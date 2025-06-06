@@ -1,0 +1,99 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+import { FavorCard } from '@/components/favor-card';
+import { mockFavors, mockUsers } from '@/lib/mock-data';
+import type { Favor, User } from '@/types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCurrentUser } from '@/lib/auth'; // Using mock auth
+import { ListChecks, HelpingHand, Search } from 'lucide-react';
+
+export default function MyFavorsPage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [requestedFavors, setRequestedFavors] = useState<Favor[]>([]);
+  const [acceptedFavors, setAcceptedFavors] = useState<Favor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserAndFavors = async () => {
+      setIsLoading(true);
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+
+      if (user) {
+        const populatedFavors = mockFavors.map(favor => ({
+            ...favor,
+            requester: mockUsers.find(u => u.id === favor.requesterId),
+            executor: favor.executorId ? mockUsers.find(u => u.id === favor.executorId) : null,
+        }));
+
+        setRequestedFavors(populatedFavors.filter(favor => favor.requesterId === user.id));
+        setAcceptedFavors(populatedFavors.filter(favor => favor.executorId === user.id));
+      }
+      setIsLoading(false);
+    };
+    fetchUserAndFavors();
+  }, []);
+
+  if (isLoading) {
+    return (
+        <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="ml-4 text-muted-foreground">Loading your favors...</p>
+        </div>
+    );
+  }
+
+  if (!currentUser) {
+    return <p className="text-center text-muted-foreground">Please log in to see your favors.</p>;
+  }
+
+  const renderFavorList = (favors: Favor[], emptyMessage: string, emptyIcon: JSX.Element) => {
+    if (favors.length === 0) {
+      return (
+        <div className="text-center py-12 text-muted-foreground">
+          {emptyIcon}
+          <h3 className="mt-4 text-xl font-semibold">Nothing here yet!</h3>
+          <p>{emptyMessage}</p>
+        </div>
+      );
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {favors.map(favor => (
+          <FavorCard key={favor.id} favor={favor} />
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-headline font-bold">My Favors</h1>
+      <Tabs defaultValue="requested" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:w-1/2">
+          <TabsTrigger value="requested">
+            <ListChecks className="mr-2 h-4 w-4" /> My Requests
+          </TabsTrigger>
+          <TabsTrigger value="accepted">
+            <HelpingHand className="mr-2 h-4 w-4" /> My Accepted Favors
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="requested" className="mt-6">
+          {renderFavorList(
+            requestedFavors,
+            "You haven't requested any favors yet.",
+            <ListChecks className="mx-auto h-12 w-12" />
+          )}
+        </TabsContent>
+        <TabsContent value="accepted" className="mt-6">
+          {renderFavorList(
+            acceptedFavors,
+            "You haven't accepted any favors yet. Check out the Discover page!",
+            <Search className="mx-auto h-12 w-12" />
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
