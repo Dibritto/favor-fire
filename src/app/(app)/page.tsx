@@ -36,7 +36,7 @@ export default function DashboardPage() {
       {/* Welcome/Hero Section */}
       <section className="bg-card p-6 sm:p-8 rounded-lg shadow-lg border border-border">
         <h1 className="text-3xl md:text-4xl font-headline font-bold text-primary mb-2">
-          Bem-vindo(a) ao Conexão Solidária, {user?.name?.split(' ')[0] || 'Usuário'}!
+          Bem-vindo(a) ao Favor, {user?.name?.split(' ')[0] || 'Usuário'}!
         </h1>
         <p className="text-lg text-muted-foreground mb-6">
           Sua plataforma para fortalecer laços comunitários através da troca de favores.
