@@ -66,13 +66,20 @@ export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
       <Card className="shadow-xl overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-primary to-accent" data-ai-hint="abstract pattern">
-           <Image src="https://placehold.co/1200x200.png" alt="Banner do perfil" width={1200} height={200} className="w-full h-full object-cover" data-ai-hint="abstract banner"/>
+        <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
+           <Image 
+            src="https://placehold.co/1200x200.png" 
+            alt="Banner do perfil" 
+            layout="fill" 
+            objectFit="cover" 
+            priority
+            data-ai-hint="abstract banner"
+          />
         </div>
         <CardContent className="relative pt-0">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                    <AvatarImage src={`https://placehold.co/128x128.png`} alt={user.name} data-ai-hint="profile picture"/>
+                    <AvatarImage src={`https://placehold.co/128x128.png?text=${user.name.charAt(0).toUpperCase()}`} alt={user.name} data-ai-hint="profile picture"/>
                     <AvatarFallback className="text-4xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow text-center sm:text-left">
@@ -97,7 +104,10 @@ export default function ProfilePage() {
             <CardContent className="space-y-3 text-sm">
                 <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
                 {user.phone && <p className="flex items-center"><Phone className="mr-3 h-5 w-5 text-primary" /> {user.phone}</p>}
-                <p className="flex items-center"><CalendarDays className="mr-3 h-5 w-5 text-primary" /> Entrou em: {format(new Date(), "P", { locale: ptBR }) /* Mock Join Date */}</p>
+                 <p className="flex items-center">
+                    <CalendarDays className="mr-3 h-5 w-5 text-primary" /> 
+                    {user.joinDate ? `Entrou em: ${format(new Date(user.joinDate), "P", { locale: ptBR })}` : 'Data de entrada não disponível'}
+                </p>
             </CardContent>
         </Card>
         <Card className="md:col-span-2">
@@ -152,5 +162,4 @@ export default function ProfilePage() {
     </div>
   );
 }
-
     

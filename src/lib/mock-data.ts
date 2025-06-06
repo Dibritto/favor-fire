@@ -1,3 +1,4 @@
+
 import type { User, Favor } from '@/types';
 
 export const mockUsers: User[] = [
@@ -9,6 +10,7 @@ export const mockUsers: User[] = [
     reputation: 4.5,
     favorsCompleted: 10,
     favorsRequested: 5,
+    joinDate: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString(), // Joined 100 days ago
   },
   {
     id: 'user2',
@@ -18,6 +20,7 @@ export const mockUsers: User[] = [
     reputation: 4.8,
     favorsCompleted: 15,
     favorsRequested: 3,
+    joinDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString(), // Joined 200 days ago
   },
   {
     id: 'user3',
@@ -26,6 +29,7 @@ export const mockUsers: User[] = [
     reputation: 3.9,
     favorsCompleted: 3,
     favorsRequested: 8,
+    joinDate: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(), // Joined 50 days ago
   },
 ];
 

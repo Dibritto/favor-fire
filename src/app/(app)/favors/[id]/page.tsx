@@ -167,7 +167,7 @@ export default function FavorDetailPage() {
                 {favor.requester && (
                     <div className="flex items-center space-x-3 mb-2">
                         <Avatar>
-                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.requester.name.charAt(0)}`} data-ai-hint="avatar person" />
+                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.requester.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.requester.name} />
                             <AvatarFallback>{favor.requester.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
@@ -179,7 +179,7 @@ export default function FavorDetailPage() {
                 {favor.executor && (
                     <div className="flex items-center space-x-3">
                         <Avatar>
-                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.executor.name.charAt(0)}`} data-ai-hint="avatar person" />
+                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.executor.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.executor.name} />
                             <AvatarFallback>{favor.executor.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>

@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -6,6 +7,7 @@ export interface User {
   reputation: number; // 0-5 scale, can be calculated or stored
   favorsCompleted: number;
   favorsRequested: number;
+  joinDate?: string; // ISO string for when the user joined
   // avatarUrl?: string; // If avatars are to be included
 }
 

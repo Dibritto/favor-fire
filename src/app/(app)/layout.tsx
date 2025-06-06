@@ -1,4 +1,5 @@
 
+
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,6 +17,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // if (!user) {
   //   redirect('/auth/login');
   // }
+
+  const userInitial = user?.name?.charAt(0).toUpperCase() || 'U';
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -64,8 +67,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarFooter className="border-t border-sidebar-border p-3">
              <div className="flex items-center gap-3 mb-3">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={`https://placehold.co/40x40.png`} alt={user?.name} data-ai-hint="avatar person" />
-                <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                <AvatarImage src={`https://placehold.co/40x40.png?text=${userInitial}`} alt={user?.name} data-ai-hint="avatar person" />
+                <AvatarFallback>{userInitial}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'Nome do Usuário'}</span>
