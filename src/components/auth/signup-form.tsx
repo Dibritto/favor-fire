@@ -20,13 +20,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 
 const signupFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email." }),
+  name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
+  email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
   phone: z.string().optional(), // Optional phone number
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "As senhas não coincidem",
   path: ["confirmPassword"], // Path to show error on
 });
 
@@ -50,8 +50,8 @@ export function SignupForm() {
   async function onSubmit(data: SignupFormValues) {
     console.log("Signup data:", data);
     toast({
-      title: "Signup Successful",
-      description: "Welcome to Kindred Connect! Redirecting to login...",
+      title: "Cadastro Bem-sucedido",
+      description: "Bem-vindo(a) à Conexão Solidária! Redirecionando para o login...",
     });
     // In a real app, you'd call an API to create the user
     // For now, just redirect after a short delay
@@ -63,8 +63,8 @@ export function SignupForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Join Kindred Connect</CardTitle>
-        <CardDescription>Create your account to start connecting with your community.</CardDescription>
+        <CardTitle className="text-2xl font-headline">Junte-se à Conexão Solidária</CardTitle>
+        <CardDescription>Crie sua conta para começar a se conectar com sua comunidade.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -74,9 +74,9 @@ export function SignupForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>Nome Completo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your Name" {...field} />
+                    <Input placeholder="Seu Nome" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,9 +87,9 @@ export function SignupForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="voce@exemplo.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,9 +100,9 @@ export function SignupForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone (Optional)</FormLabel>
+                  <FormLabel>Telefone (Opcional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="555-123-4567" {...field} />
+                    <Input placeholder="(XX) XXXXX-XXXX" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -113,7 +113,7 @@ export function SignupForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
@@ -126,7 +126,7 @@ export function SignupForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>Confirmar Senha</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
@@ -135,14 +135,14 @@ export function SignupForm() {
               )}
             />
             <Button type="submit" className="w-full">
-              Create Account
+              Criar Conta
             </Button>
           </form>
         </Form>
         <div className="mt-6 text-center text-sm">
-          Already have an account?{" "}
+          Já tem uma conta?{" "}
           <Link href="/auth/login" className="underline text-primary hover:text-primary/80">
-            Login
+            Entrar
           </Link>
         </div>
       </CardContent>

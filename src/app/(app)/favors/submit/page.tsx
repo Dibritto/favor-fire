@@ -25,17 +25,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { ptBR } from 'date-fns/locale';
 
 const favorFormSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters.").max(100, "Title must be 100 characters or less."),
-  description: z.string().min(10, "Description must be at least 10 characters.").max(500,"Description must be 500 characters or less."),
-  urgency: z.enum(["low", "medium", "high"], { required_error: "Urgency level is required." }),
-  location: z.string().min(3, "Location is required."),
-  type: z.enum(["volunteer", "paid"], { required_error: "Favor type is required." }),
+  title: z.string().min(5, "O título deve ter pelo menos 5 caracteres.").max(100, "O título deve ter 100 caracteres ou menos."),
+  description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres.").max(500,"A descrição deve ter 500 caracteres ou menos."),
+  urgency: z.enum(["low", "medium", "high"], { required_error: "O nível de urgência é obrigatório." }),
+  location: z.string().min(3, "A localização é obrigatória."),
+  type: z.enum(["volunteer", "paid"], { required_error: "O tipo de favor é obrigatório." }),
   preferredDateTime: z.date().optional(),
-  amount: z.coerce.number().positive("Amount must be positive.").optional(),
+  amount: z.coerce.number().positive("O valor deve ser positivo.").optional(),
 }).refine(data => data.type === 'volunteer' || (data.type === 'paid' && data.amount !== undefined && data.amount > 0), {
-  message: "Amount is required for paid favors and must be greater than 0.",
+  message: "O valor é obrigatório para favores pagos e deve ser maior que 0.",
   path: ["amount"],
 });
 
@@ -63,8 +64,8 @@ export default function SubmitFavorPage() {
     // In a real app, you'd save this to your backend
     // And potentially use mockUsers[0].id as requesterId
     toast({
-      title: "Favor Submitted!",
-      description: "Your favor request has been posted to the community.",
+      title: "Favor Enviado!",
+      description: "Seu pedido de favor foi publicado para a comunidade.",
     });
     router.push("/favors"); // Redirect to discovery page
   }
@@ -73,8 +74,8 @@ export default function SubmitFavorPage() {
     <div className="max-w-2xl mx-auto">
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-3xl font-headline">Submit a New Favor</CardTitle>
-          <CardDescription>Let the community know what help you need or what you can offer.</CardDescription>
+          <CardTitle className="text-3xl font-headline">Pedir um Novo Favor</CardTitle>
+          <CardDescription>Deixe a comunidade saber que tipo de ajuda você precisa ou o que você pode oferecer.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -84,11 +85,11 @@ export default function SubmitFavorPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Favor Title</FormLabel>
+                    <FormLabel>Título do Favor</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Need help with gardening" {...field} />
+                      <Input placeholder="Ex: Preciso de ajuda com jardinagem" {...field} />
                     </FormControl>
-                    <FormDescription>A short, clear title for your favor.</FormDescription>
+                    <FormDescription>Um título curto e claro para o seu favor.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -99,11 +100,11 @@ export default function SubmitFavorPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Detailed Description</FormLabel>
+                    <FormLabel>Descrição Detalhada</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Describe the favor in detail..." {...field} rows={4} />
+                      <Textarea placeholder="Descreva o favor em detalhes..." {...field} rows={4} />
                     </FormControl>
-                     <FormDescription>Provide as much information as possible.</FormDescription>
+                     <FormDescription>Forneça o máximo de informações possível.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -115,17 +116,17 @@ export default function SubmitFavorPage() {
                     name="urgency"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Urgency Level</FormLabel>
+                        <FormLabel>Nível de Urgência</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>
-                            <SelectValue placeholder="Select urgency" />
+                            <SelectValue placeholder="Selecione a urgência" />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="low">Baixa</SelectItem>
+                            <SelectItem value="medium">Média</SelectItem>
+                            <SelectItem value="high">Alta</SelectItem>
                         </SelectContent>
                         </Select>
                         <FormMessage />
@@ -137,9 +138,9 @@ export default function SubmitFavorPage() {
                     name="location"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Location</FormLabel>
+                        <FormLabel>Localização</FormLabel>
                         <FormControl>
-                        <Input placeholder="e.g., Downtown Anytown or Remote" {...field} />
+                        <Input placeholder="Ex: Centro da Cidade ou Remoto" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -152,7 +153,7 @@ export default function SubmitFavorPage() {
                 name="type"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Favor Type</FormLabel>
+                    <FormLabel>Tipo de Favor</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -163,13 +164,13 @@ export default function SubmitFavorPage() {
                           <FormControl>
                             <RadioGroupItem value="volunteer" />
                           </FormControl>
-                          <FormLabel className="font-normal">Volunteer (Unpaid)</FormLabel>
+                          <FormLabel className="font-normal">Voluntário (Não remunerado)</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="paid" />
                           </FormControl>
-                          <FormLabel className="font-normal">Paid</FormLabel>
+                          <FormLabel className="font-normal">Pago</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -184,11 +185,11 @@ export default function SubmitFavorPage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Payment Amount (USD)</FormLabel>
+                      <FormLabel>Valor do Pagamento (BRL)</FormLabel>
                       <FormControl>
                         <div className="relative">
                             <DollarSign className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input type="number" placeholder="e.g., 20" {...field} className="pl-8" onChange={event => field.onChange(+event.target.value)} />
+                            <Input type="number" placeholder="Ex: 20" {...field} className="pl-8" onChange={event => field.onChange(+event.target.value)} />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -202,7 +203,7 @@ export default function SubmitFavorPage() {
                 name="preferredDateTime"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Preferred Date & Time (Optional)</FormLabel>
+                    <FormLabel>Data e Hora Preferenciais (Opcional)</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -214,7 +215,7 @@ export default function SubmitFavorPage() {
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
+                            {field.value ? format(field.value, "PPP HH:mm", { locale: ptBR }) : <span>Escolha uma data e hora</span>}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -225,6 +226,7 @@ export default function SubmitFavorPage() {
                           onSelect={field.onChange}
                           disabled={(date) => date < new Date(new Date().setHours(0,0,0,0)) } // Disable past dates
                           initialFocus
+                          locale={ptBR}
                         />
                         {/* Basic time picker, can be enhanced */}
                         <div className="p-3 border-t border-border">
@@ -243,14 +245,14 @@ export default function SubmitFavorPage() {
                       </PopoverContent>
                     </Popover>
                     <FormDescription>
-                      Suggest a date and time for the favor.
+                      Sugira uma data e hora para o favor.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="w-full" size="lg">Submit Favor</Button>
+              <Button type="submit" className="w-full" size="lg">Enviar Pedido de Favor</Button>
             </form>
           </Form>
         </CardContent>

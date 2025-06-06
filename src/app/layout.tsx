@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; // Added Toaster for app-wide notifications
 
 export const metadata: Metadata = {
-  title: 'Kindred Connect',
-  description: 'A platform for community collaboration and mutual help.',
+  title: 'Conexão Solidária',
+  description: 'Uma plataforma para colaboração comunitária e ajuda mútua.',
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

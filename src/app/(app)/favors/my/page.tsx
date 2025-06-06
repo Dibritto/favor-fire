@@ -39,13 +39,13 @@ export default function MyFavorsPage() {
     return (
         <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <p className="ml-4 text-muted-foreground">Loading your favors...</p>
+            <p className="ml-4 text-muted-foreground">Carregando seus favores...</p>
         </div>
     );
   }
 
   if (!currentUser) {
-    return <p className="text-center text-muted-foreground">Please log in to see your favors.</p>;
+    return <p className="text-center text-muted-foreground">Por favor, faça login para ver seus favores.</p>;
   }
 
   const renderFavorList = (favors: Favor[], emptyMessage: string, emptyIcon: JSX.Element) => {
@@ -53,7 +53,7 @@ export default function MyFavorsPage() {
       return (
         <div className="text-center py-12 text-muted-foreground">
           {emptyIcon}
-          <h3 className="mt-4 text-xl font-semibold">Nothing here yet!</h3>
+          <h3 className="mt-4 text-xl font-semibold">Nada aqui ainda!</h3>
           <p>{emptyMessage}</p>
         </div>
       );
@@ -69,27 +69,27 @@ export default function MyFavorsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-headline font-bold">My Favors</h1>
+      <h1 className="text-3xl font-headline font-bold">Meus Favores</h1>
       <Tabs defaultValue="requested" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:w-1/2">
           <TabsTrigger value="requested">
-            <ListChecks className="mr-2 h-4 w-4" /> My Requests
+            <ListChecks className="mr-2 h-4 w-4" /> Meus Pedidos
           </TabsTrigger>
           <TabsTrigger value="accepted">
-            <HelpingHand className="mr-2 h-4 w-4" /> My Accepted Favors
+            <HelpingHand className="mr-2 h-4 w-4" /> Favores Aceitos por Mim
           </TabsTrigger>
         </TabsList>
         <TabsContent value="requested" className="mt-6">
           {renderFavorList(
             requestedFavors,
-            "You haven't requested any favors yet.",
+            "Você ainda não pediu nenhum favor.",
             <ListChecks className="mx-auto h-12 w-12" />
           )}
         </TabsContent>
         <TabsContent value="accepted" className="mt-6">
           {renderFavorList(
             acceptedFavors,
-            "You haven't accepted any favors yet. Check out the Discover page!",
+            "Você ainda não aceitou nenhum favor. Dê uma olhada na página Descobrir!",
             <Search className="mx-auto h-12 w-12" />
           )}
         </TabsContent>

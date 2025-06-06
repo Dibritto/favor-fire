@@ -55,26 +55,26 @@ export default function FavorDiscoveryPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
-            <h1 className="text-3xl font-headline font-bold">Discover Favors</h1>
-            <p className="text-muted-foreground">Find opportunities to help or get help in your community.</p>
+            <h1 className="text-3xl font-headline font-bold">Descobrir Favores</h1>
+            <p className="text-muted-foreground">Encontre oportunidades para ajudar ou obter ajuda em sua comunidade.</p>
         </div>
         <Button asChild>
           <Link href="/favors/submit">
-            <PlusCircle className="mr-2 h-4 w-4" /> Submit a Favor
+            <PlusCircle className="mr-2 h-4 w-4" /> Pedir um Favor
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-            <CardTitle className="text-lg">Filter Favors</CardTitle>
+            <CardTitle className="text-lg">Filtrar Favores</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     type="search"
-                    placeholder="Search by keyword, location..."
+                    placeholder="Buscar por palavra-chave, local..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8 w-full"
@@ -83,24 +83,24 @@ export default function FavorDiscoveryPage() {
             
             <Select value={filterType} onValueChange={(value) => setFilterType(value as FavorType | 'all')}>
                 <SelectTrigger>
-                    <SelectValue placeholder="Filter by Type" />
+                    <SelectValue placeholder="Filtrar por Tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="volunteer">Volunteer</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="all">Todos os Tipos</SelectItem>
+                    <SelectItem value="volunteer">Voluntário</SelectItem>
+                    <SelectItem value="paid">Pago</SelectItem>
                 </SelectContent>
             </Select>
 
             <Select value={filterUrgency} onValueChange={(value) => setFilterUrgency(value as UrgencyLevel | 'all')}>
                 <SelectTrigger>
-                    <SelectValue placeholder="Filter by Urgency" />
+                    <SelectValue placeholder="Filtrar por Urgência" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All Urgencies</SelectItem>
-                    <SelectItem value="low">Low Urgency</SelectItem>
-                    <SelectItem value="medium">Medium Urgency</SelectItem>
-                    <SelectItem value="high">High Urgency</SelectItem>
+                    <SelectItem value="all">Todas as Urgências</SelectItem>
+                    <SelectItem value="low">Baixa Urgência</SelectItem>
+                    <SelectItem value="medium">Média Urgência</SelectItem>
+                    <SelectItem value="high">Alta Urgência</SelectItem>
                 </SelectContent>
             </Select>
             {/* 
@@ -111,7 +111,7 @@ export default function FavorDiscoveryPage() {
             /> 
             */}
             <Button onClick={resetFilters} variant="outline" className="w-full md:w-auto">
-                <FilterX className="mr-2 h-4 w-4" /> Reset Filters
+                <FilterX className="mr-2 h-4 w-4" /> Limpar Filtros
             </Button>
         </CardContent>
       </Card>
@@ -126,8 +126,8 @@ export default function FavorDiscoveryPage() {
       ) : (
         <div className="text-center py-12">
           <Search className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No Favors Found</h3>
-          <p className="text-muted-foreground">Try adjusting your search or filters, or check back later!</p>
+          <h3 className="text-xl font-semibold mb-2">Nenhum Favor Encontrado</h3>
+          <p className="text-muted-foreground">Tente ajustar sua busca ou filtros, ou volte mais tarde!</p>
         </div>
       )}
     </div>

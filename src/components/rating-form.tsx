@@ -19,8 +19,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const ratingFormSchema = z.object({
-  rating: z.coerce.number().min(1, "Rating is required.").max(5, "Rating cannot exceed 5."),
-  feedback: z.string().max(300, "Feedback must be 300 characters or less.").optional(),
+  rating: z.coerce.number().min(1, "A avaliação é obrigatória.").max(5, "A avaliação não pode exceder 5."),
+  feedback: z.string().max(300, "O feedback deve ter 300 caracteres ou menos.").optional(),
 });
 
 type RatingFormValues = z.infer<typeof ratingFormSchema>;
@@ -45,19 +45,21 @@ export function RatingForm({ favorId, onRatedUserType, onSubmitRating, isSubmitt
   });
   const currentRating = form.watch("rating");
 
+  const ratedUserTypeName = onRatedUserType === 'requester' ? 'solicitante' : 'ajudante';
+
   async function handleSubmit(data: RatingFormValues) {
     try {
       await onSubmitRating(data);
       toast({
-        title: "Rating Submitted",
-        description: `Your feedback for the ${onRatedUserType} has been recorded.`,
+        title: "Avaliação Enviada",
+        description: `Seu feedback para o ${ratedUserTypeName} foi registrado.`,
       });
       form.reset(); // Reset form after successful submission
     } catch (error) {
       console.error("Failed to submit rating:", error);
       toast({
-        title: "Error",
-        description: "Failed to submit your rating. Please try again.",
+        title: "Erro",
+        description: "Falha ao enviar sua avaliação. Por favor, tente novamente.",
         variant: "destructive",
       });
     }
@@ -71,7 +73,7 @@ export function RatingForm({ favorId, onRatedUserType, onSubmitRating, isSubmitt
           name="rating"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your Rating (1-5 Stars)</FormLabel>
+              <FormLabel>Sua Avaliação (1-5 Estrelas)</FormLabel>
               <FormControl>
                 <div className="flex items-center space-x-1">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -96,10 +98,10 @@ export function RatingForm({ favorId, onRatedUserType, onSubmitRating, isSubmitt
           name="feedback"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Feedback (Optional)</FormLabel>
+              <FormLabel>Feedback (Opcional)</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder={`Share your experience with the ${onRatedUserType}...`}
+                  placeholder={`Compartilhe sua experiência com o ${ratedUserTypeName}...`}
                   {...field}
                   rows={3}
                 />
@@ -109,7 +111,7 @@ export function RatingForm({ favorId, onRatedUserType, onSubmitRating, isSubmitt
           )}
         />
         <Button type="submit" disabled={isSubmitting || currentRating === 0}>
-          {isSubmitting ? "Submitting..." : "Submit Rating"}
+          {isSubmitting ? "Enviando..." : "Enviar Avaliação"}
         </Button>
       </form>
     </Form>

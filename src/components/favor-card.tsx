@@ -1,14 +1,29 @@
-import type { Favor } from '@/types';
+import type { Favor, UrgencyLevel, FavorStatus } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { MapPin, Clock, DollarSign, Sparkles, AlertTriangle, Users, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface FavorCardProps {
   favor: Favor;
 }
+
+const urgencyTranslations: Record<UrgencyLevel, string> = {
+  low: 'Baixa',
+  medium: 'Média',
+  high: 'Alta',
+};
+
+const statusTranslations: Record<FavorStatus, string> = {
+  open: 'Aberto',
+  accepted: 'Aceito',
+  completed: 'Concluído',
+  cancelled: 'Cancelado',
+};
 
 export function FavorCard({ favor }: FavorCardProps) {
   const getUrgencyStyles = (urgency: Favor['urgency']) => {
@@ -46,12 +61,12 @@ export function FavorCard({ favor }: FavorCardProps) {
             <CardTitle className="font-headline text-lg md:text-xl line-clamp-2">{favor.title}</CardTitle>
             <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 ml-2">
                 {favor.type === 'paid' ? <DollarSign className="mr-1 h-3 w-3" /> : <Sparkles className="mr-1 h-3 w-3" />}
-                {favor.type} {favor.type === 'paid' && favor.amount ? `($${favor.amount})` : ''}
+                {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
             </Badge>
         </div>
         <CardDescription className="text-xs text-muted-foreground flex items-center">
           <Users className="h-3 w-3 mr-1.5" />
-          Requested by: {favor.requester?.name || 'A Kindred Soul'}
+          Pedido por: {favor.requester?.name || 'Uma Alma Bondosa'}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow pt-0 pb-4">
@@ -64,22 +79,22 @@ export function FavorCard({ favor }: FavorCardProps) {
           {favor.preferredDateTime && (
             <div className="flex items-center text-muted-foreground">
               <Clock className="h-4 w-4 mr-2 text-primary shrink-0" />
-              <span>{new Date(favor.preferredDateTime).toLocaleDateString()} at {new Date(favor.preferredDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{format(new Date(favor.preferredDateTime), "P", { locale: ptBR })} às {format(new Date(favor.preferredDateTime), "p", { locale: ptBR })}</span>
             </div>
           )}
           <div className="flex flex-wrap gap-2 pt-1">
             <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getUrgencyStyles(favor.urgency)}`}>
-              <AlertTriangle className="h-3 w-3 mr-1" /> {favor.urgency} Urgency
+              <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]} Urgência
             </Badge>
             <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getStatusStyles(favor.status)}`}>
-              <CheckCircle className="h-3 w-3 mr-1" /> {favor.status}
+              <CheckCircle className="h-3 w-3 mr-1" /> {statusTranslations[favor.status]}
             </Badge>
           </div>
         </div>
       </CardContent>
       <CardFooter className="pt-0">
         <Button asChild className="w-full">
-          <Link href={`/favors/${favor.id}`}>View Details</Link>
+          <Link href={`/favors/${favor.id}`}>Ver Detalhes</Link>
         </Button>
       </CardFooter>
     </Card>

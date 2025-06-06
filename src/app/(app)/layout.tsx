@@ -29,33 +29,33 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarContent className="flex-grow">
             <SidebarMenu>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors" exact label="Dashboard">
+                <ClientNavItem href="/favors" exact label="Painel">
                   <HomeIcon />
-                  <span>Dashboard</span>
+                  <span>Painel</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors" label="Discover Favors">
+                <ClientNavItem href="/favors" label="Descobrir Favores">
                   <Compass />
-                  <span>Discover Favors</span>
+                  <span>Descobrir Favores</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors/my" label="My Favors">
+                <ClientNavItem href="/favors/my" label="Meus Favores">
                   <ListChecks />
-                  <span>My Favors</span>
+                  <span>Meus Favores</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors/submit" label="Submit Favor">
+                <ClientNavItem href="/favors/submit" label="Pedir um Favor">
                   <PlusSquare />
-                  <span>Submit Favor</span>
+                  <span>Pedir um Favor</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/profile" label="Profile">
+                <ClientNavItem href="/profile" label="Perfil">
                   <UserIcon />
-                  <span>Profile</span>
+                  <span>Perfil</span>
                 </ClientNavItem>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -67,14 +67,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'User Name'}</span>
-                <span className="text-xs text-sidebar-foreground/70">{user?.email || 'user@example.com'}</span>
+                <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'Nome do Usuário'}</span>
+                <span className="text-xs text-sidebar-foreground/70">{user?.email || 'usuario@exemplo.com'}</span>
               </div>
             </div>
             <Button variant="ghost" className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" asChild>
               <Link href="/auth/login"> {/* Mock logout */}
                 <LogOut className="mr-2 h-5 w-5" />
-                Logout
+                Sair
               </Link>
             </Button>
           </SidebarFooter>
@@ -84,7 +84,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <SidebarTrigger className="md:hidden" /> {/* Mobile trigger visible on small screens */}
             {/* Page title or breadcrumbs can go here */}
             <div className="flex-1">
-                <h1 className="font-semibold text-xl font-headline">Kindred Connect</h1>
+                <h1 className="font-semibold text-xl font-headline">Conexão Solidária</h1>
             </div>
             <div>
                 {/* Additional header items like notifications or settings */}

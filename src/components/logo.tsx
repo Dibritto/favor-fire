@@ -12,7 +12,7 @@ export function Logo({ size = "md", className }: LogoProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Handshake className={`text-primary ${iconSizeClass}`} />
-      <span className={`font-headline font-bold ${textSizeClass}`}>Kindred Connect</span>
+      <span className={`font-headline font-bold ${textSizeClass}`}>Conexão Solidária</span>
     </div>
   );
 }

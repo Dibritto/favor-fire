@@ -20,8 +20,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 
 const loginFormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
-  password: z.string().min(1, { message: "Password is required." }),
+  email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
+  password: z.string().min(1, { message: "A senha é obrigatória." }),
 });
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
@@ -42,8 +42,8 @@ export function LoginForm() {
     // Simulate API call
     console.log("Login data:", data);
     toast({
-      title: "Login Successful",
-      description: "Redirecting to your dashboard...",
+      title: "Login Bem-sucedido",
+      description: "Redirecionando para o seu painel...",
     });
     // In a real app, you'd call an auth API here
     // For now, just redirect after a short delay
@@ -55,8 +55,8 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Welcome Back!</CardTitle>
-        <CardDescription>Sign in to your Kindred Connect account.</CardDescription>
+        <CardTitle className="text-2xl font-headline">Bem-vindo(a) de Volta!</CardTitle>
+        <CardDescription>Faça login na sua conta Conexão Solidária.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -66,9 +66,9 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="voce@exemplo.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,7 +79,7 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
@@ -88,19 +88,19 @@ export function LoginForm() {
               )}
             />
             <Button type="submit" className="w-full">
-              Login
+              Entrar
             </Button>
           </form>
         </Form>
         <div className="mt-6 text-center text-sm">
-          Don&apos;t have an account?{" "}
+          Não tem uma conta?{" "}
           <Link href="/auth/signup" className="underline text-primary hover:text-primary/80">
-            Sign up
+            Cadastre-se
           </Link>
         </div>
         <div className="mt-2 text-center text-sm">
            <Link href="#" className="underline text-xs text-muted-foreground hover:text-primary/80">
-            Forgot password?
+            Esqueceu a senha?
           </Link>
         </div>
       </CardContent>
