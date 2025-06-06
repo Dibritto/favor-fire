@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -75,7 +76,7 @@ export default function ProfilePage() {
                     <AvatarFallback className="text-4xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow text-center sm:text-left">
-                    <CardTitle className="text-3xl font-headline">{user.name}</CardTitle>
+                    <CardTitle className="text-2xl sm:text-3xl font-headline">{user.name}</CardTitle>
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
                         {[...Array(Math.floor(user.reputation))].map((_, i) => <Star key={`full-${i}`} className="h-5 w-5 fill-current" />)}
                         {user.reputation % 1 >= 0.5 && <Star key="half" className="h-5 w-5" style={{ clipPath: 'inset(0 50% 0 0)' }} />}
@@ -151,3 +152,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

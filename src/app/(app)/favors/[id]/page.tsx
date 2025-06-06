@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -132,9 +133,9 @@ export default function FavorDetailPage() {
     <div className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-3xl font-headline">{favor.title}</CardTitle>
-            <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+            <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
+            <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start sm:self-center">
               {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
               {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
             </Badge>
@@ -244,3 +245,5 @@ export default function FavorDetailPage() {
     </div>
   );
 }
+
+    
