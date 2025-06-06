@@ -8,6 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -82,12 +83,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <SidebarInset className="flex flex-col flex-1">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" /> {/* Mobile trigger visible on small screens */}
-            {/* Page title or breadcrumbs can go here */}
             <div className="flex-1">
-                <h1 className="font-semibold text-xl font-headline">Conexão Solidária</h1>
+                <h1 className="font-semibold text-xl font-headline text-foreground">Favor</h1>
             </div>
-            <div>
-                {/* Additional header items like notifications or settings */}
+            <div className="flex items-center gap-2">
+                <ThemeToggleButton />
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 overflow-auto bg-background">
