@@ -1,3 +1,4 @@
+
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,11 +28,36 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </SidebarHeader>
           <SidebarContent className="flex-grow">
             <SidebarMenu>
-              <SidebarMenuItem><ClientNavItem href="/favors" icon={HomeIcon} exact>Dashboard</ClientNavItem></SidebarMenuItem>
-              <SidebarMenuItem><ClientNavItem href="/favors" icon={Compass}>Discover Favors</ClientNavItem></SidebarMenuItem>
-              <SidebarMenuItem><ClientNavItem href="/favors/my" icon={ListChecks}>My Favors</ClientNavItem></SidebarMenuItem>
-              <SidebarMenuItem><ClientNavItem href="/favors/submit" icon={PlusSquare}>Submit Favor</ClientNavItem></SidebarMenuItem>
-              <SidebarMenuItem><ClientNavItem href="/profile" icon={UserIcon}>Profile</ClientNavItem></SidebarMenuItem>
+              <SidebarMenuItem>
+                <ClientNavItem href="/favors" exact label="Dashboard">
+                  <HomeIcon />
+                  <span>Dashboard</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ClientNavItem href="/favors" label="Discover Favors">
+                  <Compass />
+                  <span>Discover Favors</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ClientNavItem href="/favors/my" label="My Favors">
+                  <ListChecks />
+                  <span>My Favors</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ClientNavItem href="/favors/submit" label="Submit Favor">
+                  <PlusSquare />
+                  <span>Submit Favor</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ClientNavItem href="/profile" label="Profile">
+                  <UserIcon />
+                  <span>Profile</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter className="border-t border-sidebar-border p-3">

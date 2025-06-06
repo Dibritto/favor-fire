@@ -1,19 +1,20 @@
+
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarMenuButton } from '@/components/ui/sidebar';
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react'; // Keep for reference, though not directly used as prop type now
 import type { ReactNode } from 'react';
 
 interface ClientNavItemProps {
   href: string;
-  icon: LucideIcon;
-  children: ReactNode;
+  label: string; // Used for tooltip and ARIA attributes
+  children: ReactNode; // Expected to be an Icon component instance + a <span> for text
   exact?: boolean;
 }
 
-export function ClientNavItem({ href, icon: Icon, children, exact = false }: ClientNavItemProps) {
+export function ClientNavItem({ href, label, children, exact = false }: ClientNavItemProps) {
   const pathname = usePathname();
   let isActive: boolean;
 
@@ -31,11 +32,15 @@ export function ClientNavItem({ href, icon: Icon, children, exact = false }: Cli
   }
   
   return (
-    <Link href={href} passHref legacyBehavior>
-      <SidebarMenuButton asChild isActive={isActive} tooltip={{ children: children, side: 'right', className: 'font-body' }} className="w-full justify-start">
-        <a> {/* This 'a' tag is crucial when SidebarMenuButton has asChild */}
-          <Icon className="mr-2" /> {/* Ensure icon is direct child */}
-          <span>{children}</span> {/* Ensure span is direct child */}
+    <Link href={href} passHref legacyBehavior aria-label={label}>
+      <SidebarMenuButton 
+        asChild 
+        isActive={isActive} 
+        tooltip={{ children: label, side: 'right', className: 'font-body' }} 
+        className="w-full justify-start"
+      >
+        <a> 
+          {children}
         </a>
       </SidebarMenuButton>
     </Link>
