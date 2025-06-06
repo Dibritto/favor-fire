@@ -22,9 +22,11 @@ export function Logo({ size = "md", className }: LogoProps) {
         strokeLinejoin="round"
         className={`text-primary ${iconSizeClass}`}
       >
-        <path d="M9 4V20" />
-        <path d="M9 4H16" />
-        <path d="M9 11H15" />
+        {/* Cupped hand/support base */}
+        <path d="M5 20c0-3.5 3-6.5 7-6.5s7 3 7 6.5"/>
+        {/* Sprout representing growth/help */}
+        <path d="M12 14V8"/> {/* Stem */}
+        <path d="M9 10l3-3 3 3"/> {/* Leaves */}
       </svg>
       <span className={`font-headline font-bold ${textSizeClass}`}>Favor</span>
     </div>
