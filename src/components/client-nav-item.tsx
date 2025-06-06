@@ -4,35 +4,42 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarMenuButton } from '@/components/ui/sidebar';
-import type { LucideIcon } from 'lucide-react'; // Keep for reference, though not directly used as prop type now
 import type { ReactNode } from 'react';
+import { useSidebar } from '@/components/ui/sidebar'; // Import useSidebar
 
 interface ClientNavItemProps {
   href: string;
-  label: string; // Used for tooltip and ARIA attributes
-  children: ReactNode; // Expected to be an Icon component instance + a <span> for text
+  label: string; 
+  children: ReactNode; 
   exact?: boolean;
 }
 
 export function ClientNavItem({ href, label, children, exact = false }: ClientNavItemProps) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar(); // Get mobile state and setter
   let isActive: boolean;
 
   if (exact) {
     isActive = pathname === href;
   } else {
-    if (href === "/favors") { // Main discover page and individual favor details
+    if (href === "/favors") { 
       isActive = pathname === "/favors" || (pathname.startsWith("/favors/") && !pathname.startsWith("/favors/my") && !pathname.startsWith("/favors/submit"));
-    } else if (href === "/") { // Exact match for root/dashboard
+    } else if (href === "/") { 
         isActive = pathname === "/";
     }
-    else { // General case for other pages like /profile, /favors/my, /favors/submit
+    else { 
       isActive = pathname === href || pathname.startsWith(`${href}/`);
     }
   }
+
+  const handleClick = () => {
+    if (isMobile) {
+      setOpenMobile(false); // Close mobile sidebar on click
+    }
+  };
   
   return (
-    <Link href={href} passHref legacyBehavior aria-label={label}>
+    <Link href={href} passHref legacyBehavior aria-label={label} onClick={handleClick}>
       <SidebarMenuButton 
         asChild 
         isActive={isActive} 
@@ -46,3 +53,4 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
     </Link>
   );
 }
+
