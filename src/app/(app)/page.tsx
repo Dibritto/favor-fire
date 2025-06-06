@@ -4,22 +4,22 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUser } from '@/lib/auth';
-import type { User, Favor } from '@/types'; // Added Favor type
+import type { User, Favor } from '@/types';
 import { Activity, Compass, ListChecks, PlusSquare, User as UserIcon, BookOpen, HelpCircle, MessageSquareQuestion, Info, Lightbulb, ShieldCheck, FileText, Users2, Phone, Star, CalendarPlus, CheckCircle, UserPlus, TrendingUp, LayoutList, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { mockFavors, mockUsers } from '@/lib/mock-data'; // For previewing favors
-import { FavorCard } from '@/components/favor-card'; // To display favor previews
-import { Separator } from '@/components/ui/separator'; // For visual separation
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // For activity feed
+import { mockFavors, mockUsers } from '@/lib/mock-data';
+import { FavorCard } from '@/components/favor-card';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-// Mock stats for now, replace with real data fetching as needed
-const mockDashboardStats = {
-  openFavorsNearby: 12,
-  myActiveRequests: 2,
-  favorsIAccepted: 1,
+// Mock stats
+const initialDashboardStats = {
+  openFavorsNearby: 0,
+  myActiveRequests: 0,
+  favorsIAccepted: 0,
 };
 
 // Mock Activity Data
@@ -34,7 +34,7 @@ interface ActivityItem {
   message?: string;
 }
 
-const mockActivities: ActivityItem[] = [
+const initialMockActivities: ActivityItem[] = [
   { id: 'act1', type: 'new_favor', userName: 'Carlos Pereira', favorTitle: 'Preciso de ajuda com mudança', favorId: 'favor1', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
   { id: 'act2', type: 'favor_completed', userName: 'Beatriz Costa', favorTitle: 'Passeio com cães', favorId: 'favor2', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000) },
   { id: 'act3', type: 'new_user', userName: 'Mariana Silva', message: 'Mariana Silva juntou-se à comunidade!', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
@@ -44,17 +44,35 @@ const mockActivities: ActivityItem[] = [
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [stats, setStats] = useState(mockDashboardStats);
+  const [stats, setStats] = useState(initialDashboardStats);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   const [recentOpenFavors, setRecentOpenFavors] = useState<Favor[]>([]);
-  const [activities, setActivities] = useState<ActivityItem[]>(mockActivities);
+  const [activities, setActivities] = useState<ActivityItem[]>(initialMockActivities);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       const currentUser = await getCurrentUser();
       setUser(currentUser);
 
-      // Populate recent open favors for preview (mocked)
+      if (currentUser) {
+        const userFavorsRequested = mockFavors.filter(f => f.requesterId === currentUser.id && (f.status === 'open' || f.status === 'accepted')).length;
+        const userFavorsAccepted = mockFavors.filter(f => f.executorId === currentUser.id && f.status === 'accepted').length;
+        
+        setStats({
+            openFavorsNearby: mockFavors.filter(f => f.status === 'open').length, // Simplified: all open favors
+            myActiveRequests: userFavorsRequested,
+            favorsIAccepted: userFavorsAccepted,
+        });
+      } else {
+        // Stats for logged out or loading user might be different
+         setStats({
+            openFavorsNearby: mockFavors.filter(f => f.status === 'open').length,
+            myActiveRequests: 0,
+            favorsIAccepted: 0,
+        });
+      }
+
+
       const populatedFavors = mockFavors.map(favor => ({
         ...favor,
         requester: mockUsers.find(u => u.id === favor.requesterId)
@@ -79,9 +97,9 @@ export default function DashboardPage() {
   const getActivityMessage = (activity: ActivityItem) => {
     if (activity.message) return activity.message;
     switch(activity.type) {
-      case 'new_favor': return `${activity.userName} pediu um novo favor: "${activity.favorTitle}"`;
-      case 'favor_accepted': return `${activity.userName} aceitou o favor: "${activity.favorTitle}"`;
-      case 'favor_completed': return `${activity.userName} completou o favor: "${activity.favorTitle}"`;
+      case 'new_favor': return <>{activity.userName} pediu um novo favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
+      case 'favor_accepted': return <>{activity.userName} aceitou o favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
+      case 'favor_completed': return <>{activity.userName} completou o favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
       default: return "Nova atividade";
     }
   }
@@ -120,7 +138,7 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Favores Abertos (Perto)</CardTitle>
+              <CardTitle className="text-sm font-medium">Favores Abertos (Comunidade)</CardTitle>
               <Compass className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -161,8 +179,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold flex items-center">
-                {user?.reputation.toFixed(1) || "N/A"}
-                <Star className="h-6 w-6 text-yellow-400 fill-yellow-400 ml-1.5"/>
+                {user?.reputation !== undefined ? user.reputation.toFixed(1) : "N/A"}
+                {user?.reputation !== undefined && <Star className="h-6 w-6 text-yellow-400 fill-yellow-400 ml-1.5"/>}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Com base nas suas interações.
@@ -219,7 +237,7 @@ export default function DashboardPage() {
               {activities.length > 0 ? (
                 <ul className="space-y-4">
                   {activities.map((activity) => (
-                    <li key={activity.id} className="flex items-start space-x-3">
+                    <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
                       <Avatar className="h-10 w-10 border">
                         {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
                         <AvatarFallback className="bg-muted text-muted-foreground">
@@ -319,8 +337,6 @@ export default function DashboardPage() {
     </div>
   );
 }
-    
-
     
 
     
