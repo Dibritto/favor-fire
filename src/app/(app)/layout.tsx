@@ -30,9 +30,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarContent className="flex-grow">
             <SidebarMenu>
               <SidebarMenuItem>
-                <ClientNavItem href="/" exact label="Painel">
+                <ClientNavItem href="/" exact label="Início">
                   <HomeIcon />
-                  <span>Painel</span>
+                  <span>Início</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
