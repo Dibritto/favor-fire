@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const user = await getCurrentUser();
 
   // if (!user) {
-  //   redirect('/auth/login'); 
+  //   redirect('/auth/login');
   // }
 
   return (
@@ -30,7 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarContent className="flex-grow">
             <SidebarMenu>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors" exact label="Painel">
+                <ClientNavItem href="/" exact label="Painel">
                   <HomeIcon />
                   <span>Painel</span>
                 </ClientNavItem>
