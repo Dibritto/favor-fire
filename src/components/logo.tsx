@@ -1,4 +1,3 @@
-import { Handshake } from 'lucide-react';
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -11,7 +10,22 @@ export function Logo({ size = "md", className }: LogoProps) {
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <Handshake className={`text-primary ${iconSizeClass}`} />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`text-primary ${iconSizeClass}`}
+      >
+        <path d="M9 4V20" />
+        <path d="M9 4H16" />
+        <path d="M9 11H15" />
+      </svg>
       <span className={`font-headline font-bold ${textSizeClass}`}>Favor</span>
     </div>
   );
