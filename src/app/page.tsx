@@ -5,8 +5,8 @@ import Image from 'next/image';
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-6">
-      <div className="w-full max-w-lg bg-card p-6 sm:p-10 rounded-2xl shadow-xl text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-background to-blue-100/30 dark:to-blue-900/10 p-4 sm:p-6">
+      <div className="w-full max-w-lg bg-card p-6 sm:p-10 rounded-2xl shadow-xl text-center border">
         
         <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
            <Image 
@@ -38,7 +38,7 @@ export default function LandingPage() {
           <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/auth/signup">Começar</Link>
           </Button>
-          <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto text-primary">
+          <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto text-primary hover:text-primary">
             <Link href="/auth/login">Entrar</Link>
           </Button>
         </div>
