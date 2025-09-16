@@ -10,6 +10,7 @@ import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
+import { Footer } from '@/components/footer';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -33,7 +34,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarContent className="flex-grow">
             <SidebarMenu>
               <SidebarMenuItem>
-                <ClientNavItem href="/" exact label="Início">
+                <ClientNavItem href="/dashboard" exact label="Início">
                   <HomeIcon />
                   <span>Início</span>
                 </ClientNavItem>
@@ -96,6 +97,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <main className="flex-1 p-4 sm:p-6 overflow-auto bg-background">
             {children}
           </main>
+          <Footer />
         </SidebarInset>
       </div>
     </SidebarProvider>

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -45,7 +46,6 @@ const initialMockActivities: ActivityItem[] = [
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [stats, setStats] = useState(initialDashboardStats);
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
   const [recentOpenFavors, setRecentOpenFavors] = useState<Favor[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>(initialMockActivities);
 
@@ -81,7 +81,6 @@ export default function DashboardPage() {
     };
     
     fetchInitialData();
-    setCurrentYear(new Date().getFullYear());
   }, []);
   
   const renderActivityIcon = (type: ActivityItem['type']) => {
@@ -285,7 +284,7 @@ export default function DashboardPage() {
             <Card className="shadow-md hover:shadow-lg transition-shadow">
             <CardHeader>
                 <CardTitle className="text-xl font-headline">Dica do Dia</CardTitle>
-            </CardHeader>
+            </Header>
             <CardContent>
                 <div className="flex items-start">
                 <Lightbulb className="h-6 w-6 text-yellow-400 mr-3 mt-1 shrink-0" />
@@ -297,43 +296,6 @@ export default function DashboardPage() {
             </Card>
         </section>
       </div>
-
-
-      {/* Footer Section */}
-      <footer className="mt-16 pt-10 border-t border-border text-sm text-muted-foreground">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 px-4">
-          <div className="space-y-3">
-            <h4 className="font-semibold text-foreground text-base flex items-center"><BookOpen className="mr-2 h-5 w-5 text-primary"/>Recursos</h4>
-            <Link href="#" className="block hover:text-primary transition-colors">Documentação</Link>
-            <Link href="#" className="block hover:text-primary transition-colors">Ajuda & Suporte</Link>
-            <Link href="#" className="block hover:text-primary transition-colors">FAQ</Link>
-          </div>
-          <div className="space-y-3">
-            <h4 className="font-semibold text-foreground text-base flex items-center"><Users2 className="mr-2 h-5 w-5 text-primary"/>Sobre</h4>
-            <Link href="#" className="block hover:text-primary transition-colors">Sobre Nós</Link>
-            <Link href="#" className="block hover:text-primary transition-colors">Dicas da Comunidade</Link>
-            <Link href="#" className="block hover:text-primary transition-colors">Informações Adicionais</Link> 
-          </div>
-          <div className="space-y-3">
-            <h4 className="font-semibold text-foreground text-base flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-primary"/>Legal</h4>
-            <Link href="#" className="block hover:text-primary transition-colors">Política de Privacidade</Link>
-            <Link href="#" className="block hover:text-primary transition-colors">Termos de Uso</Link>
-          </div>
-           <div className="space-y-3">
-            <h4 className="font-semibold text-foreground text-base flex items-center"><Phone className="mr-2 h-5 w-5 text-primary"/>Conecte-se</h4>
-            <Link href="#" className="block hover:text-primary transition-colors">Contate-nos</Link>
-            {/* Social media links can be added here */}
-          </div>
-        </div>
-        <div className="text-center py-6 border-t border-border/50">
-          <p>
-            &copy; {currentYear || new Date().getFullYear()} Favor. Todos os direitos reservados.
-          </p>
-          <p className="text-xs mt-1">
-            Construindo comunidades mais fortes, um favor de cada vez.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
