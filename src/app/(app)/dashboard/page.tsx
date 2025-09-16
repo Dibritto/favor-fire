@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -92,17 +91,6 @@ export default function DashboardPage() {
       default: return <Activity className="h-5 w-5 text-muted-foreground" />;
     }
   }
-
-  const getActivityMessage = (activity: ActivityItem) => {
-    if (activity.message) return activity.message;
-    switch(activity.type) {
-      case 'new_favor': return <>{activity.userName} pediu um novo favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
-      case 'favor_accepted': return <>{activity.userName} aceitou o favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
-      case 'favor_completed': return <>{activity.userName} completou o favor: <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">"{activity.favorTitle}"</Link></>;
-      default: return "Nova atividade";
-    }
-  }
-
 
   return (
     <div className="space-y-8 md:space-y-12">
@@ -235,25 +223,61 @@ export default function DashboardPage() {
             <CardContent>
               {activities.length > 0 ? (
                 <ul className="space-y-4">
-                  {activities.map((activity) => (
-                    <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
-                      <Avatar className="h-10 w-10 border">
-                        {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
-                        <AvatarFallback className="bg-muted text-muted-foreground">
-                            {activity.userName.charAt(0).toUpperCase()}
-                        </AvatarFallback>}
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="text-sm text-foreground leading-snug">
-                           {getActivityMessage(activity)}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ptBR })}
-                        </p>
-                      </div>
-                      {renderActivityIcon(activity.type)}
-                    </li>
-                  ))}
+                  {activities.map((activity) => {
+                    let activityMessage;
+                    if (activity.message) {
+                      activityMessage = <span>{activity.message}</span>;
+                    } else if (activity.type === 'new_favor') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} pediu um novo favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    } else if (activity.type === 'favor_accepted') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} aceitou o favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    } else if (activity.type === 'favor_completed') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} completou o favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    } else {
+                        activityMessage = <span>Nova atividade</span>;
+                    }
+
+                    return (
+                      <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
+                        <Avatar className="h-10 w-10 border">
+                          {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
+                          <AvatarFallback className="bg-muted text-muted-foreground">
+                              {activity.userName.charAt(0).toUpperCase()}
+                          </AvatarFallback>}
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-sm text-foreground leading-snug">
+                            {activityMessage}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ptBR })}
+                          </p>
+                        </div>
+                        {renderActivityIcon(activity.type)}
+                      </li>
+                    );
+                  })}
                 </ul>
               ) : (
                 <p className="text-muted-foreground text-center py-4">Nenhuma atividade recente para mostrar.</p>
