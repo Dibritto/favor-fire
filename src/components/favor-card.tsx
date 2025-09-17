@@ -1,10 +1,10 @@
 
-import type { Favor, UrgencyLevel, FavorStatus } from '@/types';
+import type { Favor, UrgencyLevel, FavorStatus, FavorParticipationType } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { MapPin, Clock, DollarSign, Sparkles, AlertTriangle, Users, CheckCircle } from 'lucide-react';
+import { MapPin, Clock, DollarSign, Sparkles, AlertTriangle, Users, CheckCircle, User } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -24,6 +24,11 @@ const statusTranslations: Record<FavorStatus, string> = {
   accepted: 'Aceito',
   completed: 'Concluído',
   cancelled: 'Cancelado',
+};
+
+const participationTranslations: Record<FavorParticipationType, string> = {
+  individual: 'Individual',
+  collective: 'Coletivo',
 };
 
 export function FavorCard({ favor }: FavorCardProps) {
@@ -54,6 +59,8 @@ export function FavorCard({ favor }: FavorCardProps) {
         return "";
     }
   }
+
+  const participationStyle = "border-indigo-500 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-700";
 
   return (
     <article>
@@ -91,6 +98,10 @@ export function FavorCard({ favor }: FavorCardProps) {
                 <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getStatusStyles(favor.status)}`}>
                 <CheckCircle className="h-3 w-3 mr-1" /> {statusTranslations[favor.status]}
                 </Badge>
+                <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${participationStyle}`}>
+                    {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
+                    {participationTranslations[favor.participationType]}
+                </Badge>
             </div>
             </div>
         </CardContent>
@@ -103,5 +114,3 @@ export function FavorCard({ favor }: FavorCardProps) {
     </article>
   );
 }
-
-    
