@@ -22,13 +22,12 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
   if (exact) {
     isActive = pathname === href;
   } else {
-    // Logic to highlight parent menu item
-    // e.g., /favors/my should activate the /favors link
+    // Lógica para destacar o item de menu pai
     isActive = pathname.startsWith(href);
   }
   
-  // Special cases to avoid activating multiple items
-  if (href === "/favors" && (pathname.startsWith("/favores/meus") || pathname.startsWith("/favores/pedir"))) {
+  // Casos especiais para não ativar múltiplos itens
+  if (href === "/favores" && (pathname.startsWith("/favores/meus") || pathname.startsWith("/favores/pedir"))) {
       isActive = false;
   }
   if(href === "/inicio" && pathname !== "/inicio") {
@@ -57,3 +56,4 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
     </Link>
   );
 }
+
