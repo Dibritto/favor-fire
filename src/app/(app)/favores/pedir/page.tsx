@@ -87,7 +87,6 @@ export default function SubmitFavorPage() {
     defaultValues: {
       title: "",
       description: "",
-      urgency: "medium",
       city: "",
       bairro: "",
       address: "",
