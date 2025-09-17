@@ -11,7 +11,7 @@ const routeTitles: { [key: string]: string } = {
   '/favores/pedir': 'Pedir um Favor',
   '/comunidades': 'Comunidades',
   '/comunidades/criar': 'Criar Comunidade',
-  '/perfil': 'Perfil',
+  '/perfil': 'Meu Perfil',
   '/perfil/editar': 'Editar Perfil',
   '/assinatura': 'Minha Assinatura',
   '/admin/painel': 'Painel Administrativo',
@@ -38,6 +38,12 @@ export function PageTitle() {
         const parts = pathname.split('/');
         if(parts.length === 3 && parts[2] !== 'criar') {
             return 'Detalhes da Comunidade';
+        }
+    }
+    if (pathname.startsWith('/perfil/')) {
+        const parts = pathname.split('/');
+        if(parts.length === 3 && parts[2] !== 'editar') {
+            return 'Perfil de Usuário';
         }
     }
     return routeTitles[pathname] || 'Projeto Favor';

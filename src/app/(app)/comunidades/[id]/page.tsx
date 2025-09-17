@@ -121,16 +121,18 @@ export default function CommunityDetailPage() {
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {community.members?.map(member => (
                     <Card key={member.id} className="flex items-center p-4 gap-4">
+                      <Link href={`/perfil/${member.id}`} className="flex items-center gap-4 w-full">
                         <Avatar className="h-12 w-12">
                              <AvatarImage src={`https://picsum.photos/seed/avatar${member.id}/128/128`} alt={member.name} data-ai-hint="profile picture" />
                             <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="font-semibold">{member.displayName || member.name}</p>
+                            <p className="font-semibold hover:underline">{member.displayName || member.name}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
                                 <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" /> {member.reputation.toFixed(1)} de reputação
                             </p>
                         </div>
+                      </Link>
                     </Card>
                 ))}
              </div>
@@ -140,4 +142,3 @@ export default function CommunityDetailPage() {
     </div>
   );
 }
-

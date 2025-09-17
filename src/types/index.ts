@@ -5,6 +5,7 @@ export interface User {
   displayName?: string;
   email: string;
   phone?: string;
+  bio?: string;
   reputation: number; // 0-5 scale, can be calculated or stored
   favorsCompleted: number;
   favorsRequested: number;

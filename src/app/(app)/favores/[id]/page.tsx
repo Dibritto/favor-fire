@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -164,28 +165,28 @@ export default function FavorDetailPage() {
             <div>
                 <h3 className="font-semibold mb-2 text-primary">Participantes:</h3>
                 {favor.requester && (
-                    <div className="flex items-center space-x-3 mb-2">
+                  <Link href={`/perfil/${favor.requester.id}`} className="flex items-center space-x-3 mb-2 group">
                         <Avatar>
                             <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.requester.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.requester.name} />
                             <AvatarFallback>{favor.requester.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="font-medium">{favor.requester.name} (Solicitante)</p>
+                            <p className="font-medium group-hover:underline">{favor.requester.name} (Solicitante)</p>
                             <p className="text-xs text-muted-foreground">Reputação: {favor.requester.reputation.toFixed(1)} <Star className="inline h-3 w-3 text-yellow-400 fill-yellow-400" /></p>
                         </div>
-                    </div>
+                   </Link>
                 )}
                 {favor.executor && (
-                    <div className="flex items-center space-x-3">
+                   <Link href={`/perfil/${favor.executor.id}`} className="flex items-center space-x-3 group">
                         <Avatar>
                             <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.executor.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.executor.name} />
                             <AvatarFallback>{favor.executor.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="font-medium">{favor.executor.name} (Ajudante)</p>
+                            <p className="font-medium group-hover:underline">{favor.executor.name} (Ajudante)</p>
                             <p className="text-xs text-muted-foreground">Reputação: {favor.executor.reputation.toFixed(1)} <Star className="inline h-3 w-3 text-yellow-400 fill-yellow-400" /></p>
                         </div>
-                    </div>
+                   </Link>
                 )}
                  {!favor.executor && favor.status === 'open' && (
                     <p className="text-sm text-muted-foreground italic">Aguardando um ajudante...</p>
@@ -244,4 +245,3 @@ export default function FavorDetailPage() {
     </article>
   );
 }
-

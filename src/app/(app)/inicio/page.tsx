@@ -27,6 +27,7 @@ interface ActivityItem {
   id: string;
   type: 'new_favor' | 'favor_accepted' | 'favor_completed' | 'new_user';
   userName: string;
+  userId: string;
   userAvatar?: string;
   favorTitle?: string;
   favorId?: string;
@@ -35,10 +36,10 @@ interface ActivityItem {
 }
 
 const initialMockActivities: ActivityItem[] = [
-  { id: 'act1', type: 'new_favor', userName: 'Carlos Pereira', favorTitle: 'Preciso de ajuda com mudança', favorId: 'favor1', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
-  { id: 'act2', type: 'favor_completed', userName: 'Beatriz Costa', favorTitle: 'Passeio com cães', favorId: 'favor2', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000) },
-  { id: 'act3', type: 'new_user', userName: 'Mariana Silva', message: 'Mariana Silva juntou-se à comunidade!', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-  { id: 'act4', type: 'favor_accepted', userName: 'Lucas Almeida', favorTitle: 'Aulas de violão para iniciantes', favorId: 'favor3', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+  { id: 'act1', type: 'new_favor', userName: 'Carlos Pereira', userId: 'user3', favorTitle: 'Preciso de ajuda com mudança', favorId: 'favor1', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 'act2', type: 'favor_completed', userName: 'Beatriz Costa', userId: 'user1', favorTitle: 'Passeio com cães', favorId: 'favor2', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 'act3', type: 'new_user', userName: 'Mariana Silva', userId: 'user2', message: 'Mariana Silva juntou-se à comunidade!', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+  { id: 'act4', type: 'favor_accepted', userName: 'Lucas Almeida', userId: 'user2', favorTitle: 'Aulas de violão para iniciantes', favorId: 'favor3', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
 ];
 
 
@@ -220,12 +221,14 @@ export default function DashboardPage() {
                 <ul className="space-y-4">
                   {activities.map((activity) => {
                     let activityMessage;
+                    let userLink = <Link href={`/perfil/${activity.userId}`} className="font-medium text-primary hover:underline">{activity.userName}</Link>;
+
                     if (activity.message) {
-                      activityMessage = <span>{activity.message}</span>;
+                      activityMessage = <>{userLink} {activity.message.substring(activity.userName.length)}</>;
                     } else if (activity.type === 'new_favor') {
                       activityMessage = (
                         <>
-                          {activity.userName} pediu um novo favor:{' '}
+                          {userLink} pediu um novo favor:{' '}
                           <Link href={`/favores/${activity.favorId}`} className="font-medium text-primary hover:underline">
                             "{activity.favorTitle}"
                           </Link>
@@ -234,7 +237,7 @@ export default function DashboardPage() {
                     } else if (activity.type === 'favor_accepted') {
                       activityMessage = (
                         <>
-                          {activity.userName} aceitou o favor:{' '}
+                          {userLink} aceitou o favor:{' '}
                           <Link href={`/favores/${activity.favorId}`} className="font-medium text-primary hover:underline">
                             "{activity.favorTitle}"
                           </Link>
@@ -243,7 +246,7 @@ export default function DashboardPage() {
                     } else if (activity.type === 'favor_completed') {
                       activityMessage = (
                         <>
-                          {activity.userName} completou o favor:{' '}
+                          {userLink} completou o favor:{' '}
                           <Link href={`/favores/${activity.favorId}`} className="font-medium text-primary hover:underline">
                             "{activity.favorTitle}"
                           </Link>
@@ -253,12 +256,14 @@ export default function DashboardPage() {
                   
                     return (
                       <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
-                        <Avatar className="h-10 w-10 border">
-                          {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
-                          <AvatarFallback className="bg-muted text-muted-foreground">
-                              {activity.userName.charAt(0).toUpperCase()}
-                          </AvatarFallback>}
-                        </Avatar>
+                        <Link href={`/perfil/${activity.userId}`} className="shrink-0">
+                          <Avatar className="h-10 w-10 border">
+                            {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
+                            <AvatarFallback className="bg-muted text-muted-foreground">
+                                {activity.userName.charAt(0).toUpperCase()}
+                            </AvatarFallback>}
+                          </Avatar>
+                        </Link>
                         <div className="flex-1">
                           <p className="text-sm text-foreground leading-snug">
                              {activityMessage}
@@ -319,5 +324,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

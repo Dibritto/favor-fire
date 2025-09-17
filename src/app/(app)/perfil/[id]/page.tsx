@@ -2,13 +2,14 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getCurrentUser } from '@/lib/auth';
-import { mockFavors, mockUsers } from '@/lib/mock-data';
+import { useParams } from 'next/navigation';
+import { getUserById } from '@/lib/auth';
+import { mockFavors } from '@/lib/mock-data';
 import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, Building } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -29,37 +30,37 @@ function ProfileFavorItem({ favor }: { favor: Favor }) {
     );
 }
 
-
-export default function ProfilePage() {
+export default function PublicProfilePage() {
+  const params = useParams();
+  const userId = params.id as string;
+  
   const [user, setUser] = useState<User | null>(null);
   const [favorsRequested, setFavorsRequested] = useState<Favor[]>([]);
   const [favorsFulfilled, setFavorsFulfilled] = useState<Favor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!userId) return;
     const fetchProfileData = async () => {
       setIsLoading(true);
-      const currentUser = await getCurrentUser();
+      const profileUser = await getUserById(userId);
       
-      if (currentUser) {
-        if (currentUser.invitedById) {
-            currentUser.sponsor = mockUsers.find(u => u.id === currentUser.invitedById);
-        }
-        setUser(currentUser);
-        setFavorsRequested(mockFavors.filter(f => f.requesterId === currentUser.id));
-        setFavorsFulfilled(mockFavors.filter(f => f.executorId === currentUser.id && f.status === 'completed'));
+      if (profileUser) {
+        setUser(profileUser);
+        setFavorsRequested(mockFavors.filter(f => f.requesterId === profileUser.id));
+        setFavorsFulfilled(mockFavors.filter(f => f.executorId === profileUser.id && f.status === 'completed'));
       }
       setIsLoading(false);
     };
     fetchProfileData();
-  }, []);
+  }, [userId]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div><p className="ml-4 text-muted-foreground">Carregando perfil...</p></div>;
   }
 
   if (!user) {
-    return <p className="text-center text-muted-foreground">Não foi possível carregar o perfil do usuário. Por favor, tente fazer login novamente.</p>;
+    return <p className="text-center text-muted-foreground">Usuário não encontrado.</p>;
   }
 
   const publicName = user.displayName || user.name;
@@ -91,15 +92,8 @@ export default function ProfilePage() {
                     </div>
                 </div>
                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href="/perfil/editar">
-                            <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
-                        </Link>
-                    </Button>
-                     <Button size="sm" asChild>
-                        <Link href="/comunidades/criar">
-                            <Building className="mr-2 h-4 w-4" /> Criar Comunidade
-                        </Link>
+                    <Button size="sm">
+                        <MessageCircle className="mr-2 h-4 w-4" /> Enviar Mensagem
                     </Button>
                 </div>
             </div>
@@ -113,8 +107,6 @@ export default function ProfilePage() {
                     <CardTitle className="text-xl font-headline">Informações</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
-                    <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
-                    {user.phone && <p className="flex items-center"><Phone className="mr-3 h-5 w-5 text-primary" /> {user.phone}</p>}
                     <p className="flex items-center">
                         <CalendarDays className="mr-3 h-5 w-5 text-primary" /> 
                         {user.joinDate ? `Entrou em: ${format(new Date(user.joinDate), "P", { locale: ptBR })}` : 'Data de entrada não disponível'}
@@ -170,7 +162,7 @@ export default function ProfilePage() {
                       {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">Você ainda não pediu nenhum favor.</p>
+                    <p className="text-muted-foreground">Este usuário ainda não pediu favores.</p>
                   )}
                 </CardContent>
               </Card>
@@ -187,7 +179,7 @@ export default function ProfilePage() {
                       {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">Você ainda não realizou nenhum favor.</p>
+                    <p className="text-muted-foreground">Este usuário ainda não realizou favores.</p>
                   )}
                 </CardContent>
               </Card>

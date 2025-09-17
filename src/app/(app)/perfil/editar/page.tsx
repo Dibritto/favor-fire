@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentUser } from "@/lib/auth";
@@ -27,6 +28,7 @@ import Link from "next/link";
 const profileFormSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres."),
   displayName: z.string().min(2, "O nome de exibição deve ter pelo menos 2 caracteres.").optional(),
+  bio: z.string().max(200, "A biografia deve ter no máximo 200 caracteres.").optional(),
   phone: z.string().optional(),
   email: z.string().email(),
 });
@@ -44,6 +46,7 @@ export default function EditProfilePage() {
     defaultValues: {
       name: "",
       displayName: "",
+      bio: "",
       phone: "",
       email: "",
     },
@@ -58,6 +61,7 @@ export default function EditProfilePage() {
         form.reset({
           name: currentUser.name,
           displayName: currentUser.displayName || "",
+          bio: currentUser.bio || "",
           phone: currentUser.phone || "",
           email: currentUser.email,
         });
@@ -120,6 +124,20 @@ export default function EditProfilePage() {
                       <Input placeholder="Como você quer ser chamado" {...field} />
                     </FormControl>
                      <FormDescription>Este será seu nome público na plataforma.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sua Biografia (Público)</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Fale um pouco sobre você..." {...field} rows={3} />
+                    </FormControl>
+                    <FormDescription>Uma breve biografia que aparecerá no seu perfil.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
