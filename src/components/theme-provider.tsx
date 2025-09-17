@@ -2,13 +2,49 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
+import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 
 export type Theme = "dark" | "light"
+
+// Helper function to convert hex to HSL string "h s% l%"
+const hexToHslString = (hex: string): string => {
+    if (!hex || typeof hex !== 'string') return "0 0% 0%";
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return "0 0% 0%";
+    let r = parseInt(result[1], 16) / 255, g = parseInt(result[2], 16) / 255, b = parseInt(result[3], 16) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+    return `${h} ${s}% ${l}%`;
+};
+
+// Function to apply theme colors to the root element
+const applyThemeColors = (colors: Record<string, string>) => {
+    const root = document.documentElement;
+    Object.keys(colors).forEach((key) => {
+        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        const hslString = hexToHslString(colors[key]);
+        root.style.setProperty(cssVarName, hslString);
+    });
+};
 
 type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
+  colorsStorageKey?: string
 }
 
 type ThemeProviderState = {
@@ -29,20 +65,57 @@ export function ThemeProvider({
   children,
   defaultTheme = "light",
   storageKey = "app-theme-mode",
+  colorsStorageKey = "app-colors-hex",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return defaultTheme;
-    }
-    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-  });
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  // Effect to set the theme mode (light/dark class)
+  useEffect(() => {
+    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
+    setTheme(storedTheme || defaultTheme);
+  }, [storageKey, defaultTheme]);
 
   useEffect(() => {
     const root = window.document.documentElement
     root.classList.remove("light", "dark")
     root.classList.add(theme)
   }, [theme])
+
+  // Effect to load and apply custom colors, runs only on client
+  useEffect(() => {
+    const storedColorsJson = localStorage.getItem(colorsStorageKey);
+    const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
+    
+    if (hexTheme && hexTheme[theme]) {
+        applyThemeColors(hexTheme[theme]);
+    } else {
+        // If no custom colors, apply defaults (which are in CSS but this ensures consistency)
+        const defaultColorsForMode = MOCK_DEFAULT_THEME[theme];
+         const root = document.documentElement;
+         Object.keys(defaultColorsForMode).forEach(key => {
+            const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+            root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
+        });
+    }
+
+    // Add a listener to storage events to update theme in real-time across tabs
+    const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === colorsStorageKey) {
+             const newStoredColorsJson = event.newValue;
+             const newHexTheme = newStoredColorsJson ? JSON.parse(newStoredColorsJson) : null;
+             if (newHexTheme && newHexTheme[theme]) {
+                applyThemeColors(newHexTheme[theme]);
+             }
+        }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+
+  }, [theme, colorsStorageKey]);
 
   const toggleTheme = () => {
     setTheme(prevTheme => {
@@ -76,3 +149,7 @@ export const useTheme = () => {
 
   return context
 }
+
+export { applyThemeColors };
+
+    

@@ -15,8 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="font-body antialiased">
-        <ThemeProvider storageKey="app-theme-mode">
+      <body className="antialiased">
+        <ThemeProvider
+          storageKey="app-theme-mode"
+          colorsStorageKey="app-colors-hex"
+        >
           {children}
           <Toaster />
         </ThemeProvider>
@@ -24,3 +27,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

@@ -20,12 +20,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2, Palette, Save } from "lucide-react";
 import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 import { isEqual } from "lodash";
+import { applyThemeColors, useTheme } from "@/components/theme-provider";
 
 // Helper Functions
-const hexToHsl = (hex: string): [number, number, number] => {
-    if (!hex || typeof hex !== 'string') return [0, 0, 0];
+const hexToHslString = (hex: string): string => {
+    if (!hex || typeof hex !== 'string') return "0 0% 0%";
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return [0, 0, 0];
+    if (!result) return "0 0% 0%";
     let r = parseInt(result[1], 16) / 255, g = parseInt(result[2], 16) / 255, b = parseInt(result[3], 16) / 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
     let h = 0, s = 0, l = (max + min) / 2;
@@ -39,7 +40,10 @@ const hexToHsl = (hex: string): [number, number, number] => {
         }
         h /= 6;
     }
-    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+    return `${h} ${s}% ${l}%`;
 };
 
 const hslToHex = (h: number, s: number, l: number): string => {
@@ -67,6 +71,7 @@ const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigForm
     }
     return result;
 };
+
 
 // Zod Schemas
 const colorSchema = z.object({
@@ -98,76 +103,59 @@ const friendlyColorNames: Record<string, string> = {
 };
 
 const DEFAULT_HEX_THEME = convertHslThemeToHex(MOCK_DEFAULT_THEME);
-
-// Child component to handle style injection, preventing hydration errors
-function DynamicStyle({ theme }: { theme: ColorConfigFormValues }) {
-  const generateCssVars = (themePart: Record<string, string>, selector: string) => {
-    const variables = Object.entries(themePart).map(([key, value]) => {
-      if (!value) return '';
-      try {
-        const [h, s, l] = hexToHsl(value);
-        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        return `${cssVarName}: ${h} ${s}% ${l}%;`;
-      } catch (e) {
-        console.error(`Error converting ${key}: ${value} to HSL`, e);
-        return '';
-      }
-    }).filter(Boolean).join('\n');
-    return `${selector} {\n${variables}\n}`;
-  };
-
-  const css = useMemo(() => {
-    const lightVars = generateCssVars(theme.light, ':root');
-    const darkVars = generateCssVars(theme.dark, '.dark');
-    return `${lightVars}\n${darkVars}`;
-  }, [theme]);
-
-  return <style id="custom-theme-styles">{css}</style>;
-}
-
+const COLORS_STORAGE_KEY = "app-colors-hex";
 
 export default function ThemeColorsPage() {
   const { toast } = useToast();
+  const { theme: currentMode } = useTheme(); // 'light' or 'dark'
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
+  
+  // This state holds the saved theme from localStorage and is our source of truth
+  const [savedTheme, setSavedTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
 
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: DEFAULT_HEX_THEME,
+    defaultValues: savedTheme,
   });
 
-  // Effect to load theme from localStorage and initialize form only on the client
+  // Load saved theme from localStorage only on the client
   useEffect(() => {
     setIsClient(true);
     try {
-      const storedThemeJson = localStorage.getItem('app-colors-hex');
-      const savedTheme = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
-      setCurrentTheme(savedTheme);
-      form.reset(savedTheme);
+      const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
+      const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
+      setSavedTheme(themeToLoad);
+      form.reset(themeToLoad); // Sync form with loaded data
     } catch (e) {
       console.error("Failed to load theme from localStorage", e);
-      setCurrentTheme(DEFAULT_HEX_THEME);
+      // fallback to default
+      setSavedTheme(DEFAULT_HEX_THEME);
       form.reset(DEFAULT_HEX_THEME);
     }
   }, [form]);
-  
-  // Effect to watch for form changes and compare with the saved theme
-    useEffect(() => {
-        const subscription = form.watch((value) => {
-            setHasChanges(!isEqual(value, currentTheme));
-        });
-        return () => subscription.unsubscribe();
-    }, [form, currentTheme]);
-  
+
+  // Watch for form changes to enable/disable save button
+  useEffect(() => {
+    if (!isClient) return;
+    const subscription = form.watch((value) => {
+      setHasChanges(!isEqual(value, savedTheme));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, savedTheme, isClient]);
+
 
   const onSubmit = async (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     try {
-      localStorage.setItem('app-colors-hex', JSON.stringify(data));
-      setCurrentTheme(data);
-      setHasChanges(false);
+      localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(data));
+      setSavedTheme(data); // Update our source of truth
+      setHasChanges(false); // Disable save button
+      
+      // Instantly apply the new colors for the current mode
+      applyThemeColors(data[currentMode]);
+
       toast({
         title: "Tema Atualizado!",
         description: "As cores foram salvas com sucesso e aplicadas.",
@@ -184,10 +172,19 @@ export default function ThemeColorsPage() {
   };
 
   const resetToDefault = () => {
-    localStorage.removeItem('app-colors-hex');
-    setCurrentTheme(DEFAULT_HEX_THEME);
+    localStorage.removeItem(COLORS_STORAGE_KEY);
+    setSavedTheme(DEFAULT_HEX_THEME);
     form.reset(DEFAULT_HEX_THEME);
     setHasChanges(false);
+
+    // Apply default css vars for current mode
+     const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
+     const root = document.documentElement;
+     Object.keys(defaultColorsForMode).forEach(key => {
+        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
+    });
+
     toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
@@ -223,9 +220,17 @@ export default function ThemeColorsPage() {
     );
   };
 
+  if (!isClient) {
+    return (
+        <div className="flex justify-center items-center h-96">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="ml-4 text-muted-foreground">Carregando configurações de tema...</p>
+        </div>
+    );
+  }
+
   return (
     <main>
-      {isClient && <DynamicStyle theme={currentTheme} />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -239,8 +244,8 @@ export default function ThemeColorsPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={resetToDefault} disabled={!isClient}>Restaurar Padrão</Button>
-              <Button type="submit" disabled={isSubmitting || !isClient || !hasChanges}>
+              <Button type="button" variant="outline" onClick={resetToDefault} disabled={isSubmitting}>Restaurar Padrão</Button>
+              <Button type="submit" disabled={isSubmitting || !hasChanges}>
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                 Salvar Cores
               </Button>
@@ -253,7 +258,7 @@ export default function ThemeColorsPage() {
               <CardDescription>Cores para o modo de visualização claro.</CardDescription>
             </CardHeader>
             <CardContent>
-              {isClient ? renderColorFields('light') : <div className="text-muted-foreground">Carregando prévia do tema...</div>}
+              {renderColorFields('light')}
             </CardContent>
           </Card>
 
@@ -263,7 +268,7 @@ export default function ThemeColorsPage() {
               <CardDescription>Cores para o modo de visualização escuro.</CardDescription>
             </CardHeader>
             <CardContent>
-              {isClient ? renderColorFields('dark') : <div className="text-muted-foreground">Carregando prévia do tema...</div>}
+              {renderColorFields('dark')}
             </CardContent>
           </Card>
         </form>
@@ -272,3 +277,4 @@ export default function ThemeColorsPage() {
   );
 }
 
+    
