@@ -1,25 +1,20 @@
 
 
-import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Compass, ListChecks, PlusSquare, User as UserIcon, LogOut, HomeIcon, Shield } from 'lucide-react';
+import { LogOut, LayoutDashboard, Users } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
-// import { redirect } from 'next/navigation'; // Uncomment for production to protect routes
 import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Footer } from '@/components/footer';
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser(); // Assuming admin is also a user
 
-  // if (!user) {
-  //   redirect('/auth/login');
-  // }
-
-  const userInitial = user?.name?.charAt(0).toUpperCase() || 'U';
+  const userInitial = user?.name?.charAt(0).toUpperCase() || 'A';
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -28,45 +23,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="p-3 flex justify-between items-center h-16">
               <Logo size="md" />
-              {/* SidebarTrigger is for mobile, usually placed in the header of SidebarInset */}
             </div>
           </SidebarHeader>
           <SidebarContent className="flex-grow">
             <SidebarMenu>
               <SidebarMenuItem>
-                <ClientNavItem href="/dashboard" exact label="Início">
-                  <HomeIcon />
-                  <span>Início</span>
+                <ClientNavItem href="/admin/dashboard" exact label="Admin Dashboard">
+                  <LayoutDashboard />
+                  <span>Dashboard</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/favors" label="Descobrir Favores">
-                  <Compass />
-                  <span>Descobrir Favores</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/favors/my" label="Meus Favores">
-                  <ListChecks />
-                  <span>Meus Favores</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/favors/submit" label="Pedir um Favor">
-                  <PlusSquare />
-                  <span>Pedir um Favor</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/profile" label="Perfil">
-                  <UserIcon />
-                  <span>Perfil</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/dashboard" label="Admin">
-                  <Shield />
-                  <span>Admin</span>
+                <ClientNavItem href="/admin/users" label="Gerenciar Usuários">
+                  <Users />
+                  <span>Usuários</span>
                 </ClientNavItem>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -78,8 +48,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 <AvatarFallback>{userInitial}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'Nome do Usuário'}</span>
-                <span className="text-xs text-sidebar-foreground/70">{user?.email || 'usuario@exemplo.com'}</span>
+                <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'Admin'}</span>
+                <span className="text-xs text-sidebar-foreground/70">{user?.email || 'admin@exemplo.com'}</span>
               </div>
             </div>
             <Button variant="ghost" className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" asChild>
@@ -92,9 +62,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </Sidebar>
         <div className="flex flex-col flex-1">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
-            <SidebarTrigger className="md:hidden" /> {/* Mobile trigger visible on small screens */}
+            <SidebarTrigger className="md:hidden" />
             <div className="flex-1">
-                <h1 className="font-semibold text-xl font-headline text-foreground">Favor</h1>
+                <h1 className="font-semibold text-xl font-headline text-foreground">Painel Administrativo</h1>
             </div>
             <div className="flex items-center gap-2">
                 <ThemeToggleButton />
