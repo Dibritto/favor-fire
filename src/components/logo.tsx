@@ -13,7 +13,7 @@ export function Logo({ size = "md", className }: LogoProps) {
 
   return (
       <Image
-        src="https://i.ibb.co/QJgVZnw/favor-logo.png"
+        src="https://i.ibb.co/VvZVj2S/favor-logo-1.png"
         alt="Projeto Favor Logo"
         width={width}
         height={height}
