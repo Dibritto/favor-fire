@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
@@ -114,109 +113,100 @@ interface ThemeContextProps {
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
-const applyThemeVariables = (theme: Theme) => {
-    if (typeof window === 'undefined') return;
+// Helper to convert key from camelCase to --kebab-case
+const toCssVarName = (key: string) => `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
 
-    const root = document.documentElement;
+// Function to apply a theme object to the root element
+const applyThemeToDom = (theme: Theme) => {
+  const root = document.documentElement;
+  
+  Object.entries(theme.light).forEach(([key, value]) => {
+      root.style.setProperty(toCssVarName(key), value);
+  });
 
-    const generateCssString = (themeVars: ThemeModeVars) => {
-        return Object.entries(themeVars).map(([key, value]) => {
-            const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-            return `${cssVar}: ${value};`;
-        }).join(' ');
-    };
-    
-    let lightStyle = document.getElementById('light-theme-sheet');
-    if (!lightStyle) {
-        lightStyle = document.createElement('style');
-        lightStyle.id = 'light-theme-sheet';
-        document.head.appendChild(lightStyle);
-    }
-    lightStyle.innerHTML = `:root { ${generateCssString(theme.light)} }`;
-    
-    let darkStyle = document.getElementById('dark-theme-sheet');
-    if (!darkStyle) {
-        darkStyle = document.createElement('style');
-        darkStyle.id = 'dark-theme-sheet';
-        document.head.appendChild(darkStyle);
-    }
-    darkStyle.innerHTML = `.dark { ${generateCssString(theme.dark)} }`;
-}
+  // Create a style element for dark mode styles
+  let darkStyle = document.getElementById('dark-theme-vars');
+  if (!darkStyle) {
+    darkStyle = document.createElement('style');
+    darkStyle.id = 'dark-theme-vars';
+    document.head.appendChild(darkStyle);
+  }
 
+  const darkCss = Object.entries(theme.dark)
+      .map(([key, value]) => `${toCssVarName(key)}: ${value};`)
+      .join('\n');
+  darkStyle.innerHTML = `.dark { ${darkCss} }`;
+};
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
   const [mode, setMode] = useState<ThemeMode | null>(null);
 
+  // Apply mode class to HTML element
   const applyMode = useCallback((themeMode: ThemeMode) => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(themeMode);
     setMode(themeMode);
   }, []);
-  
-  // Load initial theme and mode from localStorage
+
+  // Effect to load theme and mode from localStorage on initial client-side render
   useEffect(() => {
     try {
       const storedTheme = localStorage.getItem('app-theme');
       const initialTheme = storedTheme ? JSON.parse(storedTheme) : DEFAULT_THEME;
       setCustomTheme(initialTheme);
-      applyThemeVariables(initialTheme);
+      applyThemeToDom(initialTheme);
 
       const storedMode = localStorage.getItem('theme-mode') as ThemeMode;
-      const initialMode = storedMode || 'dark'; // Default to dark
-      applyMode(initialMode);
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyMode(storedMode || (systemPrefersDark ? 'dark' : 'light'));
     } catch (error) {
       console.error("Failed to load settings from localStorage", error);
-      applyMode('dark');
+      applyMode('light'); // Fallback to light mode
     }
   }, [applyMode]);
 
-  // Listen for changes from other tabs
+  // Effect to listen for storage changes from other tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'app-theme' && event.newValue) {
         try {
           const newTheme = JSON.parse(event.newValue);
           setCustomTheme(newTheme);
-          applyThemeVariables(newTheme);
-        } catch (error) {
-          console.error("Failed to parse theme from storage event", error);
-        }
+          applyThemeToDom(newTheme);
+        } catch (error) { console.error("Failed to parse theme from storage event", error); }
       }
       if (event.key === 'theme-mode' && event.newValue) {
         applyMode(event.newValue as ThemeMode);
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [applyMode]);
-
+  
+  // Function to update the theme
   const setTheme = (newTheme: Theme) => {
     try {
       localStorage.setItem('app-theme', JSON.stringify(newTheme));
       setCustomTheme(newTheme);
-      applyThemeVariables(newTheme);
-    } catch (error) {
-      console.error("Failed to save theme to localStorage", error);
-    }
+      applyThemeToDom(newTheme);
+    } catch (error) { console.error("Failed to save theme to localStorage", error); }
   };
 
+  // Function to toggle between light and dark mode
   const toggleTheme = () => {
-    const newMode = mode === 'light' ? 'dark' : 'light';
-    localStorage.setItem('theme-mode', newMode);
-    applyMode(newMode);
+    setMode(prevMode => {
+        const newMode = prevMode === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme-mode', newMode);
+        const root = window.document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(newMode);
+        return newMode;
+    });
   }
 
-  const value = {
-    theme: customTheme,
-    setTheme,
-    mode,
-    toggleTheme,
-  };
+  const value = { theme: customTheme, setTheme, mode, toggleTheme, };
 
   return (
     <ThemeContext.Provider value={value}>
