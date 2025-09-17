@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname } from 'next/navigation';
@@ -9,6 +10,7 @@ const routeTitles: { [key: string]: string } = {
   '/favores/meus': 'Meus Favores',
   '/favores/pedir': 'Pedir um Favor',
   '/comunidades': 'Comunidades',
+  '/comunidades/criar': 'Criar Comunidade',
   '/perfil': 'Perfil',
   '/perfil/editar': 'Editar Perfil',
   '/assinatura': 'Minha Assinatura',
@@ -25,11 +27,17 @@ export function PageTitle() {
   const pathname = usePathname();
 
   const title = useMemo(() => {
-    // Para rotas dinâmicas como /favores/[id]
+    // Para rotas dinâmicas
     if (pathname.startsWith('/favores/')) {
         const parts = pathname.split('/');
         if(parts.length === 3 && parts[2] !== 'meus' && parts[2] !== 'pedir') {
             return 'Detalhes do Favor';
+        }
+    }
+    if (pathname.startsWith('/comunidades/')) {
+        const parts = pathname.split('/');
+        if(parts.length === 3 && parts[2] !== 'criar') {
+            return 'Detalhes da Comunidade';
         }
     }
     return routeTitles[pathname] || 'Projeto Favor';

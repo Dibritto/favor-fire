@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -30,17 +31,17 @@ export default function CommunityDiscoveryPage() {
 
   return (
     <div className="space-y-6">
-       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+       <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h1 className="text-3xl font-headline font-bold">Explorar Comunidades</h1>
             <p className="text-muted-foreground">Encontre grupos de interesse e conecte-se com outros membros.</p>
         </div>
         <Button asChild>
-          <Link href="#">
+          <Link href="/comunidades/criar">
             <PlusCircle className="mr-2 h-4 w-4" /> Criar Comunidade
           </Link>
         </Button>
-      </div>
+      </header>
 
       <section aria-labelledby="filter-communities-heading">
         <Card>
@@ -62,7 +63,7 @@ export default function CommunityDiscoveryPage() {
         </Card>
       </section>
 
-      <section aria-labelledby="communities-list-heading">
+      <main aria-labelledby="communities-list-heading">
         <h2 id="communities-list-heading" className="sr-only">Lista de Comunidades Públicas</h2>
         {filteredCommunities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -77,7 +78,7 @@ export default function CommunityDiscoveryPage() {
             <p className="text-muted-foreground">Tente ajustar sua busca ou explore mais tarde!</p>
           </div>
         )}
-      </section>
+      </main>
     </div>
   );
 }

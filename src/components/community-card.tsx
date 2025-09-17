@@ -1,3 +1,4 @@
+
 import type { Community } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,8 +38,7 @@ export function CommunityCard({ community }: CommunityCardProps) {
       </CardContent>
       <CardFooter className="pt-0">
         <Button asChild className="w-full">
-          {/* O link para detalhes da comunidade será implementado no futuro */}
-          <Link href="#">Ver Detalhes</Link>
+          <Link href={`/comunidades/${community.id}`}>Ver Detalhes</Link>
         </Button>
       </CardFooter>
     </Card>

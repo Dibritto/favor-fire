@@ -96,7 +96,7 @@ export default function ProfilePage() {
                         </Link>
                     </Button>
                      <Button size="sm" asChild>
-                        <Link href="#">
+                        <Link href="/comunidades/criar">
                             <Building className="mr-2 h-4 w-4" /> Criar Comunidade
                         </Link>
                     </Button>
@@ -137,24 +137,26 @@ export default function ProfilePage() {
                 </Card>
             )}
         </aside>
-        <section className="md:col-span-2 space-y-6" aria-labelledby="contribution-heading">
-            <Card>
-                <CardHeader>
-                    <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4 text-center">
-                    <div className="p-4 rounded-lg bg-muted">
-                        <HelpingHand className="h-8 w-8 mx-auto text-primary mb-2" />
-                        <p className="text-2xl font-bold">{user.favorsCompleted}</p>
-                        <p className="text-sm text-muted-foreground">Favores Concluídos</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-muted">
-                        <ListChecks className="h-8 w-8 mx-auto text-accent mb-2" />
-                        <p className="text-2xl font-bold">{user.favorsRequested}</p>
-                        <p className="text-sm text-muted-foreground">Favores Pedidos</p>
-                    </div>
-                </CardContent>
-            </Card>
+        <main className="md:col-span-2 space-y-6" aria-labelledby="contribution-heading">
+            <section>
+                <Card>
+                    <CardHeader>
+                        <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-2 gap-4 text-center">
+                        <div className="p-4 rounded-lg bg-muted">
+                            <HelpingHand className="h-8 w-8 mx-auto text-primary mb-2" />
+                            <p className="text-2xl font-bold">{user.favorsCompleted}</p>
+                            <p className="text-sm text-muted-foreground">Favores Concluídos</p>
+                        </div>
+                        <div className="p-4 rounded-lg bg-muted">
+                            <ListChecks className="h-8 w-8 mx-auto text-accent mb-2" />
+                            <p className="text-2xl font-bold">{user.favorsRequested}</p>
+                            <p className="text-sm text-muted-foreground">Favores Pedidos</p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </section>
             
             <article aria-labelledby="requested-favors-heading">
               <Card>
@@ -189,7 +191,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </article>
-        </section>
+        </main>
       </div>
     </div>
   );
