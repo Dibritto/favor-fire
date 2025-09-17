@@ -11,6 +11,11 @@ const routeTitles: { [key: string]: string } = {
   '/perfil': 'Perfil',
   '/admin/painel': 'Painel Administrativo',
   '/admin/usuarios': 'Gerenciar Usuários',
+  '/admin/favores': 'Gerenciar Favores',
+  '/admin/comunidades': 'Gerenciar Comunidades',
+  '/admin/assinaturas': 'Gerenciar Assinaturas',
+  '/admin/denuncias': 'Gerenciar Denúncias',
+  '/admin/notificacoes': 'Gerenciar Notificações',
 };
 
 export function PageTitle() {
