@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeScript } from '@/components/theme-script';
 
 export const metadata: Metadata = {
   title: 'Kindred Connect',
@@ -16,10 +17,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          storageKey="app-theme-mode"
-          colorsStorageKey="app-colors-hex"
-        >
+        <ThemeScript />
+        <ThemeProvider>
           {children}
           <Toaster />
         </ThemeProvider>

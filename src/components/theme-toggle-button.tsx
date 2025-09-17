@@ -1,17 +1,21 @@
-
 "use client";
 
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from './theme-client-provider'; // Atualizado para usar o novo provider
+import { useTheme } from './theme-provider';
 import { useEffect, useState } from 'react';
 
 export function ThemeToggleButton() {
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    const storedTheme = localStorage.getItem("app-theme-mode") as "light" | "dark" | null;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
   }, []);
 
   if (!isMounted) {

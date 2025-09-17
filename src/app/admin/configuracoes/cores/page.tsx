@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Palette, Save } from "lucide-react";
 import MOCK_DEFAULT_THEME from "@/lib/default-theme";
-import { isEqual } from "lodash";
-import { applyThemeColors, hslStringToHex } from "@/lib/theme-utils";
+import { hslToHex } from "@/lib/theme-utils";
 
 const colorSchema = z.object({
     background: z.string(), foreground: z.string(), card: z.string(), cardForeground: z.string(),
@@ -49,6 +48,17 @@ const friendlyColorNames: Record<string, string> = {
     sidebarBorder: "Borda da Sidebar", sidebarRing: "Anel de Foco da Sidebar",
 };
 
+
+const hslStringToHex = (hsl: string): string => {
+    if (!hsl) return '#000000';
+    const parts = hsl.split(" ");
+    if (parts.length !== 3) return '#000000';
+    const [h, s, l] = parts.map(val => parseFloat(val.replace('%', '')));
+    if (isNaN(h) || isNaN(s) || isNaN(l)) return '#000000';
+    return hslToHex(h, s, l);
+};
+
+
 const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues => {
     const result: any = { light: {}, dark: {} };
     for (const mode of ['light', 'dark'] as const) {
@@ -69,13 +79,10 @@ export default function ThemeColorsPage() {
   const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
   
-  const [savedTheme, setSavedTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
-
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: savedTheme,
+    defaultValues: DEFAULT_HEX_THEME,
   });
 
   useEffect(() => {
@@ -83,67 +90,43 @@ export default function ThemeColorsPage() {
     try {
       const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
       const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
-      setSavedTheme(themeToLoad);
       form.reset(themeToLoad);
     } catch (e) {
       console.error("Failed to load theme from localStorage", e);
-      setSavedTheme(DEFAULT_HEX_THEME);
       form.reset(DEFAULT_HEX_THEME);
     }
   }, [form]);
-
-  useEffect(() => {
-    if (!isMounted) return;
-    const subscription = form.watch((value) => {
-      setHasChanges(!isEqual(value, savedTheme));
-    });
-    return () => subscription.unsubscribe();
-  }, [form, savedTheme, isMounted]);
 
   const onSubmit = async (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     try {
       localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(data));
-      setSavedTheme(data);
-      
-      const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      applyThemeColors(data[currentMode]);
-      
-      setHasChanges(false);
-
       toast({
         title: "Tema Atualizado!",
-        description: "As cores foram salvas com sucesso e aplicadas.",
+        description: "Suas cores foram salvas. A página será recarregada para aplicar as alterações.",
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       toast({
         title: "Erro ao Salvar",
         description: "Não foi possível salvar as cores do tema.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   const resetToDefault = () => {
     localStorage.removeItem(COLORS_STORAGE_KEY);
-    setSavedTheme(DEFAULT_HEX_THEME);
-    form.reset(DEFAULT_HEX_THEME);
-
-    const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-    const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
-    const root = document.documentElement;
-    Object.keys(defaultColorsForMode).forEach(key => {
-        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
-    });
-
-    setHasChanges(false);
     toast({
       title: "Tema Restaurado",
-      description: "As cores padrão foram restauradas.",
+      description: "As cores padrão foram restauradas. A página será recarregada.",
     });
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const renderColorFields = (mode: 'light' | 'dark') => {
@@ -195,14 +178,14 @@ export default function ThemeColorsPage() {
                 Cores do Tema
               </h1>
               <p className="text-muted-foreground mt-1">
-                Personalize a aparência do aplicativo. As alterações serão aplicadas globalmente.
+                Personalize a aparência do aplicativo. As alterações serão aplicadas globalmente após recarregar.
               </p>
             </div>
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={resetToDefault} disabled={isSubmitting}>Restaurar Padrão</Button>
-              <Button type="submit" disabled={isSubmitting || !hasChanges}>
+              <Button type="submit" disabled={isSubmitting || !form.formState.isDirty}>
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                Salvar Cores
+                Salvar e Recarregar
               </Button>
             </div>
           </div>
