@@ -11,13 +11,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, Sparkles, Star, UserCircle, X } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, UserCircle, X } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { RatingForm } from '@/components/rating-form';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const urgencyTranslations: Record<UrgencyLevel, string> = {
   low: 'Baixa',
@@ -101,6 +102,13 @@ export default function FavorDetailPage() {
     }
   }
 
+  const handleReport = () => {
+    toast({
+        title: "Denúncia (Em Breve)",
+        description: "A funcionalidade de denúncia será implementada em breve.",
+    });
+  }
+
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Carregando detalhes do favor...</span></div>;
@@ -133,16 +141,34 @@ export default function FavorDetailPage() {
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-            <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
-            <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start sm:self-center">
-              {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
-              {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
-            </Badge>
+          <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                  <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
+                  <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start sm:self-center">
+                    {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
+                    {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+                  </Badge>
+                </div>
+                <CardDescription className="text-sm text-muted-foreground mt-1">
+                  Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
+                </CardDescription>
+              </div>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Mais opções</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleReport} className="text-destructive">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Denunciar Favor
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
           </div>
-          <CardDescription className="text-sm text-muted-foreground">
-            Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-foreground text-base leading-relaxed">{favor.description}</p>

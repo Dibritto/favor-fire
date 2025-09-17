@@ -9,11 +9,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Globe, Lock, Users, MessageSquare, Rss, PlusCircle, UserPlus, Star } from 'lucide-react';
+import { Globe, Lock, Users, MessageSquare, Rss, PlusCircle, UserPlus, Star, MoreVertical, ShieldAlert } from 'lucide-react';
 import Image from 'next/image';
 import { FavorCard } from '@/components/favor-card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function CommunityDetailPage() {
   const params = useParams();
@@ -44,6 +45,13 @@ export default function CommunityDetailPage() {
     });
   }
 
+  const handleReport = () => {
+    toast({
+        title: "Denúncia (Em Breve)",
+        description: "A funcionalidade de denúncia será implementada em breve.",
+    });
+  }
+
   if (isLoading) {
     return <div className="text-center p-10">Carregando...</div>;
   }
@@ -67,7 +75,7 @@ export default function CommunityDetailPage() {
         </div>
         <div className="bg-card p-6 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <div>
+            <div className="flex-1">
               <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
               <CardDescription className="flex items-center gap-2 mt-1">
                 {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
@@ -77,8 +85,22 @@ export default function CommunityDetailPage() {
                 <span>{community.memberIds.length} membro(s)</span>
               </CardDescription>
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex items-center gap-2">
               <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
+               <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Mais opções</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleReport} className="text-destructive">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Denunciar Comunidade
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           <p className="text-muted-foreground">{community.description}</p>
@@ -142,3 +164,5 @@ export default function CommunityDetailPage() {
     </div>
   );
 }
+
+    

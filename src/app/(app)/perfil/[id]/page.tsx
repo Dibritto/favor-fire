@@ -9,11 +9,13 @@ import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, MessageCircle } from 'lucide-react';
+import { Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, MessageCircle, MoreVertical, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 function ProfileFavorItem({ favor }: { favor: Favor }) {
     return (
@@ -33,6 +35,7 @@ function ProfileFavorItem({ favor }: { favor: Favor }) {
 export default function PublicProfilePage() {
   const params = useParams();
   const userId = params.id as string;
+  const { toast } = useToast();
   
   const [user, setUser] = useState<User | null>(null);
   const [favorsRequested, setFavorsRequested] = useState<Favor[]>([]);
@@ -54,6 +57,13 @@ export default function PublicProfilePage() {
     };
     fetchProfileData();
   }, [userId]);
+
+  const handleReport = () => {
+    toast({
+        title: "Denúncia (Em Breve)",
+        description: "A funcionalidade de denúncia será implementada em breve.",
+    });
+  }
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div><p className="ml-4 text-muted-foreground">Carregando perfil...</p></div>;
@@ -85,13 +95,31 @@ export default function PublicProfilePage() {
                     <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-center sm:items-start flex-grow w-full">
-                    <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
-                    {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg text-center sm:text-left">{user.bio}</p>}
-                    <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
-                         <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                        <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
+                    <div className="flex items-center justify-between w-full">
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
+                            {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg text-center sm:text-left">{user.bio}</p>}
+                            <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
+                                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                                <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
+                            </div>
+                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
+                                    <MoreVertical className="h-5 w-5" />
+                                    <span className="sr-only">Mais opções</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={handleReport} className="text-destructive">
+                                    <ShieldAlert className="mr-2 h-4 w-4" />
+                                    Denunciar Perfil
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
-                     <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                     <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full justify-center sm:justify-start">
                         <Button size="sm">
                             <MessageCircle className="mr-2 h-4 w-4" /> Enviar Mensagem
                         </Button>
@@ -190,3 +218,5 @@ export default function PublicProfilePage() {
     </div>
   );
 }
+
+    
