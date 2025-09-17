@@ -28,32 +28,26 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>("light")
 
-  // Este provider agora é muito mais simples.
-  // A lógica de aplicação do tema está no ThemeScript.
-  // A lógica de alternância está no ThemeToggleButton.
-  // Este provider apenas permite que componentes filhos saibam o tema atual, se precisarem.
-  
   React.useEffect(() => {
     const storedTheme = localStorage.getItem("app-theme-mode") as Theme | null
-    if (storedTheme) {
-      setTheme(storedTheme)
-    }
+    const initialTheme = storedTheme || 'light';
+    setTheme(initialTheme);
   }, [])
   
+  const handleSetTheme = (newTheme: Theme) => {
+      localStorage.setItem("app-theme-mode", newTheme);
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(newTheme);
+      setTheme(newTheme);
+  }
 
   const toggleTheme = () => {
-    setTheme(prevTheme => {
-        const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-        localStorage.setItem("app-theme-mode", newTheme);
-        // O script e um reload farão o resto.
-        window.location.reload(); 
-        return newTheme;
-    });
+    handleSetTheme(theme === 'light' ? 'dark' : 'light');
   }
 
   const value = {
     theme,
-    setTheme,
+    setTheme: handleSetTheme,
     toggleTheme,
   }
 
