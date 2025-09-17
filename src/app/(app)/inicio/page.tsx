@@ -115,10 +115,10 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section>
+      <section aria-labelledby="dashboard-stats-heading">
         <div className="flex items-center mb-4">
           <TrendingUp className="h-6 w-6 mr-2 text-primary" />
-          <h2 className="text-2xl font-headline font-semibold text-foreground">Suas Estatísticas</h2>
+          <h2 id="dashboard-stats-heading" className="text-2xl font-headline font-semibold text-foreground">Suas Estatísticas</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="shadow-md hover:shadow-lg transition-shadow">
@@ -175,12 +175,12 @@ export default function DashboardPage() {
         </div>
       </section>
       
-      <section>
+      <section aria-labelledby="recent-favors-heading">
          <Card className="shadow-lg border-primary border-2">
             <CardHeader>
                 <div className="flex items-center mb-1">
                     <Search className="h-6 w-6 mr-2 text-primary" />
-                    <CardTitle className="text-xl font-headline text-primary">Pronto para Ajudar ou Ser Ajudado?</CardTitle>
+                    <CardTitle id="recent-favors-heading" className="text-xl font-headline text-primary">Pronto para Ajudar ou Ser Ajudado?</CardTitle>
                 </div>
                 <CardDescription>Veja alguns dos últimos favores disponíveis ou publique o seu!</CardDescription>
             </CardHeader>
@@ -207,12 +207,12 @@ export default function DashboardPage() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <section className="lg:col-span-2">
+        <section className="lg:col-span-2" aria-labelledby="recent-activity-heading">
           <Card className="shadow-md hover:shadow-lg transition-shadow h-full">
             <CardHeader>
                 <div className="flex items-center">
                     <LayoutList className="h-6 w-6 mr-2 text-primary" />
-                    <CardTitle className="text-xl font-headline">Atividade Recente na Comunidade</CardTitle>
+                    <CardTitle id="recent-activity-heading" className="text-xl font-headline">Atividade Recente na Comunidade</CardTitle>
                 </div>
                 <CardDescription>Veja o que está acontecendo na plataforma.</CardDescription>
             </CardHeader>
@@ -285,10 +285,10 @@ export default function DashboardPage() {
         </section>
 
         <aside className="lg:col-span-1 space-y-8">
-            <section>
+            <section aria-labelledby="quick-actions-heading">
                 <Card className="shadow-md hover:shadow-lg transition-shadow">
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Ações Rápidas</CardTitle>
+                        <CardTitle id="quick-actions-heading" className="text-xl font-headline">Ações Rápidas</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <Button variant="outline" className="w-full justify-start text-base py-3 h-auto" asChild>
@@ -304,10 +304,10 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
             </section>
-            <section>
+            <section aria-labelledby="tip-of-the-day-heading">
                 <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Dica do Dia</CardTitle>
+                    <CardTitle id="tip-of-the-day-heading" className="text-xl font-headline">Dica do Dia</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-start">

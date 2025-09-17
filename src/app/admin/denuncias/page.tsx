@@ -99,77 +99,79 @@ export default function AdminManageReportsPage() {
 
   return (
     <main>
-      <Card>
-        <CardHeader>
-          <CardTitle>Gerenciar Denúncias</CardTitle>
-          <CardDescription>Visualize e gerencie as denúncias feitas por usuários na plataforma.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Item Denunciado</TableHead>
-                <TableHead className="hidden md:table-cell">Motivo</TableHead>
-                <TableHead className="hidden lg:table-cell">Denunciado Por</TableHead>
-                <TableHead className="hidden sm:table-cell">Data</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {reports.map(report => (
-                <TableRow key={report.id}>
-                  <TableCell>
-                    <div className="font-medium flex items-center">
-                        {getItemIcon(report.reportedItemType)}
-                        <Link href={getReportedItemLink(report)} className="hover:underline">
-                            {getReportedItemName(report)}
-                        </Link>
-                    </div>
-                    <div className="text-xs text-muted-foreground ml-6 line-clamp-1">{report.comments}</div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell capitalize">
-                    {reasonTranslations[report.reason]}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">{report.reportedBy?.name || 'N/A'}</TableCell>
-                  <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(report.createdAt), { locale: ptBR, addSuffix: true })}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={`capitalize ${getStatusStyles(report.status)}`}>
-                      {statusTranslations[report.status]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Abrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações de Moderação</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                           <Link href={getReportedItemLink(report)}>Ver Item Denunciado</Link> 
-                        </DropdownMenuItem>
-                         {report.status === 'pending' && (
-                            <DropdownMenuItem onClick={() => handleMarkAsResolved(report.id)}>
-                                <ShieldCheck className="mr-2 h-4 w-4" />
-                                Marcar como Resolvido
-                            </DropdownMenuItem>
-                         )}
-                        <DropdownMenuItem className="text-destructive">Suspender Item</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Suspender Usuário Denunciante</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <section aria-labelledby="reports-heading">
+            <Card>
+                <CardHeader>
+                <CardTitle id="reports-heading">Gerenciar Denúncias</CardTitle>
+                <CardDescription>Visualize e gerencie as denúncias feitas por usuários na plataforma.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Item Denunciado</TableHead>
+                        <TableHead className="hidden md:table-cell">Motivo</TableHead>
+                        <TableHead className="hidden lg:table-cell">Denunciado Por</TableHead>
+                        <TableHead className="hidden sm:table-cell">Data</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {reports.map(report => (
+                        <TableRow key={report.id}>
+                        <TableCell>
+                            <div className="font-medium flex items-center">
+                                {getItemIcon(report.reportedItemType)}
+                                <Link href={getReportedItemLink(report)} className="hover:underline">
+                                    {getReportedItemName(report)}
+                                </Link>
+                            </div>
+                            <div className="text-xs text-muted-foreground ml-6 line-clamp-1">{report.comments}</div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell capitalize">
+                            {reasonTranslations[report.reason]}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">{report.reportedBy?.name || 'N/A'}</TableCell>
+                        <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
+                            {formatDistanceToNow(new Date(report.createdAt), { locale: ptBR, addSuffix: true })}
+                        </TableCell>
+                        <TableCell>
+                            <Badge variant="outline" className={`capitalize ${getStatusStyles(report.status)}`}>
+                            {statusTranslations[report.status]}
+                            </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                            <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Abrir menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Ações de Moderação</DropdownMenuLabel>
+                                <DropdownMenuItem asChild>
+                                <Link href={getReportedItemLink(report)}>Ver Item Denunciado</Link> 
+                                </DropdownMenuItem>
+                                {report.status === 'pending' && (
+                                    <DropdownMenuItem onClick={() => handleMarkAsResolved(report.id)}>
+                                        <ShieldCheck className="mr-2 h-4 w-4" />
+                                        Marcar como Resolvido
+                                    </DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem className="text-destructive">Suspender Item</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">Suspender Usuário Denunciante</DropdownMenuItem>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+                </CardContent>
+            </Card>
+        </section>
     </main>
   );
 }
