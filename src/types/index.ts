@@ -1,4 +1,5 @@
 
+
 export interface User {
   id: string;
   name: string;
@@ -14,6 +15,7 @@ export interface User {
 export type UrgencyLevel = 'low' | 'medium' | 'high';
 export type FavorType = 'volunteer' | 'paid';
 export type FavorStatus = 'open' | 'accepted' | 'completed' | 'cancelled';
+export type FavorParticipationType = 'individual' | 'collective';
 
 export interface Favor {
   id: string;
@@ -22,12 +24,16 @@ export interface Favor {
   urgency: UrgencyLevel;
   location: string; // For simplicity, can be an address or general area
   type: FavorType;
+  participationType: FavorParticipationType;
+  communityId?: string; // To link to a community, making it a restricted favor
   preferredDateTime?: string; // ISO string or a more structured date/time
   status: FavorStatus;
   requesterId: string;
   requester?: User; // Populated for display
-  executorId?: string | null;
-  executor?: User | null; // Populated if accepted/completed
+  executorId?: string | null; // For individual favors
+  executor?: User | null; // For individual favors
+  executorIds?: string[]; // For collective favors
+  executors?: User[]; // For collective favors
   createdAt: string; // ISO string
   acceptedAt?: string; // ISO string
   completedAt?: string; // ISO string
@@ -39,4 +45,26 @@ export interface Favor {
   executorFeedback?: string;
   // Optional evidence for completion
   completionProof?: string; // URL to image or text
+}
+
+export type CommunityType = 'public' | 'private';
+
+export interface Community {
+    id: string;
+    name: string;
+    description: string;
+    type: CommunityType;
+    creatorId: string;
+    memberIds: string[];
+}
+
+export type MissionNiche = 'streamer' | 'ong' | 'empresa';
+
+export interface Mission {
+    id: string;
+    title: string;
+    description: string;
+    niche: MissionNiche;
+    creatorId: string; // Could be a User ID or a Company ID
+    goals: { description: string; completed: boolean }[];
 }

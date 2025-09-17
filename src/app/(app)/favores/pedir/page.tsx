@@ -33,6 +33,7 @@ const favorFormSchema = z.object({
   urgency: z.enum(["low", "medium", "high"], { required_error: "O nível de urgência é obrigatório." }),
   location: z.string().min(3, "A localização é obrigatória."),
   type: z.enum(["volunteer", "paid"], { required_error: "O tipo de favor é obrigatório." }),
+  participationType: z.enum(["individual", "collective"], { required_error: "O modo de participação é obrigatório." }),
   preferredDateTime: z.date().optional(),
   amount: z.coerce.number().positive("O valor deve ser positivo.").optional(),
 }).refine(data => data.type === 'volunteer' || (data.type === 'paid' && data.amount !== undefined && data.amount > 0), {
@@ -54,6 +55,7 @@ export default function SubmitFavorPage() {
       urgency: "medium",
       location: "",
       type: "volunteer",
+      participationType: "individual",
     },
   });
 
@@ -148,7 +150,7 @@ export default function SubmitFavorPage() {
                 name="type"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Tipo de Favor</FormLabel>
+                    <FormLabel>Tipo de Favor (Remuneração)</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -192,6 +194,38 @@ export default function SubmitFavorPage() {
                   )}
                 />
               )}
+
+              <FormField
+                control={form.control}
+                name="participationType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Modo de Participação</FormLabel>
+                    <FormDescription>Como outras pessoas podem ajudar?</FormDescription>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="individual" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Individual (Uma pessoa)</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="collective" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Coletivo (Grupo de pessoas)</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             
               <FormField
                 control={form.control}
