@@ -207,18 +207,34 @@ export default function FavorDetailPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-                <h3 className="font-semibold mb-1 text-primary">Detalhes:</h3>
-                <div className="space-y-1">
-                    <p className="flex items-start"><MapPin className="h-4 w-4 mr-2 text-muted-foreground shrink-0 mt-0.5" /> <span className="break-words"><strong>Localização:</strong> {favor.location}</span></p>
-                    {favor.preferredDateTime && <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Preferência:</strong> {format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>}
-                    <div className="flex items-center pt-1 flex-wrap gap-2">
-                        <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
-                            <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]}
-                        </Badge>
-                        <Badge variant="outline" className={`capitalize ${participationStyle}`}>
-                           {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
-                           {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
-                        </Badge>
+                <h3 className="font-semibold mb-2 text-primary">Detalhes:</h3>
+                <div className="space-y-3">
+                    <div>
+                        <strong className="flex items-center text-foreground mb-1"><MapPin className="h-4 w-4 mr-2 text-muted-foreground" /> Localização:</strong>
+                        <p className="text-muted-foreground pl-6">{favor.location}</p>
+                    </div>
+                    {favor.preferredDateTime && (
+                        <div>
+                            <strong className="flex items-center text-foreground mb-1"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> Preferência de Data:</strong>
+                            <p className="text-muted-foreground pl-6">{format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>
+                        </div>
+                    )}
+                     <div>
+                        <strong className="flex items-center text-foreground mb-1"><AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> Urgência:</strong>
+                        <div className="pl-6">
+                            <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
+                                {urgencyTranslations[favor.urgency]}
+                            </Badge>
+                        </div>
+                    </div>
+                     <div>
+                        <strong className="flex items-center text-foreground mb-1"><Users className="h-4 w-4 mr-2 text-muted-foreground" /> Modo de Participação:</strong>
+                         <div className="pl-6">
+                            <Badge variant="outline" className={`capitalize ${participationStyle}`}>
+                               {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
+                               {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
+                            </Badge>
+                        </div>
                     </div>
                 </div>
             </div>
