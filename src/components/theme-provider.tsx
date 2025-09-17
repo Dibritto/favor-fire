@@ -151,13 +151,19 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!mode) return; // Wait until mode is determined
 
-    // Apply colors
     const root = document.documentElement;
+
+    // Remove all theme classes and apply the current one
+    root.classList.remove('light', 'dark');
+    root.classList.add(mode);
+
+    // Apply colors for the light theme to the :root
     Object.keys(customTheme.light).forEach(key => {
       const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
       root.style.setProperty(cssVar, customTheme.light[key as keyof ThemeModeVars]);
     });
 
+    // Create and apply dark theme overrides via a style tag
     const darkStyles = Object.keys(customTheme.dark).map(key => {
         const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
         return `${cssVar}: ${customTheme.dark[key as keyof ThemeModeVars]};`;
@@ -170,13 +176,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         document.head.appendChild(styleSheet);
     }
     styleSheet.innerHTML = `.dark { ${darkStyles} }`;
-
-    // Apply mode class
-    if (mode === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
     
   }, [customTheme, mode]);
 
