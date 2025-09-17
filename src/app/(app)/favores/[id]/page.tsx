@@ -150,15 +150,13 @@ export default function FavorDetailPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex justify-between items-start gap-4">
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                  <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
-                  <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start sm:self-center">
-                    {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
-                    {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
-                  </Badge>
-                </div>
-                <CardDescription className="text-sm text-muted-foreground mt-1">
+              <div className="flex-1 space-y-2">
+                <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
+                <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start">
+                  {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
+                  {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+                </Badge>
+                <CardDescription className="text-sm text-muted-foreground pt-1">
                   Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
                 </CardDescription>
               </div>
