@@ -158,8 +158,8 @@ const SidebarProvider = React.forwardRef<
 SidebarProvider.displayName = "SidebarProvider"
 
 const Sidebar = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> & {
+  HTMLElement,
+  React.ComponentProps<"aside"> & {
     side?: "left" | "right"
     variant?: "sidebar" | "floating" | "inset"
     collapsible?: "offcanvas" | "icon" | "none"
@@ -180,7 +180,7 @@ const Sidebar = React.forwardRef<
 
     if (collapsible === "none") {
       return (
-        <div
+        <aside
           className={cn(
             "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
             className
@@ -189,7 +189,7 @@ const Sidebar = React.forwardRef<
           {...props}
         >
           {children}
-        </div>
+        </aside>
       )
     }
 
@@ -219,13 +219,14 @@ const Sidebar = React.forwardRef<
     }
 
     return (
-      <div
+      <aside
         ref={ref}
         className="group peer hidden md:block text-sidebar-foreground"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
         data-side={side}
+        {...props}
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div
@@ -250,7 +251,7 @@ const Sidebar = React.forwardRef<
               : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             className
           )}
-          {...props}
+          
         >
           <div
             data-sidebar="sidebar"
@@ -259,7 +260,7 @@ const Sidebar = React.forwardRef<
             {children}
           </div>
         </div>
-      </div>
+      </aside>
     )
   }
 )
@@ -767,3 +768,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -279,38 +280,44 @@ export default function DashboardPage() {
         </section>
 
         <aside className="lg:col-span-1 space-y-8">
-            <Card className="shadow-md hover:shadow-lg transition-shadow">
+            <section>
+                <Card className="shadow-md hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                        <CardTitle className="text-xl font-headline">Ações Rápidas</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <Button variant="outline" className="w-full justify-start text-base py-3 h-auto" asChild>
+                        <Link href="/favores/meus">
+                            <ListChecks className="mr-3 h-5 w-5 text-primary" /> Gerenciar Meus Favores
+                        </Link>
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start text-base py-3 h-auto" asChild>
+                        <Link href="/perfil">
+                            <UserIcon className="mr-3 h-5 w-5 text-primary" /> Ver Meu Perfil
+                        </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </section>
+            <section>
+                <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Ações Rápidas</CardTitle>
+                    <CardTitle className="text-xl font-headline">Dica do Dia</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start text-base py-3 h-auto" asChild>
-                    <Link href="/favores/meus">
-                        <ListChecks className="mr-3 h-5 w-5 text-primary" /> Gerenciar Meus Favores
-                    </Link>
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-base py-3 h-auto" asChild>
-                    <Link href="/perfil">
-                        <UserIcon className="mr-3 h-5 w-5 text-primary" /> Ver Meu Perfil
-                    </Link>
-                    </Button>
+                <CardContent>
+                    <div className="flex items-start">
+                    <Lightbulb className="h-6 w-6 text-yellow-400 mr-3 mt-1 shrink-0" />
+                    <p className="text-sm text-muted-foreground">
+                        Ao pedir um favor, seja claro e detalhado sobre o que precisa. Isso aumenta as chances de alguém poder ajudar!
+                    </p>
+                    </div>
                 </CardContent>
-            </Card>
-            <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader>
-                <CardTitle className="text-xl font-headline">Dica do Dia</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-start">
-                <Lightbulb className="h-6 w-6 text-yellow-400 mr-3 mt-1 shrink-0" />
-                <p className="text-sm text-muted-foreground">
-                    Ao pedir um favor, seja claro e detalhado sobre o que precisa. Isso aumenta as chances de alguém poder ajudar!
-                </p>
-                </div>
-            </CardContent>
-            </Card>
+                </Card>
+            </section>
         </aside>
       </div>
     </div>
   );
 }
+
+    

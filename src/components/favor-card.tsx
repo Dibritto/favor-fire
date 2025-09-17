@@ -1,3 +1,4 @@
+
 import type { Favor, UrgencyLevel, FavorStatus } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -100,3 +101,5 @@ export function FavorCard({ favor }: FavorCardProps) {
     </Card>
   );
 }
+
+    
