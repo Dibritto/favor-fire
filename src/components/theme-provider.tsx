@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 
 // Define the structure of a single theme mode (light or dark)
-type ThemeMode = {
+type ThemeModeVars = {
   background: string;
   foreground: string;
   card: string;
@@ -35,8 +35,8 @@ type ThemeMode = {
 
 // Define the overall theme structure
 export interface Theme {
-  light: ThemeMode;
-  dark: ThemeMode;
+  light: ThemeModeVars;
+  dark: ThemeModeVars;
 }
 
 // Define the default theme as a fallback
@@ -101,11 +101,14 @@ export const DEFAULT_THEME: Theme = {
   },
 };
 
+type ThemeMode = 'light' | 'dark';
 
 // Define the context shape
 interface ThemeContextProps {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  mode: ThemeMode | null;
+  toggleTheme: () => void;
 }
 
 // Create the context
@@ -113,42 +116,51 @@ const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 // Define the provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+  const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
+  const [mode, setMode] = useState<ThemeMode | null>(null);
 
+  // Effect to load custom colors and mode from localStorage
   useEffect(() => {
-    // This effect runs only on the client
     try {
       const storedTheme = localStorage.getItem('app-theme');
       if (storedTheme) {
         const parsedTheme = JSON.parse(storedTheme);
-        // Basic validation to ensure the parsed theme has the expected structure
         if (parsedTheme.light && parsedTheme.dark) {
-          // Merge with default theme to ensure all keys are present
           const mergedTheme = {
             light: { ...DEFAULT_THEME.light, ...parsedTheme.light },
             dark: { ...DEFAULT_THEME.dark, ...parsedTheme.dark },
           };
-          setThemeState(mergedTheme);
+          setCustomTheme(mergedTheme);
         }
       }
+
+      const storedMode = localStorage.getItem('theme-mode') as ThemeMode | null;
+      if (storedMode) {
+        setMode(storedMode);
+      } else {
+        setMode('dark'); // Default to dark mode
+      }
+
     } catch (error) {
       console.error("Failed to parse theme from localStorage", error);
+      setMode('dark');
     }
   }, []);
 
-  const applyTheme = useCallback((themeToApply: Theme) => {
+  // Effect to apply theme colors and mode class
+  useEffect(() => {
+    if (!mode) return; // Wait until mode is determined
+
+    // Apply colors
     const root = document.documentElement;
-    
-    // Apply light theme variables
-    Object.keys(themeToApply.light).forEach(key => {
+    Object.keys(customTheme.light).forEach(key => {
       const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-      root.style.setProperty(cssVar, themeToApply.light[key as keyof ThemeMode]);
+      root.style.setProperty(cssVar, customTheme.light[key as keyof ThemeModeVars]);
     });
 
-    // Apply dark theme variables within the .dark selector
-    const darkStyles = Object.keys(themeToApply.dark).map(key => {
+    const darkStyles = Object.keys(customTheme.dark).map(key => {
         const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        return `${cssVar}: ${themeToApply.dark[key as keyof ThemeMode]};`;
+        return `${cssVar}: ${customTheme.dark[key as keyof ThemeModeVars]};`;
     }).join('\n');
     
     let styleSheet = document.getElementById('dynamic-dark-theme-styles');
@@ -159,27 +171,46 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
     styleSheet.innerHTML = `.dark { ${darkStyles} }`;
 
-  }, []);
+    // Apply mode class
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+  }, [customTheme, mode]);
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme, applyTheme]);
 
   const setTheme = (newTheme: Theme) => {
     try {
       const mergedTheme = {
-        light: { ...theme.light, ...newTheme.light },
-        dark: { ...theme.dark, ...newTheme.dark },
+        light: { ...customTheme.light, ...newTheme.light },
+        dark: { ...customTheme.dark, ...newTheme.dark },
       };
       localStorage.setItem('app-theme', JSON.stringify(mergedTheme));
-      setThemeState(mergedTheme);
+      setCustomTheme(mergedTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }
   };
 
+  const toggleTheme = () => {
+    setMode(prevMode => {
+      const newMode = prevMode === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme-mode', newMode);
+      return newMode;
+    });
+  }
+
+  const value = {
+    theme: customTheme,
+    setTheme,
+    mode,
+    toggleTheme,
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
