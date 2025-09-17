@@ -23,6 +23,7 @@ import { isEqual } from "lodash";
 
 // Helper Functions
 const hexToHsl = (hex: string): [number, number, number] => {
+    if (!hex || typeof hex !== 'string') return [0, 0, 0];
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (!result) return [0, 0, 0];
     let r = parseInt(result[1], 16) / 255, g = parseInt(result[2], 16) / 255, b = parseInt(result[3], 16) / 255;
@@ -47,6 +48,11 @@ const hslToHex = (h: number, s: number, l: number): string => {
     const a = s * Math.min(l, 1 - l);
     const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
     return `#${[0, 8, 4].map(n => Math.round(f(n) * 255).toString(16).padStart(2, '0')).join('')}`;
+};
+
+const hslStringToHex = (hsl: string): string => {
+    const [h, s, l] = hsl.split(" ").map(parseFloat);
+    return hslToHex(h, s, l);
 };
 
 const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues => {
@@ -95,23 +101,25 @@ const DEFAULT_HEX_THEME = convertHslThemeToHex(MOCK_DEFAULT_THEME);
 
 // Child component to handle style injection, preventing hydration errors
 function DynamicStyle({ theme }: { theme: ColorConfigFormValues }) {
-  const generateCssVars = (themePart: Record<string, string>, prefix: string) => {
-    return Object.entries(themePart).map(([key, value]) => {
+  const generateCssVars = (themePart: Record<string, string>, selector: string) => {
+    const variables = Object.entries(themePart).map(([key, value]) => {
       if (!value) return '';
       try {
         const [h, s, l] = hexToHsl(value);
         const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        return `    ${cssVarName}: ${h} ${s}% ${l}%;`;
+        return `${cssVarName}: ${h} ${s}% ${l}%;`;
       } catch (e) {
+        console.error(`Error converting ${key}: ${value} to HSL`, e);
         return '';
       }
-    }).join('\n');
+    }).filter(Boolean).join('\n');
+    return `${selector} {\n${variables}\n}`;
   };
 
   const css = useMemo(() => {
-    const lightVars = generateCssVars(theme.light, 'light');
-    const darkVars = generateCssVars(theme.dark, 'dark');
-    return `:root {\n${lightVars}\n}\n.dark {\n${darkVars}\n}`;
+    const lightVars = generateCssVars(theme.light, ':root');
+    const darkVars = generateCssVars(theme.dark, '.dark');
+    return `${lightVars}\n${darkVars}`;
   }, [theme]);
 
   return <style id="custom-theme-styles">{css}</style>;
@@ -123,45 +131,42 @@ export default function ThemeColorsPage() {
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [savedTheme, setSavedTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
+  const [currentTheme, setCurrentTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
 
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: savedTheme,
+    defaultValues: DEFAULT_HEX_THEME,
   });
 
-  // Effect to load theme from localStorage only on the client
+  // Effect to load theme from localStorage and initialize form only on the client
   useEffect(() => {
     setIsClient(true);
     try {
       const storedThemeJson = localStorage.getItem('app-colors-hex');
-      if (storedThemeJson) {
-        const hexTheme = JSON.parse(storedThemeJson);
-        setSavedTheme(hexTheme);
-        form.reset(hexTheme);
-      } else {
-        form.reset(DEFAULT_HEX_THEME);
-      }
+      const savedTheme = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
+      setCurrentTheme(savedTheme);
+      form.reset(savedTheme);
     } catch (e) {
       console.error("Failed to load theme from localStorage", e);
+      setCurrentTheme(DEFAULT_HEX_THEME);
       form.reset(DEFAULT_HEX_THEME);
     }
   }, [form]);
   
   // Effect to watch for form changes and compare with the saved theme
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-        setHasChanges(!isEqual(value, savedTheme));
-    });
-    return () => subscription.unsubscribe();
-  }, [form, savedTheme]);
+    useEffect(() => {
+        const subscription = form.watch((value) => {
+            setHasChanges(!isEqual(value, currentTheme));
+        });
+        return () => subscription.unsubscribe();
+    }, [form, currentTheme]);
   
 
   const onSubmit = async (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     try {
       localStorage.setItem('app-colors-hex', JSON.stringify(data));
-      setSavedTheme(data);
+      setCurrentTheme(data);
       setHasChanges(false);
       toast({
         title: "Tema Atualizado!",
@@ -180,7 +185,7 @@ export default function ThemeColorsPage() {
 
   const resetToDefault = () => {
     localStorage.removeItem('app-colors-hex');
-    setSavedTheme(DEFAULT_HEX_THEME);
+    setCurrentTheme(DEFAULT_HEX_THEME);
     form.reset(DEFAULT_HEX_THEME);
     setHasChanges(false);
     toast({
@@ -220,7 +225,7 @@ export default function ThemeColorsPage() {
 
   return (
     <main>
-      {isClient && <DynamicStyle theme={savedTheme} />}
+      {isClient && <DynamicStyle theme={currentTheme} />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -248,7 +253,7 @@ export default function ThemeColorsPage() {
               <CardDescription>Cores para o modo de visualização claro.</CardDescription>
             </CardHeader>
             <CardContent>
-              {isClient ? renderColorFields('light') : <p>Carregando...</p>}
+              {isClient ? renderColorFields('light') : <div className="text-muted-foreground">Carregando prévia do tema...</div>}
             </CardContent>
           </Card>
 
@@ -258,7 +263,7 @@ export default function ThemeColorsPage() {
               <CardDescription>Cores para o modo de visualização escuro.</CardDescription>
             </CardHeader>
             <CardContent>
-              {isClient ? renderColorFields('dark') : <p>Carregando...</p>}
+              {isClient ? renderColorFields('dark') : <div className="text-muted-foreground">Carregando prévia do tema...</div>}
             </CardContent>
           </Card>
         </form>
@@ -267,4 +272,3 @@ export default function ThemeColorsPage() {
   );
 }
 
-    
