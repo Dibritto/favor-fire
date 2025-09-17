@@ -92,24 +92,26 @@ export default function CommunityDetailPage() {
               <span>{community.memberIds.length} membro(s)</span>
             </CardDescription>
           </div>
-          <p className="text-muted-foreground">{community.description}</p>
-           <div className="flex-shrink-0 flex items-center gap-2 pt-2">
-              <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
-               <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9">
-                          <MoreVertical className="h-4 w-4" />
-                          <span className="sr-only">Mais opções</span>
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
-                          <ShieldAlert className="mr-2 h-4 w-4" />
-                          Denunciar Comunidade
-                      </DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <p className="text-muted-foreground flex-grow">{community.description}</p>
+            <div className="flex-shrink-0 flex items-center gap-2 pt-2 sm:pt-0">
+                <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">Mais opções</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                            <ShieldAlert className="mr-2 h-4 w-4" />
+                            Denunciar Comunidade
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+          </div>
         </div>
       </header>
 
