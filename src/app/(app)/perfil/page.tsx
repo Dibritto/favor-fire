@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getCurrentUser, getUserById } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
 import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Award, Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -20,7 +18,7 @@ function ProfileFavorItem({ favor }: { favor: Favor }) {
         <Link href={`/favores/${favor.id}`} className="block hover:bg-muted/50 p-3 rounded-md transition-colors">
             <div className="flex justify-between items-start">
                 <h4 className="font-semibold text-primary">{favor.title}</h4>
-                <Badge variant="outline" className="capitalize text-xs">{favor.status === "completed" ? "concluído" : favor.status}</Badge>
+                <div className="capitalize text-xs p-1 px-2 rounded-md" >{favor.status === "completed" ? "concluído" : favor.status}</div>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
                 {favor.type === 'paid' ? `Pago (R$${favor.amount})` : 'Voluntário'} - {format(new Date(favor.createdAt), "P", { locale: ptBR })}
@@ -43,7 +41,6 @@ export default function ProfilePage() {
       const currentUser = await getCurrentUser();
       
       if (currentUser) {
-        // Manually populate sponsor for mock data
         if (currentUser.invitedById) {
             currentUser.sponsor = mockUsers.find(u => u.id === currentUser.invitedById);
         }
@@ -68,10 +65,10 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      <div className="shadow-xl overflow-hidden rounded-lg">
+      <header className="shadow-xl overflow-hidden rounded-lg">
         <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
            <Image 
-            src="https://placehold.co/1200x200.png" 
+            src="https://picsum.photos/seed/profilebanner/1200/200" 
             alt="Banner do perfil" 
             fill
             style={{ objectFit: 'cover' }}
@@ -82,15 +79,12 @@ export default function ProfilePage() {
         <div className="relative pt-0">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                    <AvatarImage src={`https://placehold.co/128x128.png?text=${publicName.charAt(0).toUpperCase()}`} alt={publicName} data-ai-hint="profile picture"/>
+                    <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="profile picture"/>
                     <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow text-center sm:text-left">
                     <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
-                        {[...Array(Math.floor(user.reputation))].map((_, i) => <Star key={`full-${i}`} className="h-5 w-5 fill-current" />)}
-                        {user.reputation % 1 >= 0.5 && <Star key="half" className="h-5 w-5" style={{ clipPath: 'inset(0 50% 0 0)' }} />}
-                        {[...Array(5 - Math.ceil(user.reputation))].map((_, i) => <Star key={`empty-${i}`} className="h-5 w-5 text-muted-foreground" />)}
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
                 </div>
@@ -101,7 +95,7 @@ export default function ProfilePage() {
                 </Button>
             </div>
         </div>
-      </div>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-6">
@@ -135,7 +129,7 @@ export default function ProfilePage() {
                 </Card>
             )}
         </aside>
-        <div className="md:col-span-2">
+        <section className="md:col-span-2 space-y-6">
             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl font-headline">Contribuição Comunitária</CardTitle>
@@ -153,39 +147,42 @@ export default function ProfilePage() {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+            
+            <article>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {favorsRequested.length > 0 ? (
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Você ainda não pediu nenhum favor.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </article>
+
+            <article>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {favorsFulfilled.length > 0 ? (
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Você ainda não realizou nenhum favor.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </article>
+        </section>
       </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {favorsRequested.length > 0 ? (
-            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-              {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-            </div>
-          ) : (
-            <p className="text-muted-foreground">Você ainda não pediu nenhum favor.</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {favorsFulfilled.length > 0 ? (
-            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-              {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-            </div>
-          ) : (
-            <p className="text-muted-foreground">Você ainda não realizou nenhum favor.</p>
-          )}
-        </CardContent>
-      </Card>
-
     </div>
   );
 }

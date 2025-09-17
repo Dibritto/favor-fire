@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -63,6 +63,6 @@ export default function AdminDashboardPage() {
           <p>Use o menu à esquerda para navegar pelas seções de gerenciamento. Você pode visualizar todos os usuários, monitorar atividades e obter uma visão geral do ecossistema.</p>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }
