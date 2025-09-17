@@ -322,8 +322,5 @@ export default function FavorDetailPage() {
     </article>
   );
 }
-    
-
-    
 
     

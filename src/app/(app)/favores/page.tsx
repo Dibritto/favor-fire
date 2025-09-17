@@ -109,7 +109,7 @@ export default function FavorDiscoveryPage() {
         </Card>
       </section>
 
-      <section aria-labelledby="favors-list-heading">
+      <main aria-labelledby="favors-list-heading">
         <h2 id="favors-list-heading" className="sr-only">Lista de Favores Disponíveis</h2>
         {filteredFavors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +124,9 @@ export default function FavorDiscoveryPage() {
             <p className="text-muted-foreground">Tente ajustar sua busca ou filtros, ou volte mais tarde!</p>
           </div>
         )}
-      </section>
+      </main>
     </div>
   );
 }
+
+    
