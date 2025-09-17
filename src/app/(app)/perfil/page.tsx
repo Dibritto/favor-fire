@@ -8,7 +8,7 @@ import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift } from 'lucide-react';
+import { Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, Building } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -89,11 +89,18 @@ export default function ProfilePage() {
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
                 </div>
-                <Button variant="outline" size="sm" asChild>
-                    <Link href="/perfil/editar">
-                        <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
-                    </Link>
-                </Button>
+                 <div className="flex flex-col sm:flex-row gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/perfil/editar">
+                            <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
+                        </Link>
+                    </Button>
+                     <Button size="sm" asChild>
+                        <Link href="#">
+                            <Building className="mr-2 h-4 w-4" /> Criar Comunidade
+                        </Link>
+                    </Button>
+                </div>
             </div>
         </div>
       </header>

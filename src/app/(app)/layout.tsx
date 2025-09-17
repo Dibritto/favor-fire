@@ -1,7 +1,7 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Compass, ListChecks, PlusSquare, User as UserIcon, LogOut, HomeIcon, Shield } from 'lucide-react';
+import { Compass, ListChecks, PlusSquare, User as UserIcon, LogOut, HomeIcon, Shield, Gem } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-muted/40">
-        <Sidebar side="left" variant="sidebar" collapsible="icon">
+        <aside className="group peer hidden text-sidebar-foreground md:block" data-state="expanded" data-collapsible="icon" data-variant="sidebar" data-side="left">
+          <div className="duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear group-data-[collapsible=icon]:w-[--sidebar-width-icon]"></div>
+          <div className="duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex left-0 group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r">
+            <div data-sidebar="sidebar" className="flex h-full w-full flex-col bg-sidebar">
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="p-3 flex justify-center items-center h-16">
               <Link href="/">
@@ -61,6 +64,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 <ClientNavItem href="/favores/pedir" label="Pedir um Favor">
                   <PlusSquare />
                   <span>Pedir um Favor</span>
+                </ClientNavItem>
+              </SidebarMenuItem>
+               <SidebarMenuItem>
+                <ClientNavItem href="/assinatura" label="Minha Assinatura">
+                  <Gem />
+                  <span>Minha Assinatura</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -95,7 +104,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               </Link>
             </Button>
           </SidebarFooter>
-        </Sidebar>
+        </div>
+          </div>
+        </aside>
         <div className="flex flex-col flex-1">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" />
