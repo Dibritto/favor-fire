@@ -10,7 +10,7 @@ const ptSans = PT_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Projeto Favor',
+  title: 'Kindred Connect',
   description: 'Uma plataforma para colaboração comunitária e ajuda mútua.',
 };
 
