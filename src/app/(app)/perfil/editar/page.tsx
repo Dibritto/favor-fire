@@ -25,6 +25,7 @@ import Link from "next/link";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres."),
+  displayName: z.string().min(2, "O nome de exibição deve ter pelo menos 2 caracteres.").optional(),
   phone: z.string().optional(),
   email: z.string().email(),
 });
@@ -41,6 +42,7 @@ export default function EditProfilePage() {
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: "",
+      displayName: "",
       phone: "",
       email: "",
     },
@@ -54,6 +56,7 @@ export default function EditProfilePage() {
       if (currentUser) {
         form.reset({
           name: currentUser.name,
+          displayName: currentUser.displayName || "",
           phone: currentUser.phone || "",
           email: currentUser.email,
         });
@@ -97,10 +100,25 @@ export default function EditProfilePage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome Completo</FormLabel>
+                    <FormLabel>Nome Completo (Privado)</FormLabel>
                     <FormControl>
                       <Input placeholder="Seu nome completo" {...field} />
                     </FormControl>
+                    <FormDescription>Este nome não será exibido publicamente.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome de Exibição (Público)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Como você quer ser chamado" {...field} />
+                    </FormControl>
+                     <FormDescription>Este será seu nome público na plataforma.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
