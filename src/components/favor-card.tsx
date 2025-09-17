@@ -59,11 +59,11 @@ export function FavorCard({ favor }: FavorCardProps) {
     <article>
         <Card className="flex flex-col h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
         <CardHeader className="pb-3">
-            <div className="flex justify-between items-start mb-2">
-                <CardTitle className="font-headline text-lg md:text-xl line-clamp-2">{favor.title}</CardTitle>
-                <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 ml-2">
+            <div className="flex justify-between items-start gap-2 mb-2">
+                <CardTitle className="font-headline text-lg md:text-xl line-clamp-2 flex-1">{favor.title}</CardTitle>
+                <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0">
                     {favor.type === 'paid' ? <DollarSign className="mr-1 h-3 w-3" /> : <Sparkles className="mr-1 h-3 w-3" />}
-                    {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+                    {favor.type === 'paid' ? 'Pago' : 'Voluntário'}
                 </Badge>
             </div>
             <CardDescription className="text-xs text-muted-foreground flex items-center">
@@ -103,5 +103,3 @@ export function FavorCard({ favor }: FavorCardProps) {
     </article>
   );
 }
-
-    
