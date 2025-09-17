@@ -48,7 +48,7 @@ export function LoginForm() {
     // In a real app, you'd call an auth API here
     // For now, just redirect after a short delay
     setTimeout(() => {
-      router.push("/favors"); // Redirect to main app page
+      router.push("/dashboard"); // Redirect to main app page
     }, 1000);
   }
 
