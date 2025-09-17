@@ -30,7 +30,7 @@ export default function CommunityDiscoveryPage() {
 
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
        <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h1 className="text-3xl font-headline font-bold">Explorar Comunidades</h1>
@@ -63,7 +63,7 @@ export default function CommunityDiscoveryPage() {
         </Card>
       </section>
 
-      <main aria-labelledby="communities-list-heading">
+      <section aria-labelledby="communities-list-heading">
         <h2 id="communities-list-heading" className="sr-only">Lista de Comunidades Públicas</h2>
         {filteredCommunities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,7 +78,7 @@ export default function CommunityDiscoveryPage() {
             <p className="text-muted-foreground">Tente ajustar sua busca ou explore mais tarde!</p>
           </div>
         )}
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

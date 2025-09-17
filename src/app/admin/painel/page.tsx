@@ -22,8 +22,8 @@ export default function AdminDashboardPage() {
   }, []);
 
   return (
-    <section className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <main className="space-y-6">
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
             <p className="text-xs text-muted-foreground mt-1">Favores que foram concluídos com sucesso.</p>
           </CardContent>
         </Card>
-      </div>
+      </section>
        <Card>
         <CardHeader>
           <CardTitle>Bem-vindo ao Painel Administrativo</CardTitle>
@@ -63,6 +63,6 @@ export default function AdminDashboardPage() {
           <p>Use o menu à esquerda para navegar pelas seções de gerenciamento. Você pode visualizar todos os usuários, monitorar atividades e obter uma visão geral do ecossistema.</p>
         </CardContent>
       </Card>
-    </section>
+    </main>
   );
 }

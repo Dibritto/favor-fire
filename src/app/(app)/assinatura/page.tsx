@@ -29,7 +29,7 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <main className="max-w-4xl mx-auto space-y-8">
       <section className="text-center">
         <h1 className="text-4xl font-headline font-bold text-primary mb-2">Minha Assinatura</h1>
         <p className="text-lg text-muted-foreground">
@@ -99,6 +99,6 @@ export default function SubscriptionPage() {
           </CardContent>
         </Card>
       </section>
-    </div>
+    </main>
   );
 }

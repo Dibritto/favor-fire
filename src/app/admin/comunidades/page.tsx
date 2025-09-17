@@ -24,7 +24,7 @@ export default function AdminManageCommunitiesPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
         <div className="flex justify-between items-center">
             <div>
                 <h1 className="text-2xl font-headline font-bold">Gerenciar Comunidades</h1>
@@ -95,6 +95,6 @@ export default function AdminManageCommunitiesPage() {
           </CardContent>
         </Card>
       </section>
-    </div>
+    </main>
   );
 }
