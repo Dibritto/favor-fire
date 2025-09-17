@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { getCurrentUser, getUserById } from '@/lib/auth';
-import { mockFavors } from '@/lib/mock-data';
+import { mockFavors, mockUsers } from '@/lib/mock-data';
 import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Award, Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays } from 'lucide-react';
+import { Award, Edit3, Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -41,9 +41,13 @@ export default function ProfilePage() {
     const fetchProfileData = async () => {
       setIsLoading(true);
       const currentUser = await getCurrentUser();
-      setUser(currentUser);
-
+      
       if (currentUser) {
+        // Manually populate sponsor for mock data
+        if (currentUser.invitedById) {
+            currentUser.sponsor = mockUsers.find(u => u.id === currentUser.invitedById);
+        }
+        setUser(currentUser);
         setFavorsRequested(mockFavors.filter(f => f.requesterId === currentUser.id));
         setFavorsFulfilled(mockFavors.filter(f => f.executorId === currentUser.id && f.status === 'completed'));
       }
@@ -59,6 +63,8 @@ export default function ProfilePage() {
   if (!user) {
     return <p className="text-center text-muted-foreground">Não foi possível carregar o perfil do usuário. Por favor, tente fazer login novamente.</p>;
   }
+
+  const publicName = user.displayName || user.name;
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
@@ -76,11 +82,11 @@ export default function ProfilePage() {
         <div className="relative pt-0">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                    <AvatarImage src={`https://placehold.co/128x128.png?text=${user.name.charAt(0).toUpperCase()}`} alt={user.name} data-ai-hint="profile picture"/>
-                    <AvatarFallback className="text-4xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarImage src={`https://placehold.co/128x128.png?text=${publicName.charAt(0).toUpperCase()}`} alt={publicName} data-ai-hint="profile picture"/>
+                    <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow text-center sm:text-left">
-                    <h1 className="text-2xl sm:text-3xl font-headline">{user.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
                         {[...Array(Math.floor(user.reputation))].map((_, i) => <Star key={`full-${i}`} className="h-5 w-5 fill-current" />)}
                         {user.reputation % 1 >= 0.5 && <Star key="half" className="h-5 w-5" style={{ clipPath: 'inset(0 50% 0 0)' }} />}
@@ -98,10 +104,10 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <aside className="md:col-span-1">
+        <aside className="md:col-span-1 space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Informações de Contato</CardTitle>
+                    <CardTitle className="text-xl font-headline">Informações</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                     <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
@@ -112,6 +118,22 @@ export default function ProfilePage() {
                     </p>
                 </CardContent>
             </Card>
+            {user.sponsor && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl font-headline">Apadrinhamento</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="flex items-center text-sm">
+                            <Gift className="mr-3 h-5 w-5 text-primary" /> 
+                            Convidado(a) por: 
+                            <Link href="#" className="font-medium text-primary hover:underline ml-1">
+                                {user.sponsor.displayName || user.sponsor.name}
+                            </Link>
+                        </p>
+                    </CardContent>
+                </Card>
+            )}
         </aside>
         <div className="md:col-span-2">
             <Card>

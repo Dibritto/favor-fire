@@ -3,16 +3,21 @@
 
 
 
+
 export interface User {
   id: string;
   name: string;
+  displayName?: string;
   email: string;
   phone?: string;
   reputation: number; // 0-5 scale, can be calculated or stored
   favorsCompleted: number;
   favorsRequested: number;
   joinDate?: string; // ISO string for when the user joined
-  // avatarUrl?: string; // If avatars are to be included
+  // For the future invitation system
+  invitedById?: string;
+  sponsor?: User; // Populated for display
+  inviteCode?: string;
 }
 
 export type UrgencyLevel = 'low' | 'medium' | 'high';

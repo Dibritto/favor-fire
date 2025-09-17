@@ -1,39 +1,55 @@
 
 
 
+
 import type { User, Favor, Notification, Report } from '@/types';
 
 export const mockUsers: User[] = [
   {
     id: 'user1',
     name: 'Alice Wonderland',
+    displayName: 'Alice W.',
     email: 'alice@example.com',
     phone: '555-1234',
     reputation: 4.5,
     favorsCompleted: 10,
     favorsRequested: 5,
-    joinDate: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString(), // Joined 100 days ago
+    joinDate: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString(),
+    inviteCode: 'ALICE-123',
   },
   {
     id: 'user2',
     name: 'Bob The Builder',
+    displayName: 'Bob',
     email: 'bob@example.com',
     phone: '555-5678',
     reputation: 4.8,
     favorsCompleted: 15,
     favorsRequested: 3,
-    joinDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString(), // Joined 200 days ago
+    joinDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString(),
+    invitedById: 'user1',
+    inviteCode: 'BOB-456',
   },
   {
     id: 'user3',
     name: 'Charlie Brown',
+    displayName: 'Charlie',
     email: 'charlie@example.com',
     reputation: 3.9,
     favorsCompleted: 3,
     favorsRequested: 8,
-    joinDate: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(), // Joined 50 days ago
+    joinDate: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
+    inviteCode: 'CHARLIE-789',
   },
 ];
+
+// Populate sponsor data for the invitation system
+mockUsers.forEach(user => {
+    if (user.invitedById) {
+        user.sponsor = mockUsers.find(u => u.id === user.invitedById);
+    }
+});
+
 
 export const mockFavors: Favor[] = [
   {
