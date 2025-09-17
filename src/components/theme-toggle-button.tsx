@@ -1,28 +1,38 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTheme } from './theme-provider';
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+
+import { Button } from "@/components/ui/button"
 
 export function ThemeToggleButton() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme()
+  const [isMounted, setIsMounted] = React.useState(false)
 
-  // We need to ensure the component is mounted on the client to avoid hydration mismatches
-  // since the theme is read from localStorage.
-  const [isMounted, setIsMounted] = React.useState(false);
   React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
 
   if (!isMounted) {
-    // Render a placeholder or null on the server and initial client render
-    return <Button variant="ghost" size="icon" disabled aria-label="Carregando tema"><div className="h-5 w-5 animate-pulse rounded-full bg-muted" /></Button>;
+    return (
+      <Button variant="ghost" size="icon" disabled>
+        <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    )
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema">
-      {theme === 'light' ? <Moon className="h-5 w-5 text-foreground" /> : <Sun className="h-5 w-5 text-foreground" />}
+    <Button variant="ghost" size="icon" onClick={toggleTheme}>
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle theme</span>
     </Button>
-  );
+  )
 }

@@ -85,12 +85,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <span>Denúncias</span>
                   </ClientNavItem>
                 </SidebarMenuItem>
-                 <SidebarMenuItem>
-                  <ClientNavItem href="/admin/configuracoes" label="Configurações">
-                    <Settings />
-                    <span>Configurações</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
                 <SidebarMenuItem>
                   <ClientNavItem href="/admin/notificacoes" label="Gerenciar Notificações">
                     <Bell />
