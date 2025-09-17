@@ -1,5 +1,6 @@
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -25,6 +26,7 @@ export interface Favor {
   location: string; // For simplicity, can be an address or general area
   type: FavorType;
   participationType: FavorParticipationType;
+  numberOfPeople?: number; // For collective favors
   communityId?: string; // To link to a community, making it a restricted favor
   preferredDateTime?: string; // ISO string or a more structured date/time
   status: FavorStatus;

@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarIcon, DollarSign } from "lucide-react";
+import { CalendarIcon, DollarSign, Users } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -69,11 +69,15 @@ const favorFormSchema = z.object({
   address: z.string().optional(),
   type: z.enum(["volunteer", "paid"], { required_error: "O tipo de favor é obrigatório." }),
   participationType: z.enum(["individual", "collective"], { required_error: "O modo de participação é obrigatório." }),
+  numberOfPeople: z.coerce.number().positive("O número de pessoas deve ser positivo.").optional(),
   preferredDateTime: z.date().optional(),
   amount: z.coerce.number().positive("O valor deve ser positivo.").optional(),
-}).refine(data => data.type === 'volunteer' || (data.type === 'paid' && data.amount !== undefined && data.amount > 0), {
+}).refine(data => data.type !== 'paid' || (data.amount !== undefined && data.amount > 0), {
   message: "O valor é obrigatório para favores pagos e deve ser maior que 0.",
   path: ["amount"],
+}).refine(data => data.participationType !== 'collective' || (data.numberOfPeople !== undefined && data.numberOfPeople > 0), {
+    message: "A quantidade de pessoas é obrigatória para favores coletivos.",
+    path: ["numberOfPeople"],
 });
 
 type FavorFormValues = z.infer<typeof favorFormSchema>;
@@ -96,6 +100,7 @@ export default function SubmitFavorPage() {
   });
 
   const watchFavorType = form.watch("type");
+  const watchParticipationType = form.watch("participationType");
 
   async function onSubmit(data: FavorFormValues) {
     const location = data.address ? `${data.address}, ${data.bairro}, ${data.city} - ${data.state}` : `${data.bairro}, ${data.city} - ${data.state}`;
@@ -326,6 +331,26 @@ export default function SubmitFavorPage() {
                 )}
               />
             
+               {watchParticipationType === "collective" && (
+                <FormField
+                  control={form.control}
+                  name="numberOfPeople"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantidade de Pessoas</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                            <Users className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input type="number" placeholder="Ex: 5" {...field} className="pl-8" onChange={event => field.onChange(+event.target.value)} min="2" />
+                        </div>
+                      </FormControl>
+                      <FormDescription>Quantas pessoas são necessárias para este favor?</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="preferredDateTime"
