@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Palette, Save } from "lucide-react";
 import MOCK_DEFAULT_THEME from "@/lib/default-theme";
+import { isEqual } from "lodash";
+
 
 const hexToHsl = (hex: string): [number, number, number] => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -137,9 +139,8 @@ const friendlyColorNames: Record<string, string> = {
     sidebarRing: "Anel de Foco da Sidebar",
 };
 
-const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-function updateStyleTag(theme: ColorConfigFormValues | null) {
+function updateStyleTag(themeInHex: ColorConfigFormValues | null) {
     let styleTag = document.getElementById('dynamic-theme-styles');
     if (!styleTag) {
         styleTag = document.createElement('style');
@@ -147,17 +148,20 @@ function updateStyleTag(theme: ColorConfigFormValues | null) {
         document.head.appendChild(styleTag);
     }
     
-    if (!theme) {
+    if (!themeInHex) {
         styleTag.innerHTML = '';
         return;
     }
 
+    const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+    
     const generateCssVars = (themePart: Record<string, string>, prefix: string = '') => {
         return Object.entries(themePart).map(([key, value]) => {
-            if (!value) return ''; // Ignore empty values
+            if (!value) return ''; 
             try {
                 const [h, s, l] = hexToHsl(value);
-                return `--${prefix}${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
+                const cssVarName = `--${prefix}${toKebabCase(key)}`;
+                return `${cssVarName}: ${h} ${s}% ${l}%;`;
             } catch (e) {
                 console.warn(`Invalid color format for key ${key}: ${value}`);
                 return '';
@@ -165,8 +169,8 @@ function updateStyleTag(theme: ColorConfigFormValues | null) {
         }).join('\n');
     }
 
-    const lightVars = generateCssVars(theme.light);
-    const darkVars = generateCssVars(theme.dark);
+    const lightVars = generateCssVars(themeInHex.light);
+    const darkVars = generateCssVars(themeInHex.dark);
 
     styleTag.innerHTML = `
 :root {
@@ -182,36 +186,47 @@ export default function ThemeColorsPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  // The state 'theme' is the single source of truth for the currently saved theme.
   const [theme, setTheme] = useState<ColorConfigFormValues>(() => convertHslThemeToHex(MOCK_DEFAULT_THEME));
 
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: theme,
+    defaultValues: theme, // Initialize with default
   });
 
+  // 1. Load from localStorage and reset the form on initial client render
   useEffect(() => {
     setIsClient(true);
     try {
         const storedThemeJson = localStorage.getItem('app-colors');
-        if (storedThemeJson) {
-            const storedTheme = JSON.parse(storedThemeJson);
-            const hexTheme = convertHslThemeToHex(storedTheme);
-            setTheme(hexTheme);
-        }
+        const initialTheme = storedThemeJson ? JSON.parse(storedThemeJson) : MOCK_DEFAULT_THEME;
+        const hexTheme = convertHslThemeToHex(initialTheme);
+        setTheme(hexTheme); // Set the source of truth state
+        form.reset(hexTheme); // Sync form with the loaded state
     } catch (e) {
         console.error("Failed to load theme from localStorage", e);
-        setTheme(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+        const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
+        setTheme(defaultHexTheme);
+        form.reset(defaultHexTheme);
     }
-  }, []);
-
+  }, [form]); // form is stable, so this runs once
+  
+  // 2. Watch for form changes and compare with the source of truth 'theme'
   useEffect(() => {
-    if (isClient) {
-        form.reset(theme);
-        updateStyleTag(theme);
-    }
-  }, [theme, form, isClient]);
+    const subscription = form.watch((value) => {
+        setHasChanges(!isEqual(value, theme));
+        // Also update live preview on change
+        if (value.light && value.dark) {
+            updateStyleTag(value as ColorConfigFormValues);
+        }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, theme]);
 
-  function onSubmit(data: ColorConfigFormValues) {
+  // 3. Handle form submission
+  const onSubmit = (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     
     try {
@@ -225,7 +240,8 @@ export default function ThemeColorsPage() {
         }
         
         localStorage.setItem('app-colors', JSON.stringify(newThemeInHsl));
-        setTheme(data); // Update the state with the new hex values
+        setTheme(data); // Update the source of truth
+        setHasChanges(false); // Manually set hasChanges to false
 
         toast({
           title: "Tema Atualizado!",
@@ -244,10 +260,13 @@ export default function ThemeColorsPage() {
     }
   }
 
+  // 4. Handle reset to default
   const resetToDefault = () => {
     localStorage.removeItem('app-colors');
     const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
-    setTheme(defaultHexTheme);
+    setTheme(defaultHexTheme); // Update the source of truth
+    form.reset(defaultHexTheme); // Sync the form
+    setHasChanges(false); // Manually update hasChanges
      toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
@@ -258,7 +277,7 @@ export default function ThemeColorsPage() {
     if (!isClient) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Object.keys(MOCK_DEFAULT_THEME[mode]).map((key) => (
+                {Object.keys(MOCK_DEFAULT_THEME.light).map((key) => (
                     <div key={`${mode}.${key}`} className="space-y-2">
                         <div className="h-6 w-32 rounded bg-muted animate-pulse"></div>
                         <div className="flex items-center gap-2">
@@ -315,7 +334,7 @@ export default function ThemeColorsPage() {
                     </div>
                     <div className="flex gap-2">
                         <Button type="button" variant="outline" onClick={resetToDefault} disabled={!isClient}>Restaurar Padrão</Button>
-                        <Button type="submit" disabled={isSubmitting || !isClient || !form.formState.isDirty}>
+                        <Button type="submit" disabled={isSubmitting || !isClient || !hasChanges}>
                             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                             Salvar Cores
                         </Button>
@@ -346,5 +365,6 @@ export default function ThemeColorsPage() {
      </main>
   );
 }
+
 
     
