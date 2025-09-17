@@ -80,7 +80,7 @@ export default function MyFavorsPage() {
             <HelpingHand className="mr-2 h-4 w-4" /> Favores Aceitos por Mim
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="requested" className="mt-6" asChild>
+        <TabsContent value="requested" className="mt-6">
            <section>
               <h2 className="sr-only">Meus Pedidos de Favor</h2>
               {renderFavorList(
@@ -90,7 +90,7 @@ export default function MyFavorsPage() {
               )}
            </section>
         </TabsContent>
-        <TabsContent value="accepted" className="mt-6" asChild>
+        <TabsContent value="accepted" className="mt-6">
           <section>
             <h2 className="sr-only">Favores Aceitos por Mim</h2>
             {renderFavorList(

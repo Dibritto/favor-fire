@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -68,7 +69,7 @@ export default function MyFavorsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
       <h1 className="text-3xl font-headline font-bold">Meus Favores</h1>
       <Tabs defaultValue="requested" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:w-1/2">
@@ -80,20 +81,26 @@ export default function MyFavorsPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="requested" className="mt-6">
-          {renderFavorList(
-            requestedFavors,
-            "Você ainda não pediu nenhum favor.",
-            <ListChecks className="mx-auto h-12 w-12" />
-          )}
+          <section>
+            <h2 className="sr-only">Meus Pedidos de Favor</h2>
+            {renderFavorList(
+              requestedFavors,
+              "Você ainda não pediu nenhum favor.",
+              <ListChecks className="mx-auto h-12 w-12" />
+            )}
+          </section>
         </TabsContent>
         <TabsContent value="accepted" className="mt-6">
-          {renderFavorList(
-            acceptedFavors,
-            "Você ainda não aceitou nenhum favor. Dê uma olhada na página Descobrir!",
-            <Search className="mx-auto h-12 w-12" />
-          )}
+          <section>
+            <h2 className="sr-only">Favores Aceitos por Mim</h2>
+            {renderFavorList(
+              acceptedFavors,
+              "Você ainda não aceitou nenhum favor. Dê uma olhada na página Descobrir!",
+              <Search className="mx-auto h-12 w-12" />
+            )}
+          </section>
         </TabsContent>
       </Tabs>
-    </div>
+    </main>
   );
 }
