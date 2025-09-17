@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreditCard, DollarSign, Zap } from 'lucide-react';
+import { CreditCard, DollarSign, Users, Zap } from 'lucide-react';
 
 export default function AdminManageSubscriptionsPage() {
   return (
