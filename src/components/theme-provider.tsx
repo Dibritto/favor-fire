@@ -213,5 +213,3 @@ export const useTheme = (): ThemeContextProps => {
   }
   return context;
 };
-
-    
