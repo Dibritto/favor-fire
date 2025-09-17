@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { ThemeProvider } from "next-themes";
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster"; // Added Toaster for app-wide notifications
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: 'Projeto Favor',
@@ -13,15 +14,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        {children}
-        <Toaster />
+          {children}
+          <Toaster />
       </body>
     </html>
   );

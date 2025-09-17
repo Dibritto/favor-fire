@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -17,8 +16,7 @@ export function Logo({ size = "md", className }: LogoProps) {
         alt="Projeto Favor Logo"
         width={width}
         height={height}
-        className={cn(className)}
-        style={{ objectFit: 'contain' }}
+        className={cn("object-contain", className)}
         priority
       />
   );
