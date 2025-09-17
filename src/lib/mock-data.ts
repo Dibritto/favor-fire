@@ -1,6 +1,7 @@
 
 
-import type { User, Favor, Notification } from '@/types';
+
+import type { User, Favor, Notification, Report } from '@/types';
 
 export const mockUsers: User[] = [
   {
@@ -159,3 +160,46 @@ export const mockNotifications: Notification[] = [
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
   },
 ];
+
+export const mockReports: Report[] = [
+    {
+        id: 'report1',
+        reportedById: 'user1',
+        reportedItemId: 'favor2',
+        reportedItemType: 'favor',
+        reason: 'spam',
+        comments: 'O valor parece alto demais e a descrição é vaga.',
+        status: 'pending',
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'report2',
+        reportedById: 'user2',
+        reportedItemId: 'user3',
+        reportedItemType: 'user',
+        reason: 'inappropriate',
+        comments: 'O usuário enviou mensagens rudes no chat (funcionalidade em breve).',
+        status: 'pending',
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'report3',
+        reportedById: 'user3',
+        reportedItemId: 'favor4',
+        reportedItemType: 'favor',
+        reason: 'other',
+        comments: 'O favor já foi concluído, mas ainda está aparecendo como aberto em alguns lugares.',
+        status: 'resolved',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    }
+];
+
+// Populate related data for reports
+mockReports.forEach(report => {
+    report.reportedBy = mockUsers.find(u => u.id === report.reportedById);
+    if (report.reportedItemType === 'favor') {
+        report.reportedItem = mockFavors.find(f => f.id === report.reportedItemId);
+    } else {
+        report.reportedItem = mockUsers.find(u => u.id === report.reportedItemId);
+    }
+});

@@ -2,6 +2,7 @@
 
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -88,4 +89,21 @@ export interface Notification {
   link?: string; // e.g., /favors/favor123
   read: boolean;
   createdAt: string; // ISO string
+}
+
+export type ReportStatus = 'pending' | 'resolved' | 'ignored';
+export type ReportReason = 'spam' | 'inappropriate' | 'scam' | 'other';
+export type ReportedItemType = 'favor' | 'user';
+
+export interface Report {
+    id: string;
+    reportedById: string;
+    reportedBy?: User;
+    reportedItemId: string;
+    reportedItemType: ReportedItemType;
+    reportedItem?: Favor | User;
+    reason: ReportReason;
+    comments?: string;
+    status: ReportStatus;
+    createdAt: string; // ISO String
 }
