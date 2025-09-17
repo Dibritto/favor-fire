@@ -27,11 +27,44 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ptBR } from 'date-fns/locale';
 
+const states = [
+  { value: "AC", label: "Acre" },
+  { value: "AL", label: "Alagoas" },
+  { value: "AP", label: "Amapá" },
+  { value: "AM", label: "Amazonas" },
+  { value: "BA", label: "Bahia" },
+  { value: "CE", label: "Ceará" },
+  { value: "DF", label: "Distrito Federal" },
+  { value: "ES", label: "Espírito Santo" },
+  { value: "GO", label: "Goiás" },
+  { value: "MA", label: "Maranhão" },
+  { value: "MT", label: "Mato Grosso" },
+  { value: "MS", label: "Mato Grosso do Sul" },
+  { value: "MG", label: "Minas Gerais" },
+  { value: "PA", label: "Pará" },
+  { value: "PB", label: "Paraíba" },
+  { value: "PR", label: "Paraná" },
+  { value: "PE", label: "Pernambuco" },
+  { value: "PI", label: "Piauí" },
+  { value: "RJ", label: "Rio de Janeiro" },
+  { value: "RN", label: "Rio Grande do Norte" },
+  { value: "RS", label: "Rio Grande do Sul" },
+  { value: "RO", label: "Rondônia" },
+  { value: "RR", label: "Roraima" },
+  { value: "SC", label: "Santa Catarina" },
+  { value: "SP", label: "São Paulo" },
+  { value: "SE", label: "Sergipe" },
+  { value: "TO", label: "Tocantins" },
+];
+
+
 const favorFormSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres.").max(100, "O título deve ter 100 caracteres ou menos."),
   description: z.string().min(10, "A descrição deve ter pelo menos 10 caracteres.").max(500,"A descrição deve ter 500 caracteres ou menos."),
   urgency: z.enum(["low", "medium", "high"], { required_error: "O nível de urgência é obrigatório." }),
-  location: z.string().min(3, "A localização é obrigatória."),
+  state: z.string({ required_error: "O estado é obrigatório." }),
+  city: z.string().min(3, "A cidade é obrigatória."),
+  address: z.string().optional(),
   type: z.enum(["volunteer", "paid"], { required_error: "O tipo de favor é obrigatório." }),
   participationType: z.enum(["individual", "collective"], { required_error: "O modo de participação é obrigatório." }),
   preferredDateTime: z.date().optional(),
@@ -53,7 +86,8 @@ export default function SubmitFavorPage() {
       title: "",
       description: "",
       urgency: "medium",
-      location: "",
+      city: "",
+      address: "",
       type: "volunteer",
       participationType: "individual",
     },
@@ -62,7 +96,19 @@ export default function SubmitFavorPage() {
   const watchFavorType = form.watch("type");
 
   async function onSubmit(data: FavorFormValues) {
-    console.log("Dados do favor submetido:", data);
+    const location = data.address ? `${data.address}, ${data.city} - ${data.state}` : `${data.city} - ${data.state}`;
+    
+    const submissionData = {
+        ...data,
+        location,
+    };
+    // Remover campos que já foram combinados em 'location'
+    delete (submissionData as Partial<FavorFormValues>).city;
+    delete (submissionData as Partial<FavorFormValues>).state;
+    delete (submissionData as Partial<FavorFormValues>).address;
+
+
+    console.log("Dados do favor submetido:", submissionData);
     // Em um app real, você salvaria isso no seu backend
     toast({
       title: "Favor Enviado!",
@@ -106,9 +152,61 @@ export default function SubmitFavorPage() {
                   </FormItem>
                 )}
               />
+              
+              <div className="space-y-4">
+                <FormLabel>Localização</FormLabel>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Estado</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                    <SelectValue placeholder="Selecione o estado" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {states.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Cidade</FormLabel>
+                            <FormControl>
+                            <Input placeholder="Ex: São Paulo" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </div>
+                 <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Endereço (Opcional)</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Ex: Rua Principal, 123, Centro" {...field} />
+                        </FormControl>
+                         <FormDescription>Seja específico, se necessário para o favor.</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
+               <FormField
                     control={form.control}
                     name="urgency"
                     render={({ field }) => (
@@ -130,20 +228,7 @@ export default function SubmitFavorPage() {
                     </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Localização</FormLabel>
-                        <FormControl>
-                        <Input placeholder="Ex: Centro da Cidade ou Remoto" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-              </div>
+
               
               <FormField
                 control={form.control}
@@ -288,3 +373,5 @@ export default function SubmitFavorPage() {
     </div>
   );
 }
+
+    
