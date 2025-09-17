@@ -23,6 +23,14 @@ type ThemeMode = {
   border: string;
   input: string;
   ring: string;
+  sidebarBackground: string;
+  sidebarForeground: string;
+  sidebarPrimary: string;
+  sidebarPrimaryForeground: string;
+  sidebarAccent: string;
+  sidebarAccentForeground: string;
+  sidebarBorder: string;
+  sidebarRing: string;
 };
 
 // Define the overall theme structure
@@ -53,6 +61,14 @@ export const DEFAULT_THEME: Theme = {
     border: "0 0% 83.1%",
     input: "0 0% 83.1%",
     ring: "219 16% 50%",
+    sidebarBackground: "210 40% 98%",
+    sidebarForeground: "222.2 84% 4.9%",
+    sidebarPrimary: "219 16% 50%",
+    sidebarPrimaryForeground: "210 40% 98%",
+    sidebarAccent: "210 40% 94.1%",
+    sidebarAccentForeground: "222.2 84% 4.9%",
+    sidebarBorder: "210 40% 90.1%",
+    sidebarRing: "219 16% 50%",
   },
   dark: {
     background: "222.2 84% 4.9%",
@@ -74,6 +90,14 @@ export const DEFAULT_THEME: Theme = {
     border: "217.2 32.6% 17.5%",
     input: "217.2 32.6% 17.5%",
     ring: "219 16% 60%",
+    sidebarBackground: "222.2 84% 5.9%",
+    sidebarForeground: "210 40% 98%",
+    sidebarPrimary: "210 40% 98%",
+    sidebarPrimaryForeground: "222.2 47.4% 11.2%",
+    sidebarAccent: "217.2 32.6% 17.5%",
+    sidebarAccentForeground: "210 40% 98%",
+    sidebarBorder: "217.2 32.6% 17.5%",
+    sidebarRing: "212.7 26.8% 83.9%",
   },
 };
 
@@ -99,7 +123,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         const parsedTheme = JSON.parse(storedTheme);
         // Basic validation to ensure the parsed theme has the expected structure
         if (parsedTheme.light && parsedTheme.dark) {
-          setThemeState(parsedTheme);
+          // Merge with default theme to ensure all keys are present
+          const mergedTheme = {
+            light: { ...DEFAULT_THEME.light, ...parsedTheme.light },
+            dark: { ...DEFAULT_THEME.dark, ...parsedTheme.dark },
+          };
+          setThemeState(mergedTheme);
         }
       }
     } catch (error) {
@@ -112,12 +141,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     
     // Apply light theme variables
     Object.keys(themeToApply.light).forEach(key => {
-      root.style.setProperty(`--${key}`, themeToApply.light[key as keyof ThemeMode]);
+      const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      root.style.setProperty(cssVar, themeToApply.light[key as keyof ThemeMode]);
     });
 
     // Apply dark theme variables within the .dark selector
     const darkStyles = Object.keys(themeToApply.dark).map(key => {
-        return `--${key}: ${themeToApply.dark[key as keyof ThemeMode]};`;
+        const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        return `${cssVar}: ${themeToApply.dark[key as keyof ThemeMode]};`;
     }).join('\n');
     
     let styleSheet = document.getElementById('dynamic-dark-theme-styles');
@@ -136,8 +167,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const setTheme = (newTheme: Theme) => {
     try {
-      localStorage.setItem('app-theme', JSON.stringify(newTheme));
-      setThemeState(newTheme);
+      const mergedTheme = {
+        light: { ...theme.light, ...newTheme.light },
+        dark: { ...theme.dark, ...newTheme.dark },
+      };
+      localStorage.setItem('app-theme', JSON.stringify(mergedTheme));
+      setThemeState(mergedTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }

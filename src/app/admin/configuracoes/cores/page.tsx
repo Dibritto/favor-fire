@@ -56,49 +56,39 @@ const hslToHex = (h: number, s: number, l: number): string => {
 };
 
 
+const colorSchema = z.object({
+    background: z.string(),
+    foreground: z.string(),
+    card: z.string(),
+    cardForeground: z.string(),
+    popover: z.string(),
+    popoverForeground: z.string(),
+    primary: z.string(),
+    primaryForeground: z.string(),
+    secondary: z.string(),
+    secondaryForeground: z.string(),
+    muted: z.string(),
+    mutedForeground: z.string(),
+    accent: z.string(),
+    accentForeground: z.string(),
+    destructive: z.string(),
+    destructiveForeground: z.string(),
+    border: z.string(),
+    input: z.string(),
+    ring: z.string(),
+    sidebarBackground: z.string(),
+    sidebarForeground: z.string(),
+    sidebarPrimary: z.string(),
+    sidebarPrimaryForeground: z.string(),
+    sidebarAccent: z.string(),
+    sidebarAccentForeground: z.string(),
+    sidebarBorder: z.string(),
+    sidebarRing: z.string(),
+});
+
 const colorConfigSchema = z.object({
-  light: z.object({
-    background: z.string(),
-    foreground: z.string(),
-    card: z.string(),
-    cardForeground: z.string(),
-    popover: z.string(),
-    popoverForeground: z.string(),
-    primary: z.string(),
-    primaryForeground: z.string(),
-    secondary: z.string(),
-    secondaryForeground: z.string(),
-    muted: z.string(),
-    mutedForeground: z.string(),
-    accent: z.string(),
-    accentForeground: z.string(),
-    destructive: z.string(),
-    destructiveForeground: z.string(),
-    border: z.string(),
-    input: z.string(),
-    ring: z.string(),
-  }),
-  dark: z.object({
-    background: z.string(),
-    foreground: z.string(),
-    card: z.string(),
-    cardForeground: z.string(),
-    popover: z.string(),
-    popoverForeground: z.string(),
-    primary: z.string(),
-    primaryForeground: z.string(),
-    secondary: z.string(),
-    secondaryForeground: z.string(),
-    muted: z.string(),
-    mutedForeground: z.string(),
-    accent: z.string(),
-    accentForeground: z.string(),
-    destructive: z.string(),
-    destructiveForeground: z.string(),
-    border: z.string(),
-    input: z.string(),
-    ring: z.string(),
-  })
+  light: colorSchema,
+  dark: colorSchema
 });
 
 type ColorConfigFormValues = z.infer<typeof colorConfigSchema>;
@@ -107,8 +97,11 @@ function convertHslThemeToHex(theme: Theme): ColorConfigFormValues {
     const result: any = { light: {}, dark: {} };
     for (const mode of ['light', 'dark'] as const) {
         for (const key in theme[mode]) {
-            const [h, s, l] = theme[mode][key as keyof typeof theme.light].split(" ").map(v => parseFloat(v.replace('%', '')));
-            result[mode][key] = hslToHex(h, s, l);
+            const hslString = theme[mode][key as keyof typeof theme.light];
+            if (typeof hslString === 'string') {
+                const [h, s, l] = hslString.split(" ").map(v => parseFloat(v.replace('%', '')));
+                result[mode][key] = hslToHex(h, s, l);
+            }
         }
     }
     return result;
@@ -134,6 +127,14 @@ const friendlyColorNames: Record<string, string> = {
     border: "Bordas Gerais",
     input: "Borda de Inputs",
     ring: "Anel de Foco (Focus)",
+    sidebarBackground: "Fundo da Sidebar",
+    sidebarForeground: "Texto da Sidebar",
+    sidebarPrimary: "Primária da Sidebar",
+    sidebarPrimaryForeground: "Texto sobre Primária da Sidebar",
+    sidebarAccent: "Destaque da Sidebar (Hover)",
+    sidebarAccentForeground: "Texto sobre Destaque da Sidebar",
+    sidebarBorder: "Borda da Sidebar",
+    sidebarRing: "Anel de Foco da Sidebar",
 };
 
 
@@ -160,7 +161,7 @@ export default function ThemeColorsPage() {
         for (const key in data[mode]) {
             const hexColor = data[mode][key as keyof typeof data.light];
             const [h, s, l] = hexToHsl(hexColor);
-            newTheme[mode][key as keyof typeof newTheme.light] = `${h} ${s}% ${l}%`;
+            (newTheme[mode] as any)[key] = `${h} ${s}% ${l}%`;
         }
     }
 
