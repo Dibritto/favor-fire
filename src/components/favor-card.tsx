@@ -74,8 +74,11 @@ export function FavorCard({ favor }: FavorCardProps) {
             </div>
             <CardTitle className="font-headline text-lg md:text-xl line-clamp-2">{favor.title}</CardTitle>
             <CardDescription className="text-xs text-muted-foreground flex items-center pt-1">
-            <Users className="h-3 w-3 mr-1.5" />
-            Pedido por: {favor.requester?.name || 'Alguém da comunidade'}
+              <Users className="h-3 w-3 mr-1.5" />
+              Pedido por: {favor.requester?.name || 'Alguém da comunidade'}
+              <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ml-auto ${getStatusStyles(favor.status)}`}>
+                 <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
+              </Badge>
             </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow pt-0 pb-4">
@@ -91,12 +94,9 @@ export function FavorCard({ favor }: FavorCardProps) {
                 <span>{format(new Date(favor.preferredDateTime), "P", { locale: ptBR })} às {format(new Date(favor.preferredDateTime), "p", { locale: ptBR })}</span>
                 </div>
             )}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1">
                 <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getUrgencyStyles(favor.urgency)}`}>
-                <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]} Urgência
-                </Badge>
-                <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getStatusStyles(favor.status)}`}>
-                <CheckCircle className="h-3 w-3 mr-1" /> {statusTranslations[favor.status]}
+                  <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]} Urgência
                 </Badge>
                 <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${participationStyle}`}>
                     {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
