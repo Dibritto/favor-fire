@@ -38,56 +38,58 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               </div>
             </SidebarHeader>
             <SidebarContent className="flex-grow">
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/inicio" exact label="Início">
-                    <HomeIcon />
-                    <span>Início</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/favores" label="Descobrir Favores">
-                    <Compass />
-                    <span>Descobrir Favores</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                 <SidebarMenuItem>
-                  <ClientNavItem href="/comunidades" label="Comunidades">
-                    <Users2 />
-                    <span>Comunidades</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/favores/meus" label="Meus Favores">
-                    <ListChecks />
-                    <span>Meus Favores</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/favores/pedir" label="Pedir um Favor">
-                    <PlusSquare />
-                    <span>Pedir um Favor</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                 <SidebarMenuItem>
-                  <ClientNavItem href="/assinatura" label="Minha Assinatura">
-                    <Gem />
-                    <span>Minha Assinatura</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/perfil" label="Perfil">
-                    <UserIcon />
-                    <span>Perfil</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <ClientNavItem href="/admin/painel" label="Admin">
-                    <Shield />
-                    <span>Admin</span>
-                  </ClientNavItem>
-                </SidebarMenuItem>
-              </SidebarMenu>
+              <nav aria-label="Navegação Principal">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/inicio" exact label="Início">
+                      <HomeIcon />
+                      <span>Início</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/favores" label="Descobrir Favores">
+                      <Compass />
+                      <span>Descobrir Favores</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/comunidades" label="Comunidades">
+                      <Users2 />
+                      <span>Comunidades</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/favores/meus" label="Meus Favores">
+                      <ListChecks />
+                      <span>Meus Favores</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/favores/pedir" label="Pedir um Favor">
+                      <PlusSquare />
+                      <span>Pedir um Favor</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/assinatura" label="Minha Assinatura">
+                      <Gem />
+                      <span>Minha Assinatura</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/perfil" label="Perfil">
+                      <UserIcon />
+                      <span>Perfil</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/admin/painel" label="Admin">
+                      <Shield />
+                      <span>Admin</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </nav>
             </SidebarContent>
             <SidebarFooter className="border-t border-sidebar-border p-3">
                <div className="flex items-center gap-3 mb-3">

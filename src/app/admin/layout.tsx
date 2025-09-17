@@ -1,4 +1,3 @@
-
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -40,56 +39,58 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
           </SidebarHeader>
           <SidebarContent className="flex-grow">
-            <SidebarMenu>
-               <SidebarMenuItem>
-                <ClientNavItem href="/inicio" label="Voltar ao App">
-                  <Home />
-                  <span>Voltar ao App</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/painel" exact label="Painel Administrativo">
-                  <LayoutDashboard />
-                  <span>Painel</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/usuarios" label="Gerenciar Usuários">
-                  <Users />
-                  <span>Usuários</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/favores" label="Gerenciar Favores">
-                  <Handshake />
-                  <span>Favores</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/comunidades" label="Gerenciar Comunidades">
-                  <Building2 />
-                  <span>Comunidades</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/assinaturas" label="Gerenciar Assinaturas">
-                  <CreditCard />
-                  <span>Assinaturas</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/denuncias" label="Gerenciar Denúncias">
-                  <ShieldAlert />
-                  <span>Denúncias</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <ClientNavItem href="/admin/notificacoes" label="Gerenciar Notificações">
-                  <Bell />
-                  <span>Notificações</span>
-                </ClientNavItem>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <nav aria-label="Navegação Administrativa">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/inicio" label="Voltar ao App">
+                    <Home />
+                    <span>Voltar ao App</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/painel" exact label="Painel Administrativo">
+                    <LayoutDashboard />
+                    <span>Painel</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/usuarios" label="Gerenciar Usuários">
+                    <Users />
+                    <span>Usuários</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/favores" label="Gerenciar Favores">
+                    <Handshake />
+                    <span>Favores</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/comunidades" label="Gerenciar Comunidades">
+                    <Building2 />
+                    <span>Comunidades</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/assinaturas" label="Gerenciar Assinaturas">
+                    <CreditCard />
+                    <span>Assinaturas</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/denuncias" label="Gerenciar Denúncias">
+                    <ShieldAlert />
+                    <span>Denúncias</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <ClientNavItem href="/admin/notificacoes" label="Gerenciar Notificações">
+                    <Bell />
+                    <span>Notificações</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </nav>
           </SidebarContent>
           <SidebarFooter className="border-t border-sidebar-border p-3">
              <div className="flex items-center gap-3 mb-3">
