@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { mockCommunities, mockFavors, mockUsers } from '@/lib/mock-data';
-import type { Community, Favor, User } from '@/types';
+import type { Community, Favor, User, ReportReason } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -18,6 +18,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const reasonTranslations: { [key in ReportReason]: string } = {
+    spam: 'Spam ou Propaganda',
+    inappropriate: 'Conteúdo Inadequado',
+    scam: 'Fraude ou Golpe',
+    other: 'Outro',
+};
+
 
 export default function CommunityDetailPage() {
   const params = useParams();
@@ -28,6 +37,7 @@ export default function CommunityDetailPage() {
   const [favors, setFavors] = useState<Favor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<ReportReason | ''>('');
   const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
@@ -51,11 +61,20 @@ export default function CommunityDetailPage() {
   }
 
   const handleReportSubmit = () => {
-    console.log("Denúncia enviada:", { communityId: community?.id, comments: reportComments });
+    if (!reportReason) {
+        toast({
+            title: "Erro",
+            description: "Por favor, selecione um motivo para a denúncia.",
+            variant: "destructive",
+        });
+        return;
+    }
+    console.log("Denúncia enviada:", { communityId: community?.id, reason: reportReason, comments: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
     });
+    setReportReason("");
     setReportComments("");
     setIsReportDialogOpen(false);
   }
@@ -171,26 +190,40 @@ export default function CommunityDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Denunciar esta comunidade</AlertDialogTitle>
             <AlertDialogDescription>
-              Por favor, descreva por que você está denunciando esta comunidade. Sua denúncia é anônima.
+              Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="report-comments" className="text-right">
-                Motivo
+                <Label htmlFor="report-reason" className="text-right">Motivo</Label>
+                <Select value={reportReason} onValueChange={(value) => setReportReason(value as ReportReason)}>
+                    <SelectTrigger id="report-reason" className="col-span-3">
+                        <SelectValue placeholder="Selecione um motivo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.entries(reasonTranslations).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>{value}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="report-comments" className="text-right pt-2">
+                Comentários
               </Label>
               <Textarea
                 id="report-comments"
                 value={reportComments}
                 onChange={(e) => setReportComments(e.target.value)}
                 className="col-span-3"
-                placeholder="Ex: Conteúdo inadequado, spam, etc."
+                placeholder="Ex: Conteúdo inadequado, spam, etc. (Opcional)"
+                rows={3}
               />
             </div>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportComments.trim()}>Enviar Denúncia</AlertDialogAction>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportReason}>Enviar Denúncia</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

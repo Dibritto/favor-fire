@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getUserById } from '@/lib/auth';
 import { mockFavors } from '@/lib/mock-data';
-import type { User, Favor } from '@/types';
+import type { User, Favor, ReportReason } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, MessageCircle, MoreVertical, ShieldAlert } from 'lucide-react';
+import { CalendarDays, Gift, MessageCircle, MoreVertical, ShieldAlert, Star } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -19,6 +19,14 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const reasonTranslations: { [key in ReportReason]: string } = {
+    spam: 'Spam ou Propaganda',
+    inappropriate: 'Conteúdo Inadequado',
+    scam: 'Fraude ou Golpe',
+    other: 'Outro',
+};
 
 function ProfileFavorItem({ favor }: { favor: Favor }) {
     return (
@@ -45,6 +53,7 @@ export default function PublicProfilePage() {
   const [favorsFulfilled, setFavorsFulfilled] = useState<Favor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<ReportReason | ''>('');
   const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
@@ -64,11 +73,20 @@ export default function PublicProfilePage() {
   }, [userId]);
 
   const handleReportSubmit = () => {
-    console.log("Denúncia enviada:", { userId: user?.id, comments: reportComments });
+     if (!reportReason) {
+        toast({
+            title: "Erro",
+            description: "Por favor, selecione um motivo para a denúncia.",
+            variant: "destructive",
+        });
+        return;
+    }
+    console.log("Denúncia enviada:", { userId: user?.id, reason: reportReason, comments: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
     });
+    setReportReason("");
     setReportComments("");
     setIsReportDialogOpen(false);
   };
@@ -85,7 +103,7 @@ export default function PublicProfilePage() {
 
   return (
     <main className="max-w-4xl mx-auto space-y-8 pb-12">
-      <header className="shadow-xl overflow-hidden rounded-lg">
+      <Card as="header" className="shadow-xl overflow-hidden rounded-lg">
         <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
            <Image 
             src="https://picsum.photos/seed/profilebanner/1200/200" 
@@ -135,7 +153,7 @@ export default function PublicProfilePage() {
                 </div>
             </div>
         </div>
-      </header>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-6">
@@ -176,59 +194,51 @@ export default function PublicProfilePage() {
             )}
         </aside>
         <div className="md:col-span-2 space-y-6">
-            <section aria-labelledby="contribution-heading">
-                <Card>
-                    <CardHeader>
-                        <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-2 gap-4 text-center">
-                        <div className="p-4 rounded-lg bg-muted">
-                            <HelpingHand className="h-8 w-8 mx-auto text-primary mb-2" />
-                            <p className="text-2xl font-bold">{user.favorsCompleted}</p>
-                            <p className="text-sm text-muted-foreground">Favores Concluídos</p>
-                        </div>
-                        <div className="p-4 rounded-lg bg-muted">
-                            <ListChecks className="h-8 w-8 mx-auto text-accent mb-2" />
-                            <p className="text-2xl font-bold">{user.favorsRequested}</p>
-                            <p className="text-sm text-muted-foreground">Favores Pedidos</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </section>
+            <Card as="section" aria-labelledby="contribution-heading">
+                <CardHeader>
+                    <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-4 text-center">
+                    <div className="p-4 rounded-lg bg-muted">
+                        <p className="text-2xl font-bold">{user.favorsCompleted}</p>
+                        <p className="text-sm text-muted-foreground">Favores Concluídos</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted">
+                        <p className="text-2xl font-bold">{user.favorsRequested}</p>
+                        <p className="text-sm text-muted-foreground">Favores Pedidos</p>
+                    </div>
+                </CardContent>
+            </Card>
             
-            <article aria-labelledby="requested-favors-heading">
-              <Card>
-                <CardHeader>
-                  <CardTitle id="requested-favors-heading" className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {favorsRequested.length > 0 ? (
-                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                      {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">Este usuário ainda não pediu favores.</p>
-                  )}
-                </CardContent>
-              </Card>
-            </article>
+            <Card as="article" aria-labelledby="requested-favors-heading">
+              <CardHeader>
+                <CardTitle id="requested-favors-heading" className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {favorsRequested.length > 0 ? (
+                  <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">Este usuário ainda não pediu favores.</p>
+                )}
+              </CardContent>
+            </Card>
 
-            <article aria-labelledby="fulfilled-favors-heading">
-              <Card>
-                <CardHeader>
-                  <CardTitle id="fulfilled-favors-heading" className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {favorsFulfilled.length > 0 ? (
-                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                      {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">Este usuário ainda não realizou favores.</p>
-                  )}
-                </CardContent>
-              </Card>
-            </article>
+            <Card as="article" aria-labelledby="fulfilled-favors-heading">
+              <CardHeader>
+                <CardTitle id="fulfilled-favors-heading" className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {favorsFulfilled.length > 0 ? (
+                  <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">Este usuário ainda não realizou favores.</p>
+                )}
+              </CardContent>
+            </Card>
         </div>
       </div>
       <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
@@ -236,26 +246,40 @@ export default function PublicProfilePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Denunciar este perfil</AlertDialogTitle>
             <AlertDialogDescription>
-              Por favor, descreva por que você está denunciando este perfil. Sua denúncia é anônima.
+               Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="report-comments" className="text-right">
-                Motivo
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="report-reason" className="text-right">Motivo</Label>
+                <Select value={reportReason} onValueChange={(value) => setReportReason(value as ReportReason)}>
+                    <SelectTrigger id="report-reason" className="col-span-3">
+                        <SelectValue placeholder="Selecione um motivo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.entries(reasonTranslations).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>{value}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="report-comments" className="text-right pt-2">
+                Comentários
               </Label>
               <Textarea
                 id="report-comments"
                 value={reportComments}
                 onChange={(e) => setReportComments(e.target.value)}
                 className="col-span-3"
-                placeholder="Ex: Comportamento inadequado, spam, etc."
+                placeholder="Ex: Comportamento inadequado, spam, etc. (Opcional)"
+                rows={3}
               />
             </div>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportComments.trim()}>Enviar Denúncia</AlertDialogAction>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportReason}>Enviar Denúncia</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

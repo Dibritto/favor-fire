@@ -1,26 +1,27 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
-import type { Favor, User, UrgencyLevel, FavorStatus, FavorParticipationType } from '@/types';
+import type { Favor, User, UrgencyLevel, FavorStatus, FavorParticipationType, ReportReason } from '@/types';
 import { getCurrentUser } from '@/lib/auth'; // Mock auth
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, User as UserIcon, Users, X } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, User as UserIcon, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { RatingForm } from '@/components/rating-form';
-import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const urgencyTranslations: Record<UrgencyLevel, string> = {
   low: 'Baixa',
@@ -40,6 +41,13 @@ const participationTranslations: Record<FavorParticipationType, string> = {
   collective: 'Coletivo',
 };
 
+const reasonTranslations: { [key in ReportReason]: string } = {
+    spam: 'Spam ou Propaganda',
+    inappropriate: 'Conteúdo Inadequado',
+    scam: 'Fraude ou Golpe',
+    other: 'Outro',
+};
+
 
 export default function FavorDetailPage() {
   const params = useParams();
@@ -52,6 +60,7 @@ export default function FavorDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<ReportReason | ''>('');
   const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
@@ -112,11 +121,20 @@ export default function FavorDetailPage() {
   }
 
   const handleReportSubmit = () => {
-    console.log("Denúncia enviada:", { favorId: favor?.id, comments: reportComments });
+     if (!reportReason) {
+        toast({
+            title: "Erro",
+            description: "Por favor, selecione um motivo para a denúncia.",
+            variant: "destructive",
+        });
+        return;
+    }
+    console.log("Denúncia enviada:", { favorId: favor?.id, reason: reportReason, comments: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
     });
+    setReportReason("");
     setReportComments("");
     setIsReportDialogOpen(false);
   }
@@ -327,26 +345,40 @@ export default function FavorDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Denunciar este favor</AlertDialogTitle>
             <AlertDialogDescription>
-              Por favor, descreva por que você está denunciando este favor. Sua denúncia é anônima.
+              Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="report-comments" className="text-right">
-                Motivo
+                <Label htmlFor="report-reason" className="text-right">Motivo</Label>
+                <Select value={reportReason} onValueChange={(value) => setReportReason(value as ReportReason)}>
+                    <SelectTrigger id="report-reason" className="col-span-3">
+                        <SelectValue placeholder="Selecione um motivo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.entries(reasonTranslations).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>{value}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="report-comments" className="text-right pt-2">
+                Comentários
               </Label>
               <Textarea
                 id="report-comments"
                 value={reportComments}
                 onChange={(e) => setReportComments(e.target.value)}
                 className="col-span-3"
-                placeholder="Ex: É spam, conteúdo inadequado, etc."
+                placeholder="Ex: É spam, conteúdo inadequado, etc. (Opcional)"
+                rows={3}
               />
             </div>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportComments.trim()}>Enviar Denúncia</AlertDialogAction>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportReason}>Enviar Denúncia</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
