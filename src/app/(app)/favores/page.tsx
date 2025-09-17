@@ -51,10 +51,7 @@ export default function FavorDiscoveryPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div>
-            <h1 className="text-3xl font-headline font-bold">Descobrir Favores</h1>
-            <p className="text-muted-foreground">Encontre oportunidades para ajudar ou obter ajuda em sua comunidade.</p>
-        </div>
+        <p className="text-muted-foreground">Encontre oportunidades para ajudar ou obter ajuda em sua comunidade.</p>
         <Button asChild>
           <Link href="/favores/pedir">
             <PlusCircle className="mr-2 h-4 w-4" /> Pedir um Favor
