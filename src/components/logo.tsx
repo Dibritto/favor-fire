@@ -1,4 +1,6 @@
+
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -10,7 +12,7 @@ export function Logo({ size = "md", className }: LogoProps) {
   const height = size === "sm" ? 25 : size === "md" ? 30 : 38;
 
   return (
-    <div className={`relative ${className}`} style={{ width, height }}>
+    <div className={cn("relative", className)} style={{ width, height }}>
       <Image
         src="https://i.ibb.co/QJgVZnw/favor-logo.png"
         alt="Projeto Favor Logo"
