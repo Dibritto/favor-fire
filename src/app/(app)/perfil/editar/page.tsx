@@ -26,6 +26,7 @@ import { Loader2, Camera } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import { Label } from "@/components/ui/label";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres."),
@@ -222,5 +223,3 @@ export default function EditProfilePage() {
     </article>
   );
 }
-
-    
