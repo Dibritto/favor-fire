@@ -137,7 +137,7 @@ export default function PublicProfilePage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-6">
             <Card>
                 <CardHeader>
@@ -167,8 +167,8 @@ export default function PublicProfilePage() {
                 </Card>
             )}
         </aside>
-        <main className="md:col-span-2 space-y-6" aria-labelledby="contribution-heading">
-            <section>
+        <div className="md:col-span-2 space-y-6">
+            <section aria-labelledby="contribution-heading">
                 <Card>
                     <CardHeader>
                         <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
@@ -221,8 +221,8 @@ export default function PublicProfilePage() {
                 </CardContent>
               </Card>
             </article>
-        </main>
-      </div>
+        </div>
+      </main>
       <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
