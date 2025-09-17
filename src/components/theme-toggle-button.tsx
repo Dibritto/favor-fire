@@ -3,7 +3,7 @@
 
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from './theme-provider';
+import { useTheme } from './theme-client-provider'; // Atualizado para usar o novo provider
 import { useEffect, useState } from 'react';
 
 export function ThemeToggleButton() {

@@ -20,65 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2, Palette, Save } from "lucide-react";
 import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 import { isEqual } from "lodash";
-import { applyThemeColors, useTheme } from "@/components/theme-provider";
+import { applyThemeColors, hexToHslString, hslStringToHex } from "@/lib/theme-utils";
 
 
-// Helper Functions
-const hexToHslString = (hex: string): string => {
-    if (!hex || typeof hex !== 'string') return "0 0% 0%";
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return "0 0% 0%";
-    let r = parseInt(result[1], 16) / 255, g = parseInt(result[2], 16) / 255, b = parseInt(result[3], 16) / 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
-    if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-    h = Math.round(h * 360);
-    s = Math.round(s * 100);
-    l = Math.round(l * 100);
-    return `${h} ${s}% ${l}%`;
-};
-
-const hslToHex = (h: number, s: number, l: number): string => {
-    s /= 100; l /= 100;
-    const k = (n: number) => (n + h / 30) % 12;
-    const a = s * Math.min(l, 1 - l);
-    const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
-    return `#${[0, 8, 4].map(n => Math.round(f(n) * 255).toString(16).padStart(2, '0')).join('')}`;
-};
-
-const hslStringToHex = (hsl: string): string => {
-    if (!hsl) return '#000000';
-    const parts = hsl.split(" ");
-    if (parts.length !== 3) return '#000000';
-    const [h, s, l] = parts.map(val => parseFloat(val.replace('%', '')));
-    if (isNaN(h) || isNaN(s) || isNaN(l)) return '#000000';
-    return hslToHex(h, s, l);
-};
-
-const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues => {
-    const result: any = { light: {}, dark: {} };
-    for (const mode of ['light', 'dark'] as const) {
-        for (const key in theme[mode]) {
-            const hslString = theme[mode][key as keyof typeof theme.light];
-            if (typeof hslString === 'string') {
-                result[mode][key] = hslStringToHex(hslString);
-            }
-        }
-    }
-    return result;
-};
-
-
-// Zod Schemas
 const colorSchema = z.object({
     background: z.string(), foreground: z.string(), card: z.string(), cardForeground: z.string(),
     popover: z.string(), popoverForeground: z.string(), primary: z.string(), primaryForeground: z.string(),
@@ -107,12 +51,26 @@ const friendlyColorNames: Record<string, string> = {
     sidebarBorder: "Borda da Sidebar", sidebarRing: "Anel de Foco da Sidebar",
 };
 
+
+const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues => {
+    const result: any = { light: {}, dark: {} };
+    for (const mode of ['light', 'dark'] as const) {
+        for (const key in theme[mode]) {
+            const hslString = theme[mode][key as keyof typeof theme.light];
+            if (typeof hslString === 'string') {
+                result[mode][key] = hslStringToHex(hslString);
+            }
+        }
+    }
+    return result;
+};
+
+
 const DEFAULT_HEX_THEME = convertHslThemeToHex(MOCK_DEFAULT_THEME);
 const COLORS_STORAGE_KEY = "app-colors-hex";
 
 export default function ThemeColorsPage() {
   const { toast } = useToast();
-  const { theme: currentMode } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -125,23 +83,19 @@ export default function ThemeColorsPage() {
   });
 
   useEffect(() => {
+    // This effect runs only on the client, preventing hydration errors.
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
-      try {
-        const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
-        const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
-        setSavedTheme(themeToLoad);
-        form.reset(themeToLoad);
-      } catch (e) {
-        console.error("Failed to load theme from localStorage", e);
-        setSavedTheme(DEFAULT_HEX_THEME);
-        form.reset(DEFAULT_HEX_THEME);
-      }
+    try {
+      const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
+      const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
+      setSavedTheme(themeToLoad);
+      form.reset(themeToLoad);
+    } catch (e) {
+      console.error("Failed to load theme from localStorage", e);
+      setSavedTheme(DEFAULT_HEX_THEME);
+      form.reset(DEFAULT_HEX_THEME);
     }
-  }, [isMounted, form]);
+  }, [form]);
 
   useEffect(() => {
     if (!isMounted) return;
@@ -158,6 +112,7 @@ export default function ThemeColorsPage() {
       setSavedTheme(data);
       setHasChanges(false); 
       
+      const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
       applyThemeColors(data[currentMode]);
 
       toast({
@@ -181,7 +136,13 @@ export default function ThemeColorsPage() {
     form.reset(DEFAULT_HEX_THEME);
     setHasChanges(false);
 
-    applyThemeColors(DEFAULT_HEX_THEME[currentMode]);
+    const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
+    const root = document.documentElement;
+    Object.keys(defaultColorsForMode).forEach(key => {
+        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
+    });
 
     toast({
       title: "Tema Restaurado",
