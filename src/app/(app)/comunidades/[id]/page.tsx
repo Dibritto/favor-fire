@@ -7,7 +7,7 @@ import { mockCommunities, mockFavors, mockUsers } from '@/lib/mock-data';
 import type { Community, Favor, User } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Globe, Lock, Users, MessageSquare, Rss, PlusCircle, UserPlus, Star, MoreVertical, ShieldAlert } from 'lucide-react';
 import Image from 'next/image';
@@ -70,7 +70,7 @@ export default function CommunityDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      <header className="shadow-lg overflow-hidden rounded-lg">
+      <Card as="header" className="shadow-lg overflow-hidden">
         <div className="h-40 bg-gradient-to-r from-accent to-primary/80 relative">
           <Image
             src={`https://picsum.photos/seed/header${community.id}/1200/300`}
@@ -92,28 +92,26 @@ export default function CommunityDetailPage() {
               <span>{community.memberIds.length} membro(s)</span>
             </CardDescription>
           </div>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <p className="text-muted-foreground flex-grow">{community.description}</p>
-            <div className="flex-shrink-0 flex items-center gap-2 pt-2 sm:pt-0">
-                <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9">
-                            <MoreVertical className="h-4 w-4" />
-                            <span className="sr-only">Mais opções</span>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
-                            <ShieldAlert className="mr-2 h-4 w-4" />
-                            Denunciar Comunidade
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-          </div>
+          <p className="text-muted-foreground flex-grow">{community.description}</p>
         </div>
-      </header>
+        <CardFooter className="p-4 bg-muted/50 border-t flex justify-end gap-2">
+            <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9">
+                        <MoreVertical className="h-4 w-4" />
+                        <span className="sr-only">Mais opções</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                        <ShieldAlert className="mr-2 h-4 w-4" />
+                        Denunciar Comunidade
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </CardFooter>
+      </Card>
 
       <main>
         <Tabs defaultValue="favors" className="w-full">
@@ -201,3 +199,5 @@ export default function CommunityDetailPage() {
     </div>
   );
 }
+
+    
