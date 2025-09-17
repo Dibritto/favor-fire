@@ -22,12 +22,12 @@ import { useToast } from "@/hooks/use-toast";
 const signupFormSchema = z.object({
   name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
   email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
-  phone: z.string().optional(), // Optional phone number
+  phone: z.string().optional(),
   password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
-  path: ["confirmPassword"], // Path to show error on
+  path: ["confirmPassword"],
 });
 
 type SignupFormValues = z.infer<typeof signupFormSchema>;
@@ -48,22 +48,21 @@ export function SignupForm() {
   });
 
   async function onSubmit(data: SignupFormValues) {
-    console.log("Signup data:", data);
+    console.log("Dados de cadastro:", data);
     toast({
       title: "Cadastro Bem-sucedido",
-      description: "Bem-vindo(a) à Conexão Solidária! Redirecionando para o login...",
+      description: "Bem-vindo(a) à Kindred Connect! Redirecionando para o login...",
     });
-    // In a real app, you'd call an API to create the user
-    // For now, just redirect after a short delay
+    
     setTimeout(() => {
-      router.push("/auth/login");
+      router.push("/auth/entrar");
     }, 1500);
   }
 
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Junte-se à Conexão Solidária</CardTitle>
+        <CardTitle className="text-2xl font-headline">Junte-se à Kindred Connect</CardTitle>
         <CardDescription>Crie sua conta para começar a se conectar com sua comunidade.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -141,7 +140,7 @@ export function SignupForm() {
         </Form>
         <div className="mt-6 text-center text-sm">
           Já tem uma conta?{" "}
-          <Link href="/auth/login" className="underline text-primary hover:text-primary/80">
+          <Link href="/auth/entrar" className="underline text-primary hover:text-primary/80">
             Entrar
           </Link>
         </div>

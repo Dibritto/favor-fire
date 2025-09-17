@@ -1,5 +1,3 @@
-
-
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Footer } from '@/components/footer';
@@ -17,12 +15,12 @@ export default function WebsiteLayout({
           <Link href="/">
             <Logo size="md" />
           </Link>
-          <nav aria-label="Main navigation" className="flex items-center space-x-2">
+          <nav aria-label="Navegação principal" className="flex items-center space-x-2">
             <Button variant="ghost" asChild>
-              <Link href="/auth/login">Entrar</Link>
+              <Link href="/auth/entrar">Entrar</Link>
             </Button>
             <Button asChild>
-              <Link href="/auth/signup">Começar</Link>
+              <Link href="/auth/cadastrar">Começar</Link>
             </Button>
           </nav>
         </div>

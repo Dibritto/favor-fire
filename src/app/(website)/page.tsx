@@ -14,10 +14,10 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button asChild size="lg" className="w-full sm:w-auto shadow-lg hover:shadow-primary/30 transition-shadow">
-                    <Link href="/auth/signup">Comece Agora</Link>
+                    <Link href="/auth/cadastrar">Comece Agora</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
-                    <Link href="/favors">Explorar Favores</Link>
+                    <Link href="/favores">Explorar Favores</Link>
                 </Button>
             </div>
         </section>

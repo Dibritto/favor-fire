@@ -1,4 +1,3 @@
-
 interface LogoProps {
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -22,13 +21,11 @@ export function Logo({ size = "md", className }: LogoProps) {
         strokeLinejoin="round"
         className={`text-primary ${iconSizeClass}`}
       >
-        {/* Cupped hand/support base */}
         <path d="M5 20c0-3.5 3-6.5 7-6.5s7 3 7 6.5"/>
-        {/* Sprout representing growth/help */}
-        <path d="M12 14V8"/> {/* Stem */}
-        <path d="M9 10l3-3 3 3"/> {/* Leaves */}
+        <path d="M12 14V8"/>
+        <path d="M9 10l3-3 3 3"/>
       </svg>
-      <span className={`font-headline font-bold ${textSizeClass}`}>Favor</span>
+      <span className={`font-headline font-bold ${textSizeClass}`}>Kindred Connect</span>
     </div>
   );
 }

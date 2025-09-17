@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Use next/navigation for App Router
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -39,16 +39,14 @@ export function LoginForm() {
   });
 
   async function onSubmit(data: LoginFormValues) {
-    // Simulate API call
-    console.log("Login data:", data);
+    console.log("Dados de login:", data);
     toast({
       title: "Login Bem-sucedido",
       description: "Redirecionando para o seu painel...",
     });
-    // In a real app, you'd call an auth API here
-    // For now, just redirect after a short delay
+    
     setTimeout(() => {
-      router.push("/dashboard"); // Redirect to main app page
+      router.push("/inicio");
     }, 1000);
   }
 
@@ -56,7 +54,7 @@ export function LoginForm() {
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-headline">Bem-vindo(a) de Volta!</CardTitle>
-        <CardDescription>Faça login na sua conta Conexão Solidária.</CardDescription>
+        <CardDescription>Faça login na sua conta Kindred Connect.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -94,7 +92,7 @@ export function LoginForm() {
         </Form>
         <div className="mt-6 text-center text-sm">
           Não tem uma conta?{" "}
-          <Link href="/auth/signup" className="underline text-primary hover:text-primary/80">
+          <Link href="/auth/cadastrar" className="underline text-primary hover:text-primary/80">
             Cadastre-se
           </Link>
         </div>

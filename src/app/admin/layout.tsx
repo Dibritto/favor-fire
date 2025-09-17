@@ -1,5 +1,3 @@
-
-
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,7 +10,7 @@ import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Footer } from '@/components/footer';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser(); // Assuming admin is also a user
+  const user = await getCurrentUser();
 
   const userInitial = user?.name?.charAt(0).toUpperCase() || 'A';
 
@@ -28,19 +26,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <SidebarContent className="flex-grow">
             <SidebarMenu>
                <SidebarMenuItem>
-                <ClientNavItem href="/dashboard" label="Voltar ao App">
+                <ClientNavItem href="/inicio" label="Voltar ao App">
                   <Home />
                   <span>Voltar ao App</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/admin/dashboard" exact label="Admin Dashboard">
+                <ClientNavItem href="/admin/painel" exact label="Painel Administrativo">
                   <LayoutDashboard />
-                  <span>Dashboard</span>
+                  <span>Painel</span>
                 </ClientNavItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <ClientNavItem href="/admin/users" label="Gerenciar Usuários">
+                <ClientNavItem href="/admin/usuarios" label="Gerenciar Usuários">
                   <Users />
                   <span>Usuários</span>
                 </ClientNavItem>
@@ -59,7 +57,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </div>
             </div>
             <Button variant="ghost" className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" asChild>
-              <Link href="/auth/login"> {/* Mock logout */}
+              <Link href="/auth/entrar">
                 <LogOut className="mr-2 h-5 w-5" />
                 Sair
               </Link>

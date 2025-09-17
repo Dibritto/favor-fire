@@ -66,7 +66,7 @@ export function FavorCard({ favor }: FavorCardProps) {
         </div>
         <CardDescription className="text-xs text-muted-foreground flex items-center">
           <Users className="h-3 w-3 mr-1.5" />
-          Pedido por: {favor.requester?.name || 'Uma Alma Bondosa'}
+          Pedido por: {favor.requester?.name || 'Alguém da comunidade'}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow pt-0 pb-4">
@@ -94,7 +94,7 @@ export function FavorCard({ favor }: FavorCardProps) {
       </CardContent>
       <CardFooter className="pt-0">
         <Button asChild className="w-full">
-          <Link href={`/favors/${favor.id}`}>Ver Detalhes</Link>
+          <Link href={`/favores/${favor.id}`}>Ver Detalhes</Link>
         </Button>
       </CardFooter>
     </Card>
