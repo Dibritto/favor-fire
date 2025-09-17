@@ -18,69 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Palette, Save } from "lucide-react";
-
-// This is not the real theme provider, just a helper for this page.
-const MOCK_DEFAULT_THEME = {
-  light: {
-    background: "0 0% 100%",
-    foreground: "222.2 84% 4.9%",
-    card: "0 0% 100%",
-    cardForeground: "222.2 84% 4.9%",
-    popover: "0 0% 100%",
-    popoverForeground: "222.2 84% 4.9%",
-    primary: "219 16% 50%",
-    primaryForeground: "210 40% 98%",
-    secondary: "210 8% 59%",
-    secondaryForeground: "222.2 47.4% 11.2%",
-    muted: "210 40% 96.1%",
-    mutedForeground: "215.4 16.3% 46.9%",
-    accent: "326 9% 55%",
-    accentForeground: "210 40% 98%",
-    destructive: "0 84.2% 60.2%",
-    destructiveForeground: "210 40% 98%",
-    border: "0 0% 83.1%",
-    input: "0 0% 83.1%",
-    ring: "219 16% 50%",
-    sidebarBackground: "210 40% 98%",
-    sidebarForeground: "222.2 84% 4.9%",
-    sidebarPrimary: "219 16% 50%",
-    sidebarPrimaryForeground: "210 40% 98%",
-    sidebarAccent: "210 40% 94.1%",
-    sidebarAccentForeground: "222.2 84% 4.9%",
-    sidebarBorder: "210 40% 90.1%",
-    sidebarRing: "219 16% 50%",
-  },
-  dark: {
-    background: "222.2 84% 4.9%",
-    foreground: "210 40% 98%",
-    card: "222.2 84% 4.9%",
-    cardForeground: "210 40% 98%",
-    popover: "222.2 84% 4.9%",
-    popoverForeground: "210 40% 98%",
-    primary: "219 16% 60%",
-    primaryForeground: "222.2 47.4% 11.2%",
-    secondary: "217.2 32.6% 17.5%",
-    secondaryForeground: "210 40% 98%",
-    muted: "217.2 32.6% 17.5%",
-    mutedForeground: "215 20.2% 65.1%",
-    accent: "326 9% 65%",
-    accentForeground: "210 40% 98%",
-    destructive: "0 62.8% 50.6%",
-    destructiveForeground: "210 40% 98%",
-    border: "217.2 32.6% 17.5%",
-    input: "217.2 32.6% 17.5%",
-    ring: "219 16% 60%",
-    sidebarBackground: "222.2 84% 5.9%",
-    sidebarForeground: "210 40% 98%",
-    sidebarPrimary: "210 40% 98%",
-    sidebarPrimaryForeground: "222.2 47.4% 11.2%",
-    sidebarAccent: "217.2 32.6% 17.5%",
-    sidebarAccentForeground: "210 40% 98%",
-    sidebarBorder: "217.2 32.6% 17.5%",
-    sidebarRing: "212.7 26.8% 83.9%",
-  },
-};
-
+import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 
 const hexToHsl = (hex: string): [number, number, number] => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -117,7 +55,6 @@ const hslToHex = (h: number, s: number, l: number): string => {
       l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
     return `#${[0, 8, 4].map(n => Math.round(f(n) * 255).toString(16).padStart(2, '0')).join('')}`;
 };
-
 
 const colorSchema = z.object({
     background: z.string(),
@@ -202,7 +139,7 @@ const friendlyColorNames: Record<string, string> = {
 
 const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-function updateStyleTag(theme: ColorConfigFormValues) {
+function updateStyleTag(theme: ColorConfigFormValues | null) {
     let styleTag = document.getElementById('dynamic-theme-styles');
     if (!styleTag) {
         styleTag = document.createElement('style');
@@ -210,10 +147,21 @@ function updateStyleTag(theme: ColorConfigFormValues) {
         document.head.appendChild(styleTag);
     }
     
-    const generateCssVars = (themePart: Record<string, string>) => {
+    if (!theme) {
+        styleTag.innerHTML = '';
+        return;
+    }
+
+    const generateCssVars = (themePart: Record<string, string>, prefix: string = '') => {
         return Object.entries(themePart).map(([key, value]) => {
-            const [h, s, l] = hexToHsl(value);
-            return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
+            if (!value) return ''; // Ignore empty values
+            try {
+                const [h, s, l] = hexToHsl(value);
+                return `--${prefix}${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
+            } catch (e) {
+                console.warn(`Invalid color format for key ${key}: ${value}`);
+                return '';
+            }
         }).join('\n');
     }
 
@@ -234,41 +182,35 @@ export default function ThemeColorsPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [theme, setTheme] = useState<ColorConfigFormValues>(() => convertHslThemeToHex(MOCK_DEFAULT_THEME));
 
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: convertHslThemeToHex(MOCK_DEFAULT_THEME),
+    defaultValues: theme,
   });
-  
-  useEffect(() => {
-    // This effect runs once on mount to confirm we're on the client
-    // and to load the theme from localStorage.
-    setIsClient(true);
-    try {
-        const storedTheme = localStorage.getItem('app-colors');
-        if (storedTheme) {
-            const parsedTheme = JSON.parse(storedTheme);
-            const hexTheme = convertHslThemeToHex(parsedTheme);
-            form.reset(hexTheme); // Load saved theme into the form
-            updateStyleTag(hexTheme); // Apply the styles
-        } else {
-            updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME)); // Apply default styles
-        }
-    } catch {
-        // If there's an error, apply default styles
-        updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
-    }
-  }, [form]);
 
   useEffect(() => {
-      // This effect watches for form changes and applies them live.
-      if (!isClient) return;
-      const subscription = form.watch((value) => {
-          updateStyleTag(value as ColorConfigFormValues);
-      });
-      return () => subscription.unsubscribe();
-  }, [form, isClient]);
-  
+    setIsClient(true);
+    try {
+        const storedThemeJson = localStorage.getItem('app-colors');
+        if (storedThemeJson) {
+            const storedTheme = JSON.parse(storedThemeJson);
+            const hexTheme = convertHslThemeToHex(storedTheme);
+            setTheme(hexTheme);
+        }
+    } catch (e) {
+        console.error("Failed to load theme from localStorage", e);
+        setTheme(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+        form.reset(theme);
+        updateStyleTag(theme);
+    }
+  }, [theme, form, isClient]);
+
   function onSubmit(data: ColorConfigFormValues) {
     setIsSubmitting(true);
     
@@ -283,10 +225,7 @@ export default function ThemeColorsPage() {
         }
         
         localStorage.setItem('app-colors', JSON.stringify(newThemeInHsl));
-
-        // After saving, reset the form state to the newly saved data.
-        // This makes the new data the "default" for dirty state tracking.
-        form.reset(data);
+        setTheme(data); // Update the state with the new hex values
 
         toast({
           title: "Tema Atualizado!",
@@ -308,17 +247,15 @@ export default function ThemeColorsPage() {
   const resetToDefault = () => {
     localStorage.removeItem('app-colors');
     const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
-    form.reset(defaultHexTheme);
-    updateStyleTag(defaultHexTheme);
+    setTheme(defaultHexTheme);
      toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
     });
   }
-
+  
   const renderColorFields = (mode: 'light' | 'dark') => {
     if (!isClient) {
-        // Render skeletons on the server to prevent hydration mismatch
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Object.keys(MOCK_DEFAULT_THEME[mode]).map((key) => (
@@ -336,7 +273,7 @@ export default function ThemeColorsPage() {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.keys(form.getValues(mode)).map((key) => (
+        {Object.keys(friendlyColorNames).map((key) => (
           <FormField
             key={`${mode}.${key}`}
             control={form.control}
@@ -373,7 +310,7 @@ export default function ThemeColorsPage() {
                             Cores do Tema
                         </h1>
                         <p className="text-muted-foreground mt-1">
-                            Personalize a aparência do aplicativo. As alterações serão aplicadas em tempo real.
+                            Personalize a aparência do aplicativo. Clique em Salvar para aplicar.
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -409,7 +346,5 @@ export default function ThemeColorsPage() {
      </main>
   );
 }
-
-    
 
     
