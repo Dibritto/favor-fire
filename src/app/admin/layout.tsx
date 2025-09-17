@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Footer } from '@/components/footer';
+import { PageTitle } from '@/components/page-title';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -68,7 +69,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" />
             <div className="flex-1">
-                <h1 className="font-semibold text-xl font-headline text-foreground">Painel Administrativo</h1>
+                <PageTitle />
             </div>
             <div className="flex items-center gap-2">
                 <ThemeToggleButton />
