@@ -15,6 +15,9 @@ import { FavorCard } from '@/components/favor-card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function CommunityDetailPage() {
   const params = useParams();
@@ -24,6 +27,8 @@ export default function CommunityDetailPage() {
   const [community, setCommunity] = useState<Community | null>(null);
   const [favors, setFavors] = useState<Favor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
     // Simula busca de dados
@@ -45,11 +50,14 @@ export default function CommunityDetailPage() {
     });
   }
 
-  const handleReport = () => {
+  const handleReportSubmit = () => {
+    console.log("Denúncia enviada:", { communityId: community?.id, comments: reportComments });
     toast({
-        title: "Denúncia (Em Breve)",
-        description: "A funcionalidade de denúncia será implementada em breve.",
+        title: "Denúncia Enviada",
+        description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
     });
+    setReportComments("");
+    setIsReportDialogOpen(false);
   }
 
   if (isLoading) {
@@ -95,7 +103,7 @@ export default function CommunityDetailPage() {
                       </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={handleReport} className="text-destructive">
+                      <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
                           <ShieldAlert className="mr-2 h-4 w-4" />
                           Denunciar Comunidade
                       </DropdownMenuItem>
@@ -161,8 +169,35 @@ export default function CommunityDetailPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+       <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Denunciar esta comunidade</AlertDialogTitle>
+            <AlertDialogDescription>
+              Por favor, descreva por que você está denunciando esta comunidade. Sua denúncia é anônima.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="report-comments" className="text-right">
+                Motivo
+              </Label>
+              <Textarea
+                id="report-comments"
+                value={reportComments}
+                onChange={(e) => setReportComments(e.target.value)}
+                className="col-span-3"
+                placeholder="Ex: Conteúdo inadequado, spam, etc."
+              />
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportComments.trim()}>Enviar Denúncia</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
-
-    

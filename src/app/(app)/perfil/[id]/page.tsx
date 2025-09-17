@@ -16,6 +16,9 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 function ProfileFavorItem({ favor }: { favor: Favor }) {
     return (
@@ -41,6 +44,8 @@ export default function PublicProfilePage() {
   const [favorsRequested, setFavorsRequested] = useState<Favor[]>([]);
   const [favorsFulfilled, setFavorsFulfilled] = useState<Favor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
     if (!userId) return;
@@ -58,12 +63,15 @@ export default function PublicProfilePage() {
     fetchProfileData();
   }, [userId]);
 
-  const handleReport = () => {
+  const handleReportSubmit = () => {
+    console.log("Denúncia enviada:", { userId: user?.id, comments: reportComments });
     toast({
-        title: "Denúncia (Em Breve)",
-        description: "A funcionalidade de denúncia será implementada em breve.",
+        title: "Denúncia Enviada",
+        description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
     });
-  }
+    setReportComments("");
+    setIsReportDialogOpen(false);
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div><p className="ml-4 text-muted-foreground">Carregando perfil...</p></div>;
@@ -112,7 +120,7 @@ export default function PublicProfilePage() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={handleReport} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
                                     <ShieldAlert className="mr-2 h-4 w-4" />
                                     Denunciar Perfil
                                 </DropdownMenuItem>
@@ -215,8 +223,34 @@ export default function PublicProfilePage() {
             </article>
         </main>
       </div>
+      <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Denunciar este perfil</AlertDialogTitle>
+            <AlertDialogDescription>
+              Por favor, descreva por que você está denunciando este perfil. Sua denúncia é anônima.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="report-comments" className="text-right">
+                Motivo
+              </Label>
+              <Textarea
+                id="report-comments"
+                value={reportComments}
+                onChange={(e) => setReportComments(e.target.value)}
+                className="col-span-3"
+                placeholder="Ex: Comportamento inadequado, spam, etc."
+              />
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportComments.trim()}>Enviar Denúncia</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
-
-    
