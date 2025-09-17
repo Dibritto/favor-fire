@@ -12,14 +12,14 @@ export function Logo({ size = "md", className }: LogoProps) {
   const height = size === "sm" ? 25 : size === "md" ? 30 : 38;
 
   return (
-    <div className={cn("relative", className)} style={{ width, height }}>
       <Image
         src="https://i.ibb.co/QJgVZnw/favor-logo.png"
         alt="Projeto Favor Logo"
-        fill
+        width={width}
+        height={height}
+        className={cn(className)}
         style={{ objectFit: 'contain' }}
         priority
       />
-    </div>
   );
 }
