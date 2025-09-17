@@ -51,7 +51,7 @@ export function SignupForm() {
     console.log("Dados de cadastro:", data);
     toast({
       title: "Cadastro Bem-sucedido",
-      description: "Bem-vindo(a) à Kindred Connect! Redirecionando para o login...",
+      description: "Bem-vindo(a) à Conexão Solidária! Redirecionando para o login...",
     });
     
     setTimeout(() => {
@@ -62,7 +62,7 @@ export function SignupForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Junte-se à Kindred Connect</CardTitle>
+        <CardTitle className="text-2xl font-headline">Junte-se à Conexão Solidária</CardTitle>
         <CardDescription>Crie sua conta para começar a se conectar com sua comunidade.</CardDescription>
       </CardHeader>
       <CardContent>

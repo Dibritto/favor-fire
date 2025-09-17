@@ -51,7 +51,7 @@ export function Footer() {
       </div>
       <div className="text-center py-6 border-t border-border/50 bg-muted/50">
         <p className="text-sm text-muted-foreground">
-          {currentYear ? `© ${currentYear} Kindred Connect. Todos os direitos reservados.` : `\u00A0`}
+          {currentYear ? `© ${currentYear} Conexão Solidária. Todos os direitos reservados.` : `\u00A0`}
         </p>
       </div>
     </footer>

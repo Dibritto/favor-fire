@@ -25,7 +25,7 @@ export function Logo({ size = "md", className }: LogoProps) {
         <path d="M12 14V8"/>
         <path d="M9 10l3-3 3 3"/>
       </svg>
-      <span className={`font-headline font-bold ${textSizeClass}`}>Kindred Connect</span>
+      <span className={`font-headline font-bold ${textSizeClass}`}>Conexão Solidária</span>
     </div>
   );
 }
