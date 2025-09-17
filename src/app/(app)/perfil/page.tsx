@@ -79,29 +79,29 @@ export default function ProfilePage() {
         </div>
         <div className="relative pt-0">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
-                <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
+                <Avatar className="h-32 w-32 border-4 border-background shadow-lg shrink-0">
                     <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="profile picture"/>
                     <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className="flex-grow text-center sm:text-left">
+                <div className="flex flex-col items-center sm:items-start flex-grow w-full">
                     <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
-                    {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg">{user.bio}</p>}
+                    {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg text-center sm:text-left">{user.bio}</p>}
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
                         <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
-                </div>
-                 <div className="flex flex-col sm:flex-row gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href="/perfil/editar">
-                            <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
-                        </Link>
-                    </Button>
-                    <Button size="sm" asChild>
-                        <Link href="/comunidades/criar">
-                            <Building className="mr-2 h-4 w-4" /> Criar Comunidade
-                        </Link>
-                    </Button>
+                     <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href="/perfil/editar">
+                                <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
+                            </Link>
+                        </Button>
+                        <Button size="sm" asChild>
+                            <Link href="/comunidades/criar">
+                                <Building className="mr-2 h-4 w-4" /> Criar Comunidade
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,6 +198,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-
-    
