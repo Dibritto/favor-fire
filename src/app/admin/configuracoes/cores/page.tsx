@@ -1,10 +1,9 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,7 +50,6 @@ const friendlyColorNames: Record<string, string> = {
     sidebarBorder: "Borda da Sidebar", sidebarRing: "Anel de Foco da Sidebar",
 };
 
-
 const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues => {
     const result: any = { light: {}, dark: {} };
     for (const mode of ['light', 'dark'] as const) {
@@ -83,7 +81,6 @@ export default function ThemeColorsPage() {
   });
 
   useEffect(() => {
-    // This effect runs only on the client, preventing hydration errors.
     setIsMounted(true);
     try {
       const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
@@ -110,10 +107,11 @@ export default function ThemeColorsPage() {
     try {
       localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(data));
       setSavedTheme(data);
-      setHasChanges(false); 
       
       const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
       applyThemeColors(data[currentMode]);
+      
+      setHasChanges(false);
 
       toast({
         title: "Tema Atualizado!",
@@ -134,7 +132,6 @@ export default function ThemeColorsPage() {
     localStorage.removeItem(COLORS_STORAGE_KEY);
     setSavedTheme(DEFAULT_HEX_THEME);
     form.reset(DEFAULT_HEX_THEME);
-    setHasChanges(false);
 
     const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
     const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
@@ -144,6 +141,7 @@ export default function ThemeColorsPage() {
         root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
     });
 
+    setHasChanges(false);
     toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",

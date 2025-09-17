@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="antialiased">
+      <body>
         <ThemeProvider
           storageKey="app-theme-mode"
           colorsStorageKey="app-colors-hex"
@@ -27,5 +27,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    

@@ -7,12 +7,10 @@ type ThemeProviderProps = {
 }
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  // O ThemeClientProvider agora tem "use client" e lida com toda a lógica do navegador.
   return (
     <ThemeClientProvider {...props}>
       {children}
     </ThemeClientProvider>
   )
 }
-
-// A função `useTheme` agora será exportada de `theme-client-provider.tsx`
-// pois é um hook do lado do cliente.

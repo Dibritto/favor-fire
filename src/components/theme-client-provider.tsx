@@ -37,40 +37,31 @@ export function ThemeClientProvider({
   const [theme, setTheme] = useState<Theme>(defaultTheme);
   const [isMounted, setIsMounted] = useState(false);
 
-  // This ensures we're on the client before doing anything.
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (isMounted) {
-      const storedTheme = localStorage.getItem(storageKey) as Theme | null;
-      if (storedTheme) {
-        setTheme(storedTheme);
-      } else {
-        setTheme(defaultTheme);
-      }
-    }
-  }, [isMounted, storageKey, defaultTheme]);
-
-  useEffect(() => {
     if (!isMounted) return;
+
+    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
+    setTheme(storedTheme || defaultTheme);
 
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    localStorage.setItem(storageKey, theme);
+    root.classList.add(storedTheme || defaultTheme);
+    localStorage.setItem(storageKey, storedTheme || defaultTheme);
     
     try {
       const storedColorsJson = localStorage.getItem(colorsStorageKey);
-      if (storedColorsJson) {
-        const hexTheme = JSON.parse(storedColorsJson);
-        if (hexTheme && hexTheme[theme]) {
-            applyThemeColors(hexTheme[theme]);
-        }
+      const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
+      const currentMode = storedTheme || defaultTheme;
+
+      if (hexTheme && hexTheme[currentMode]) {
+          applyThemeColors(hexTheme[currentMode]);
       } else {
-          // If no custom colors, apply default HSL from the file
-          const defaultColorsForMode = MOCK_DEFAULT_THEME[theme];
+          const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
+          const root = document.documentElement;
           Object.keys(defaultColorsForMode).forEach(key => {
               const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
               root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
@@ -79,42 +70,44 @@ export function ThemeClientProvider({
     } catch (e) {
         console.error("Failed to parse or apply theme colors from localStorage", e);
     }
-  }, [theme, isMounted, storageKey, colorsStorageKey]);
-
-  // Add a listener to storage events to update theme in real-time across tabs
-  useEffect(() => {
-      if (!isMounted) return;
-      
-      const handleStorageChange = (event: StorageEvent) => {
-        if (event.key === colorsStorageKey && event.newValue) {
-             try {
-                const newHexTheme = JSON.parse(event.newValue);
-                if (newHexTheme && newHexTheme[theme]) {
-                    applyThemeColors(newHexTheme[theme]);
-                }
-             } catch (e) {
-                 console.error("Failed to parse stored theme on storage event", e);
-             }
-        }
-        if (event.key === storageKey && event.newValue) {
-          setTheme(event.newValue as Theme);
-        }
-      };
-    
-      window.addEventListener('storage', handleStorageChange);
-      return () => {
-          window.removeEventListener('storage', handleStorageChange);
-      };
-  }, [theme, isMounted, storageKey, colorsStorageKey]);
-
+  }, [isMounted, storageKey, colorsStorageKey, defaultTheme]);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    setTheme(prevTheme => {
+        const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+        localStorage.setItem(storageKey, newTheme);
+        window.document.documentElement.classList.remove('light', 'dark');
+        window.document.documentElement.classList.add(newTheme);
+        // Re-apply colors for the new theme
+        try {
+            const storedColorsJson = localStorage.getItem(colorsStorageKey);
+            const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
+            if (hexTheme && hexTheme[newTheme]) {
+                applyThemeColors(hexTheme[newTheme]);
+            } else {
+                 const defaultColorsForMode = MOCK_DEFAULT_THEME[newTheme];
+                 const root = document.documentElement;
+                 Object.keys(defaultColorsForMode).forEach(key => {
+                     const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                     root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
+                 });
+            }
+        } catch(e) {
+            console.error("Failed to apply theme on toggle", e);
+        }
+
+        return newTheme;
+    });
   }
 
   const value = {
     theme,
-    setTheme,
+    setTheme: (newTheme: Theme) => {
+        setTheme(newTheme);
+        localStorage.setItem(storageKey, newTheme);
+        window.document.documentElement.classList.remove('light', 'dark');
+        window.document.documentElement.classList.add(newTheme);
+    },
     toggleTheme,
   }
 
