@@ -170,7 +170,7 @@ export default function FavorDetailPage() {
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-           <div className="flex justify-end gap-2">
+           <div className="flex justify-end items-center gap-2">
              <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
                 {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
                 {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
@@ -178,10 +178,7 @@ export default function FavorDetailPage() {
              <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
                 <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
             </Badge>
-          </div>
-          <div className="flex justify-between items-start gap-4">
-              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1 pt-2">{favor.title}</CardTitle>
-              <DropdownMenu>
+             <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                           <MoreVertical className="h-4 w-4" />
@@ -195,6 +192,9 @@ export default function FavorDetailPage() {
                       </DropdownMenuItem>
                   </DropdownMenuContent>
               </DropdownMenu>
+          </div>
+          <div className="flex justify-between items-start gap-4">
+              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1 pt-2">{favor.title}</CardTitle>
           </div>
           <CardDescription className="text-sm text-muted-foreground pt-1">
             Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
@@ -354,3 +354,5 @@ export default function FavorDetailPage() {
     </article>
   );
 }
+
+    
