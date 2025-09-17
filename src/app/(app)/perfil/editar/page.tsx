@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,8 +22,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentUser } from "@/lib/auth";
 import type { User } from "@/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, Camera } from "lucide-react";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres."),
@@ -88,86 +91,124 @@ export default function EditProfilePage() {
       </div>
     );
   }
+  
+  const publicName = form.watch('displayName') || form.watch('name') || "Usuário";
 
   return (
-    <article className="max-w-2xl mx-auto">
+    <article className="max-w-2xl mx-auto space-y-8">
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>Editar Perfil</CardTitle>
-          <CardDescription>Atualize suas informações pessoais. O e-mail não pode ser alterado.</CardDescription>
+          <CardDescription>Atualize suas informações e personalize sua aparência na plataforma.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome Completo (Privado)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Seu nome completo" {...field} />
-                    </FormControl>
-                    <FormDescription>Este nome não será exibido publicamente.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="displayName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome de Exibição (Público)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Como você quer ser chamado" {...field} />
-                    </FormControl>
-                     <FormDescription>Este será seu nome público na plataforma.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sua Biografia (Público)</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Fale um pouco sobre você..." {...field} rows={3} />
-                    </FormControl>
-                    <FormDescription>Uma breve biografia que aparecerá no seu perfil.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>E-mail</FormLabel>
-                    <FormControl>
-                      <Input placeholder="seu@email.com" {...field} disabled />
-                    </FormControl>
-                    <FormDescription>O e-mail não pode ser alterado.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="(XX) XXXXX-XXXX" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
+              <div className="space-y-6">
+                <div className="space-y-2">
+                    <Label>Imagens do Perfil</Label>
+                    <CardDescription>Clique para alterar sua foto e capa.</CardDescription>
+                </div>
+                 <div className="relative h-32 w-full rounded-lg bg-muted">
+                    <Image
+                        src={`https://picsum.photos/seed/profilebanner${user?.id}/1200/200`}
+                        alt="Imagem de capa do usuário"
+                        fill
+                        className="object-cover rounded-lg"
+                        data-ai-hint="profile cover"
+                    />
+                    <Button type="button" variant="outline" size="icon" className="absolute top-2 right-2 bg-background/70 hover:bg-background/90">
+                        <Camera className="h-4 w-4" />
+                        <span className="sr-only">Alterar imagem de capa</span>
+                    </Button>
+                    <div className="absolute bottom-0 left-4 translate-y-1/2">
+                         <div className="relative group w-24 h-24">
+                            <Avatar className="h-24 w-24 border-4 border-background shadow-md">
+                                <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/128/128`} alt={publicName} data-ai-hint="profile picture" />
+                                <AvatarFallback className="text-2xl">{publicName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <Button type="button" variant="outline" size="icon" className="absolute bottom-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background/90">
+                                <Camera className="h-4 w-4" />
+                                <span className="sr-only">Alterar avatar</span>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+              <div className="pt-12 space-y-6">
+                <FormField
+                    control={form.control}
+                    name="displayName"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Nome de Exibição (Público)</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Como você quer ser chamado" {...field} />
+                        </FormControl>
+                        <FormDescription>Este será seu nome público na plataforma.</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="bio"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Sua Biografia (Público)</FormLabel>
+                        <FormControl>
+                        <Textarea placeholder="Fale um pouco sobre você..." {...field} rows={3} />
+                        </FormControl>
+                        <FormDescription>Uma breve biografia que aparecerá no seu perfil.</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Nome Completo (Privado)</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Seu nome completo" {...field} />
+                        </FormControl>
+                        <FormDescription>Este nome não será exibido publicamente.</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>E-mail</FormLabel>
+                        <FormControl>
+                        <Input placeholder="seu@email.com" {...field} disabled />
+                        </FormControl>
+                        <FormDescription>O e-mail não pode ser alterado.</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Telefone (Opcional)</FormLabel>
+                        <FormControl>
+                        <Input placeholder="(XX) XXXXX-XXXX" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+              </div>
+
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" asChild>
                     <Link href="/perfil">Cancelar</Link>
@@ -181,3 +222,5 @@ export default function EditProfilePage() {
     </article>
   );
 }
+
+    

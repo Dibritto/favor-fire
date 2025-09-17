@@ -21,8 +21,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { Loader2, Globe, Lock } from "lucide-react";
+import { Loader2, Globe, Lock, Camera } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const communityFormSchema = z.object({
   name: z.string().min(5, "O nome deve ter pelo menos 5 caracteres.").max(50, "O nome deve ter no máximo 50 caracteres."),
@@ -62,6 +64,8 @@ export default function CreateCommunityPage() {
     setIsSubmitting(false);
   }
 
+  const communityName = form.watch('name') || "Nova Comunidade";
+
   return (
     <main className="max-w-2xl mx-auto">
       <Card className="shadow-lg">
@@ -75,39 +79,73 @@ export default function CreateCommunityPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome da Comunidade</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Amantes de Culinária do Bairro" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      O nome que será exibido publicamente.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Descreva o propósito e as regras da sua comunidade..."
-                        rows={5}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
+               <div className="space-y-2">
+                 <Label>Identidade Visual da Comunidade</Label>
+                 <FormDescription>Escolha uma imagem de capa e um avatar para sua comunidade.</FormDescription>
+                 <div className="relative h-32 w-full rounded-lg bg-muted mt-2">
+                    <Image
+                        src={`https://picsum.photos/seed/newcommunitycover/1200/200`}
+                        alt="Imagem de capa da comunidade"
+                        fill
+                        className="object-cover rounded-lg"
+                        data-ai-hint="community cover abstract"
+                    />
+                    <Button type="button" variant="outline" size="icon" className="absolute top-2 right-2 bg-background/70 hover:bg-background/90">
+                        <Camera className="h-4 w-4" />
+                        <span className="sr-only">Alterar imagem de capa</span>
+                    </Button>
+                    <div className="absolute bottom-0 left-4 translate-y-1/2">
+                         <div className="relative group w-24 h-24">
+                            <Avatar className="h-24 w-24 border-4 border-background shadow-md">
+                                <AvatarImage src={`https://picsum.photos/seed/newcommunityavatar/128/128`} alt={communityName} data-ai-hint="community logo" />
+                                <AvatarFallback className="text-2xl">{communityName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <Button type="button" variant="outline" size="icon" className="absolute bottom-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background/90">
+                                <Camera className="h-4 w-4" />
+                                <span className="sr-only">Alterar avatar da comunidade</span>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+               </div>
+
+              <div className="space-y-6 pt-12">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome da Comunidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: Amantes de Culinária do Bairro" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        O nome que será exibido publicamente.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Descrição</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Descreva o propósito e as regras da sua comunidade..."
+                          rows={5}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="type"
@@ -161,3 +199,5 @@ export default function CreateCommunityPage() {
     </main>
   );
 }
+
+    
