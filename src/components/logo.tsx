@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import logo from '@/app/favor.png';
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -7,20 +9,21 @@ interface LogoProps {
 
 export function Logo({ size = "md", className }: LogoProps) {
   const sizeStyles = {
-    sm: 'h-6', // Adjust height as needed
-    md: 'h-8', // Adjust height as needed
-    lg: 'h-10', // Adjust height as needed
+    sm: 'h-6 w-auto',
+    md: 'h-8 w-auto',
+    lg: 'h-10 w-auto',
   };
 
   return (
-    <img
-      src="https://i.ibb.co/VvZVj2S/favor-logo-1.png"
+    <Image
+      src={logo}
       alt="Projeto Favor Logo"
       className={cn(
         "object-contain",
         sizeStyles[size],
         className
       )}
+      priority
     />
   );
 }
