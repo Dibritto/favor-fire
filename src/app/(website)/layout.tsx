@@ -15,14 +15,14 @@ export default function WebsiteLayout({
           <Link href="/">
             <Logo size="md" />
           </Link>
-          <nav aria-label="Navegação principal" className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <Button variant="ghost" asChild>
               <Link href="/auth/entrar">Entrar</Link>
             </Button>
             <Button asChild>
               <Link href="/auth/cadastrar">Começar</Link>
             </Button>
-          </nav>
+          </div>
         </div>
       </header>
 

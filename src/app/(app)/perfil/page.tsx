@@ -62,7 +62,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      <header className="shadow-xl overflow-hidden rounded-lg">
+      <div className="shadow-xl overflow-hidden rounded-lg">
         <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
            <Image 
             src="https://placehold.co/1200x200.png" 
@@ -91,7 +91,7 @@ export default function ProfilePage() {
                 <Button variant="outline" size="sm"><Edit3 className="mr-2 h-4 w-4" /> Editar Perfil (Em Breve)</Button>
             </div>
         </div>
-      </header>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1">
