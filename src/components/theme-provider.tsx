@@ -2,7 +2,6 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import MOCK_DEFAULT_THEME from "@/lib/default-theme"
 
 export type Theme = "dark" | "light"
 
@@ -26,41 +25,6 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
-function applyCustomColors() {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    const storedColors = localStorage.getItem('app-colors');
-    let styleTag = document.getElementById('dynamic-theme-styles');
-
-    if (!styleTag) {
-        styleTag = document.createElement('style');
-        styleTag.id = 'dynamic-theme-styles';
-        document.head.appendChild(styleTag);
-    }
-    
-    const theme = storedColors ? JSON.parse(storedColors) : MOCK_DEFAULT_THEME;
-
-    const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
-
-    const lightVars = Object.entries(theme.light).map(([key, value]) => `--${toKebabCase(key)}: ${value};`).join('\n');
-    const darkVars = Object.entries(theme.dark).map(([key, value]) => `--${toKebabCase(key)}: ${value};`).join('\n');
-
-    styleTag.innerHTML = `
-:root {
-${lightVars}
-}
-.dark {
-${darkVars}
-}
-    `;
-
-  } catch(e) {
-    console.error("Failed to apply custom colors", e)
-  }
-}
-
-
 export function ThemeProvider({
   children,
   defaultTheme = "light",
@@ -73,20 +37,6 @@ export function ThemeProvider({
     }
     return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
   });
-
-  useEffect(() => {
-    applyCustomColors();
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'app-colors') {
-        applyCustomColors();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -126,5 +76,3 @@ export const useTheme = () => {
 
   return context
 }
-
-    

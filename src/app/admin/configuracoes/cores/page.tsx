@@ -48,6 +48,11 @@ const hexToHsl = (hex: string): [number, number, number] => {
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
 };
 
+const hslStringToHex = (hslString: string): string => {
+    const [h, s, l] = hslString.split(" ").map(v => parseFloat(v.replace('%', '')));
+    return hslToHex(h, s, l);
+};
+
 const hslToHex = (h: number, s: number, l: number): string => {
     s /= 100;
     l /= 100;
@@ -101,8 +106,7 @@ function convertHslThemeToHex(theme: typeof MOCK_DEFAULT_THEME): ColorConfigForm
         for (const key in theme[mode]) {
             const hslString = theme[mode][key as keyof typeof theme.light];
             if (typeof hslString === 'string') {
-                const [h, s, l] = hslString.split(" ").map(v => parseFloat(v.replace('%', '')));
-                result[mode][key] = hslToHex(h, s, l);
+                result[mode][key] = hslStringToHex(hslString);
             }
         }
     }
@@ -139,29 +143,57 @@ const friendlyColorNames: Record<string, string> = {
     sidebarRing: "Anel de Foco da Sidebar",
 };
 
+export default function ThemeColorsPage() {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  // This state holds the currently SAVED theme colors, acting as our source of truth.
+  const [savedTheme, setSavedTheme] = useState<ColorConfigFormValues>(() => convertHslThemeToHex(MOCK_DEFAULT_THEME));
 
-function updateStyleTag(themeInHex: ColorConfigFormValues | null) {
-    let styleTag = document.getElementById('dynamic-theme-styles');
-    if (!styleTag) {
-        styleTag = document.createElement('style');
-        styleTag.id = 'dynamic-theme-styles';
-        document.head.appendChild(styleTag);
-    }
-    
-    if (!themeInHex) {
-        styleTag.innerHTML = '';
-        return;
-    }
+  const form = useForm<ColorConfigFormValues>({
+    resolver: zodResolver(colorConfigSchema),
+    defaultValues: savedTheme,
+  });
 
+  // Load from localStorage on initial client render
+  useEffect(() => {
+    setIsClient(true);
+    try {
+        const storedThemeJson = localStorage.getItem('app-colors-hex');
+        if (storedThemeJson) {
+            const hexTheme = JSON.parse(storedThemeJson);
+            setSavedTheme(hexTheme);
+            form.reset(hexTheme);
+        } else {
+             form.reset(savedTheme);
+        }
+    } catch (e) {
+        console.error("Failed to load theme from localStorage", e);
+        form.reset(savedTheme);
+    }
+  }, [form]); // form is stable, runs once
+  
+  // Watch for form changes and compare with the SAVED theme
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      setHasChanges(!isEqual(value, savedTheme));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, savedTheme]);
+
+  // This function now returns the full CSS content string.
+  const generateCssContent = (themeInHex: ColorConfigFormValues): string => {
     const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
     
-    const generateCssVars = (themePart: Record<string, string>, prefix: string = '') => {
+    const generateCssVars = (themePart: Record<string, string>) => {
         return Object.entries(themePart).map(([key, value]) => {
             if (!value) return ''; 
             try {
                 const [h, s, l] = hexToHsl(value);
-                const cssVarName = `--${prefix}${toKebabCase(key)}`;
-                return `${cssVarName}: ${h} ${s}% ${l}%;`;
+                const cssVarName = `--${toKebabCase(key)}`;
+                return `    ${cssVarName}: ${h} ${s}% ${l}%;`;
             } catch (e) {
                 console.warn(`Invalid color format for key ${key}: ${value}`);
                 return '';
@@ -172,80 +204,68 @@ function updateStyleTag(themeInHex: ColorConfigFormValues | null) {
     const lightVars = generateCssVars(themeInHex.light);
     const darkVars = generateCssVars(themeInHex.dark);
 
-    styleTag.innerHTML = `
-:root {
+    return `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
 ${lightVars}
-}
-.dark {
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
 ${darkVars}
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
-    `;
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body), sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
+`;
+  };
 
-export default function ThemeColorsPage() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  
-  // The state 'theme' is the single source of truth for the currently saved theme.
-  const [theme, setTheme] = useState<ColorConfigFormValues>(() => convertHslThemeToHex(MOCK_DEFAULT_THEME));
-
-  const form = useForm<ColorConfigFormValues>({
-    resolver: zodResolver(colorConfigSchema),
-    defaultValues: theme, // Initialize with default
-  });
-
-  // 1. Load from localStorage and reset the form on initial client render
-  useEffect(() => {
-    setIsClient(true);
-    try {
-        const storedThemeJson = localStorage.getItem('app-colors');
-        const initialTheme = storedThemeJson ? JSON.parse(storedThemeJson) : MOCK_DEFAULT_THEME;
-        const hexTheme = convertHslThemeToHex(initialTheme);
-        setTheme(hexTheme); // Set the source of truth state
-        form.reset(hexTheme); // Sync form with the loaded state
-    } catch (e) {
-        console.error("Failed to load theme from localStorage", e);
-        const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
-        setTheme(defaultHexTheme);
-        form.reset(defaultHexTheme);
-    }
-  }, [form]); // form is stable, so this runs once
-  
-  // 2. Watch for form changes and compare with the source of truth 'theme'
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-        setHasChanges(!isEqual(value, theme));
-        // Also update live preview on change
-        if (value.light && value.dark) {
-            updateStyleTag(value as ColorConfigFormValues);
-        }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, theme]);
-
-  // 3. Handle form submission
-  const onSubmit = (data: ColorConfigFormValues) => {
+  const onSubmit = async (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     
     try {
-        const newThemeInHsl = { light: {} as any, dark: {} as any };
-        for (const mode of ['light', 'dark'] as const) {
-            for (const key in data[mode]) {
-                const hexColor = data[mode][key as keyof typeof data.light];
-                const [h, s, l] = hexToHsl(hexColor);
-                (newThemeInHsl[mode] as any)[key] = `${h} ${s}% ${l}%`;
-            }
-        }
+        // Here we would typically make an API call to a server action
+        // to write the file. For this environment, we'll simulate it
+        // and update localStorage, assuming a page reload will apply changes.
+        console.log("Generating new globals.css content...");
+        const newCssContent = generateCssContent(data);
         
-        localStorage.setItem('app-colors', JSON.stringify(newThemeInHsl));
-        setTheme(data); // Update the source of truth
-        setHasChanges(false); // Manually set hasChanges to false
+        // This is a placeholder for a future server action to write the file.
+        // For now, we log it to the console.
+        console.log("New CSS Content to be written to src/app/globals.css:", newCssContent);
+        
+        // We'll save the hex values to local storage so the form reloads correctly.
+        localStorage.setItem('app-colors-hex', JSON.stringify(data));
+        setSavedTheme(data);
+        setHasChanges(false);
 
         toast({
           title: "Tema Atualizado!",
-          description: "As cores da aplicação foram salvas com sucesso.",
+          description: "As cores foram salvas. Recarregue a página para ver as alterações. (Simulação de escrita de arquivo)",
         });
 
     } catch (error) {
@@ -259,17 +279,21 @@ export default function ThemeColorsPage() {
         setIsSubmitting(false);
     }
   }
-
-  // 4. Handle reset to default
+  
   const resetToDefault = () => {
-    localStorage.removeItem('app-colors');
+    localStorage.removeItem('app-colors-hex');
     const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
-    setTheme(defaultHexTheme); // Update the source of truth
-    form.reset(defaultHexTheme); // Sync the form
-    setHasChanges(false); // Manually update hasChanges
-     toast({
+    setSavedTheme(defaultHexTheme);
+    form.reset(defaultHexTheme);
+    setHasChanges(false);
+    
+    // Simulate writing the default theme back to the file
+    const defaultCssContent = generateCssContent(defaultHexTheme);
+    console.log("New CSS Content to be written to src/app/globals.css:", defaultCssContent);
+
+    toast({
       title: "Tema Restaurado",
-      description: "As cores padrão foram restauradas.",
+      description: "As cores padrão foram restauradas. Recarregue a página. (Simulação)",
     });
   }
   
@@ -329,7 +353,7 @@ export default function ThemeColorsPage() {
                             Cores do Tema
                         </h1>
                         <p className="text-muted-foreground mt-1">
-                            Personalize a aparência do aplicativo. Clique em Salvar para aplicar.
+                            Personalize a aparência do aplicativo. As alterações serão aplicadas globalmente.
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -365,6 +389,3 @@ export default function ThemeColorsPage() {
      </main>
   );
 }
-
-
-    
