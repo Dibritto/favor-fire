@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
@@ -114,6 +115,22 @@ interface ThemeContextProps {
 // Create the context
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
+// Helper to convert kebab-case to camelCase
+function toCamelCase(str: string): string {
+    return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+}
+
+// Helper to apply HSL values to a style sheet
+const applyThemeToStyleSheet = (theme: ThemeModeVars, sheet: CSSStyleSheet, prefix: string) => {
+    const rule = `${prefix} { ${Object.entries(theme).map(([key, value]) => `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value};`).join(' ')} }`;
+
+    // Clear existing rules and add the new one
+    while (sheet.cssRules.length) {
+        sheet.deleteRule(0);
+    }
+    sheet.insertRule(rule, 0);
+};
+
 // Define the provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
@@ -126,68 +143,60 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       if (storedTheme) {
         const parsedTheme = JSON.parse(storedTheme);
         if (parsedTheme.light && parsedTheme.dark) {
-          const mergedTheme = {
-            light: { ...DEFAULT_THEME.light, ...parsedTheme.light },
-            dark: { ...DEFAULT_THEME.dark, ...parsedTheme.dark },
-          };
-          setCustomTheme(mergedTheme);
+          setCustomTheme(parsedTheme);
         }
       }
-
-      const storedMode = localStorage.getItem('theme-mode') as ThemeMode | null;
-      if (storedMode) {
-        setMode(storedMode);
-      } else {
-        setMode('dark'); // Default to dark mode
-      }
-
     } catch (error) {
       console.error("Failed to parse theme from localStorage", error);
+    }
+
+    try {
+      const storedMode = localStorage.getItem('theme-mode') as ThemeMode | null;
+      setMode(storedMode || 'dark');
+    } catch (error) {
       setMode('dark');
     }
   }, []);
 
   // Effect to apply theme colors and mode class
   useEffect(() => {
-    if (!mode) return; // Wait until mode is determined
+    if (!mode) return;
 
     const root = document.documentElement;
-
-    // Remove all theme classes and apply the current one
     root.classList.remove('light', 'dark');
     root.classList.add(mode);
 
-    // Apply colors for the light theme to the :root
-    Object.keys(customTheme.light).forEach(key => {
-      const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-      root.style.setProperty(cssVar, customTheme.light[key as keyof ThemeModeVars]);
-    });
-
-    // Create and apply dark theme overrides via a style tag
-    const darkStyles = Object.keys(customTheme.dark).map(key => {
-        const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        return `${cssVar}: ${customTheme.dark[key as keyof ThemeModeVars]};`;
-    }).join('\n');
-    
-    let styleSheet = document.getElementById('dynamic-dark-theme-styles');
-    if (!styleSheet) {
-        styleSheet = document.createElement('style');
-        styleSheet.id = 'dynamic-dark-theme-styles';
-        document.head.appendChild(styleSheet);
+    // Get or create style sheets for dynamic themes
+    let lightSheet = (document.getElementById('light-theme-sheet') as HTMLStyleElement)?.sheet;
+    if (!lightSheet) {
+        const styleEl = document.createElement('style');
+        styleEl.id = 'light-theme-sheet';
+        document.head.appendChild(styleEl);
+        lightSheet = styleEl.sheet;
     }
-    styleSheet.innerHTML = `.dark { ${darkStyles} }`;
+
+    let darkSheet = (document.getElementById('dark-theme-sheet') as HTMLStyleElement)?.sheet;
+    if (!darkSheet) {
+        const styleEl = document.createElement('style');
+        styleEl.id = 'dark-theme-sheet';
+        document.head.appendChild(styleEl);
+        darkSheet = styleEl.sheet;
+    }
+
+    if (lightSheet) {
+        applyThemeToStyleSheet(customTheme.light, lightSheet, ':root');
+    }
+    if (darkSheet) {
+        applyThemeToStyleSheet(customTheme.dark, darkSheet, '.dark');
+    }
     
   }, [customTheme, mode]);
 
 
   const setTheme = (newTheme: Theme) => {
     try {
-      const mergedTheme = {
-        light: { ...customTheme.light, ...newTheme.light },
-        dark: { ...customTheme.dark, ...newTheme.dark },
-      };
-      localStorage.setItem('app-theme', JSON.stringify(mergedTheme));
-      setCustomTheme(mergedTheme);
+      localStorage.setItem('app-theme', JSON.stringify(newTheme));
+      setCustomTheme(newTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }
@@ -223,3 +232,5 @@ export const useTheme = (): ThemeContextProps => {
   }
   return context;
 };
+
+    
