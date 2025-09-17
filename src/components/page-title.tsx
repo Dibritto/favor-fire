@@ -1,5 +1,6 @@
 
 
+
 "use client";
 
 import { usePathname } from 'next/navigation';
@@ -15,6 +16,7 @@ const routeTitles: { [key: string]: string } = {
   '/perfil': 'Meu Perfil',
   '/perfil/editar': 'Editar Perfil',
   '/assinatura': 'Minha Assinatura',
+  '/missoes': 'Central de Missões',
   '/admin/painel': 'Painel Administrativo',
   '/admin/usuarios': 'Gerenciar Usuários',
   '/admin/favores': 'Gerenciar Favores',

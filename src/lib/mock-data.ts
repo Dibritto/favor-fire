@@ -1,6 +1,7 @@
 
 
-import type { User, Favor, Notification, Report, Community } from '@/types';
+
+import type { User, Favor, Notification, Report, Community, Mission } from '@/types';
 
 export const mockUsers: User[] = [
   {
@@ -230,6 +231,51 @@ export const mockReports: Report[] = [
     }
 ];
 
+export const mockMissions: Mission[] = [
+    {
+        id: 'mission1',
+        title: 'Pioneiro da Comunidade',
+        description: 'Ajude a dar o pontapé inicial na nossa comunidade completando seus primeiros favores e interações.',
+        niche: 'empresa',
+        creatorId: 'system',
+        creator: { name: 'Projeto Favor', avatar: '/logo.png' },
+        reward: 'Selo de "Pioneiro" no perfil',
+        goals: [
+            { description: 'Complete seu primeiro favor', completed: true },
+            { description: 'Receba sua primeira avaliação 5 estrelas', completed: false },
+            { description: 'Convide um amigo para a plataforma', completed: false },
+        ]
+    },
+    {
+        id: 'mission2',
+        title: 'Anjo do Bairro',
+        description: 'Torne-se um pilar em sua comunidade local ajudando seus vizinhos.',
+        niche: 'ong',
+        creatorId: 'ong-abc',
+        creator: { name: 'ONG Amigos do Bairro', avatar: `https://picsum.photos/seed/ong/40` },
+        reward: 'Doação de R$50 para a ONG em seu nome',
+        goals: [
+            { description: 'Complete 5 favores voluntários na sua cidade', completed: true },
+            { description: 'Ajude 3 vizinhos diferentes', completed: true },
+            { description: 'Receba uma média de avaliação de 4.8+ em 5 favores', completed: false },
+        ]
+    },
+    {
+        id: 'mission3',
+        title: 'Mestre Culinário',
+        description: 'Compartilhe suas habilidades culinárias com a comunidade e ganhe reconhecimento.',
+        niche: 'streamer',
+        creatorId: 'user3',
+        reward: 'Destaque no blog da comunidade',
+        goals: [
+            { description: 'Ofereça um favor de "Aula de Culinária"', completed: false },
+            { description: 'Receba uma avaliação por um favor culinário', completed: false },
+            { description: 'Compartilhe 3 dicas na comunidade de culinária', completed: false },
+        ]
+    }
+];
+
+
 // Populate related data before exporting
 mockUsers.forEach(user => {
     if (user.invitedById) {
@@ -257,5 +303,11 @@ mockReports.forEach(report => {
         report.reportedItem = mockUsers.find(u => u.id === report.reportedItemId);
     } else if (report.reportedItemType === 'community') {
         report.reportedItem = mockCommunities.find(c => c.id === report.reportedItemId);
+    }
+});
+
+mockMissions.forEach(mission => {
+    if (mission.creatorId !== 'system' && !mission.creator) {
+        mission.creator = mockUsers.find(u => u.id === mission.creatorId);
     }
 });

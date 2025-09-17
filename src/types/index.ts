@@ -1,5 +1,6 @@
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -75,7 +76,9 @@ export interface Mission {
     description: string;
     niche: MissionNiche;
     creatorId: string; // Could be a User ID or a Company ID
+    creator?: User | { name: string; avatar: string };
     goals: { description: string; completed: boolean }[];
+    reward: string;
 }
 
 export type NotificationType = 
