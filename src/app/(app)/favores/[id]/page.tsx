@@ -149,6 +149,12 @@ export default function FavorDetailPage() {
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
+           <div className="flex justify-end">
+             <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
+                {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
+                {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+            </Badge>
+          </div>
           <div className="flex justify-between items-start gap-4">
               <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1">{favor.title}</CardTitle>
               <DropdownMenu>
@@ -165,12 +171,6 @@ export default function FavorDetailPage() {
                       </DropdownMenuItem>
                   </DropdownMenuContent>
               </DropdownMenu>
-          </div>
-          <div className="flex justify-end">
-             <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
-                {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
-                {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
-            </Badge>
           </div>
           <CardDescription className="text-sm text-muted-foreground pt-1">
             Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
@@ -306,5 +306,4 @@ export default function FavorDetailPage() {
     </article>
   );
 }
-
     
