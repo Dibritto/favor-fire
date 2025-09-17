@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${ptSans.variable} font-body antialiased`}>
-        <ThemeProvider>
+        <ThemeProvider storageKey="app-theme">
           {children}
           <Toaster />
         </ThemeProvider>

@@ -17,7 +17,70 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Palette, Save } from "lucide-react";
-import { DEFAULT_THEME, type Theme, useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/theme-provider";
+
+// This is not the real theme provider, just a helper for this page.
+const MOCK_DEFAULT_THEME = {
+  light: {
+    background: "0 0% 100%",
+    foreground: "222.2 84% 4.9%",
+    card: "0 0% 100%",
+    cardForeground: "222.2 84% 4.9%",
+    popover: "0 0% 100%",
+    popoverForeground: "222.2 84% 4.9%",
+    primary: "219 16% 50%",
+    primaryForeground: "210 40% 98%",
+    secondary: "210 8% 59%",
+    secondaryForeground: "222.2 47.4% 11.2%",
+    muted: "210 40% 96.1%",
+    mutedForeground: "215.4 16.3% 46.9%",
+    accent: "326 9% 55%",
+    accentForeground: "210 40% 98%",
+    destructive: "0 84.2% 60.2%",
+    destructiveForeground: "210 40% 98%",
+    border: "0 0% 83.1%",
+    input: "0 0% 83.1%",
+    ring: "219 16% 50%",
+    sidebarBackground: "210 40% 98%",
+    sidebarForeground: "222.2 84% 4.9%",
+    sidebarPrimary: "219 16% 50%",
+    sidebarPrimaryForeground: "210 40% 98%",
+    sidebarAccent: "210 40% 94.1%",
+    sidebarAccentForeground: "222.2 84% 4.9%",
+    sidebarBorder: "210 40% 90.1%",
+    sidebarRing: "219 16% 50%",
+  },
+  dark: {
+    background: "222.2 84% 4.9%",
+    foreground: "210 40% 98%",
+    card: "222.2 84% 4.9%",
+    cardForeground: "210 40% 98%",
+    popover: "222.2 84% 4.9%",
+    popoverForeground: "210 40% 98%",
+    primary: "219 16% 60%",
+    primaryForeground: "222.2 47.4% 11.2%",
+    secondary: "217.2 32.6% 17.5%",
+    secondaryForeground: "210 40% 98%",
+    muted: "217.2 32.6% 17.5%",
+    mutedForeground: "215 20.2% 65.1%",
+    accent: "326 9% 65%",
+    accentForeground: "210 40% 98%",
+    destructive: "0 62.8% 50.6%",
+    destructiveForeground: "210 40% 98%",
+    border: "217.2 32.6% 17.5%",
+    input: "217.2 32.6% 17.5%",
+    ring: "219 16% 60%",
+    sidebarBackground: "222.2 84% 5.9%",
+    sidebarForeground: "210 40% 98%",
+    sidebarPrimary: "210 40% 98%",
+    sidebarPrimaryForeground: "222.2 47.4% 11.2%",
+    sidebarAccent: "217.2 32.6% 17.5%",
+    sidebarAccentForeground: "210 40% 98%",
+    sidebarBorder: "217.2 32.6% 17.5%",
+    sidebarRing: "212.7 26.8% 83.9%",
+  },
+};
+
 
 const hexToHsl = (hex: string): [number, number, number] => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -93,7 +156,7 @@ const colorConfigSchema = z.object({
 
 type ColorConfigFormValues = z.infer<typeof colorConfigSchema>;
 
-function convertHslThemeToHex(theme: Theme): ColorConfigFormValues {
+function convertHslThemeToHex(theme: typeof MOCK_DEFAULT_THEME): ColorConfigFormValues {
     const result: any = { light: {}, dark: {} };
     for (const mode of ['light', 'dark'] as const) {
         for (const key in theme[mode]) {
@@ -138,24 +201,70 @@ const friendlyColorNames: Record<string, string> = {
 };
 
 
+function updateStyleTag(theme: ColorConfigFormValues) {
+    const styleId = 'dynamic-theme-styles';
+    let styleTag = document.getElementById(styleId);
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = styleId;
+        document.head.appendChild(styleTag);
+    }
+    
+    const lightVars = Object.entries(theme.light).map(([key, value]) => {
+        const [h, s, l] = hexToHsl(value);
+        return `--${key}: ${h} ${s}% ${l}%;`;
+    }).join('\n');
+    
+    const darkVars = Object.entries(theme.dark).map(([key, value]) => {
+         const [h, s, l] = hexToHsl(value);
+        return `--${key}: ${h} ${s}% ${l}%;`;
+    }).join('\n');
+
+    styleTag.innerHTML = `
+:root {
+${lightVars}
+}
+.dark {
+${darkVars}
+}
+    `;
+}
+
+function getInitialTheme(): typeof MOCK_DEFAULT_THEME {
+    if (typeof window === 'undefined') return MOCK_DEFAULT_THEME;
+    try {
+        const storedTheme = localStorage.getItem('app-colors');
+        return storedTheme ? JSON.parse(storedTheme) : MOCK_DEFAULT_THEME;
+    } catch {
+        return MOCK_DEFAULT_THEME;
+    }
+}
+
+
 export default function ThemeColorsPage() {
-  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTheme, setActiveTheme] = useState(getInitialTheme);
+
   
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: convertHslThemeToHex(theme),
+    defaultValues: convertHslThemeToHex(activeTheme),
   });
   
   useEffect(() => {
-    form.reset(convertHslThemeToHex(theme));
-  }, [theme, form]);
+    form.reset(convertHslThemeToHex(activeTheme));
+  }, [activeTheme, form]);
+
+  useEffect(() => {
+      const hexValues = form.watch();
+      updateStyleTag(hexValues);
+  }, [form.watch()]);
   
   function onSubmit(data: ColorConfigFormValues) {
     setIsSubmitting(true);
     
-    const newTheme: Theme = { light: {}, dark: {} } as Theme;
+    const newTheme = { light: {} as any, dark: {} as any };
 
     for (const mode of ['light', 'dark'] as const) {
         for (const key in data[mode]) {
@@ -164,8 +273,9 @@ export default function ThemeColorsPage() {
             (newTheme[mode] as any)[key] = `${h} ${s}% ${l}%`;
         }
     }
-
-    setTheme(newTheme);
+    
+    localStorage.setItem('app-colors', JSON.stringify(newTheme));
+    setActiveTheme(newTheme);
 
     toast({
       title: "Tema Atualizado!",
@@ -176,7 +286,8 @@ export default function ThemeColorsPage() {
   }
 
   const resetToDefault = () => {
-    setTheme(DEFAULT_THEME);
+    localStorage.removeItem('app-colors');
+    setActiveTheme(MOCK_DEFAULT_THEME);
      toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
