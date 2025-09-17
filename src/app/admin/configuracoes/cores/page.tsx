@@ -114,6 +114,28 @@ function convertHslThemeToHex(theme: Theme): ColorConfigFormValues {
     return result;
 }
 
+const friendlyColorNames: Record<string, string> = {
+    background: "Fundo da Página",
+    foreground: "Texto Principal",
+    card: "Fundo do Card",
+    cardForeground: "Texto do Card",
+    popover: "Fundo do Popover/Dropdown",
+    popoverForeground: "Texto do Popover/Dropdown",
+    primary: "Primária (Botões principais)",
+    primaryForeground: "Texto sobre Cor Primária",
+    secondary: "Secundária (Botões secund.)",
+    secondaryForeground: "Texto sobre Cor Secundária",
+    muted: "Fundo Discreto (Badges)",
+    mutedForeground: "Texto Discreto",
+    accent: "Destaque (Hover)",
+    accentForeground: "Texto sobre Cor de Destaque",
+    destructive: "Destrutiva (Erros, Excluir)",
+    destructiveForeground: "Texto sobre Cor Destrutiva",
+    border: "Bordas Gerais",
+    input: "Borda de Inputs",
+    ring: "Anel de Foco (Focus)",
+};
+
 
 export default function ThemeColorsPage() {
   const { theme, setTheme } = useTheme();
@@ -172,7 +194,7 @@ export default function ThemeColorsPage() {
               <FormItem>
                 <FormLabel className="capitalize flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full border" style={{ backgroundColor: field.value }}></div>
-                    {key.replace(/([A-Z])/g, ' $1')}
+                    {friendlyColorNames[key] || key}
                 </FormLabel>
                 <FormControl>
                     <div className="flex items-center gap-2">
