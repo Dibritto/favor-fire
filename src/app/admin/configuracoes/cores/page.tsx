@@ -22,6 +22,7 @@ import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 import { isEqual } from "lodash";
 import { applyThemeColors, useTheme } from "@/components/theme-provider";
 
+
 // Helper Functions
 const hexToHslString = (hex: string): string => {
     if (!hex || typeof hex !== 'string') return "0 0% 0%";
@@ -55,7 +56,11 @@ const hslToHex = (h: number, s: number, l: number): string => {
 };
 
 const hslStringToHex = (hsl: string): string => {
-    const [h, s, l] = hsl.split(" ").map(parseFloat);
+    if (!hsl) return '#000000';
+    const parts = hsl.split(" ");
+    if (parts.length !== 3) return '#000000';
+    const [h, s, l] = parts.map(val => parseFloat(val.replace('%', '')));
+    if (isNaN(h) || isNaN(s) || isNaN(l)) return '#000000';
     return hslToHex(h, s, l);
 };
 
@@ -107,12 +112,11 @@ const COLORS_STORAGE_KEY = "app-colors-hex";
 
 export default function ThemeColorsPage() {
   const { toast } = useToast();
-  const { theme: currentMode } = useTheme(); // 'light' or 'dark'
-  const [isClient, setIsClient] = useState(false);
+  const { theme: currentMode } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   
-  // This state holds the saved theme from localStorage and is our source of truth
   const [savedTheme, setSavedTheme] = useState<ColorConfigFormValues>(DEFAULT_HEX_THEME);
 
   const form = useForm<ColorConfigFormValues>({
@@ -120,40 +124,40 @@ export default function ThemeColorsPage() {
     defaultValues: savedTheme,
   });
 
-  // Load saved theme from localStorage only on the client
   useEffect(() => {
-    setIsClient(true);
-    try {
-      const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
-      const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
-      setSavedTheme(themeToLoad);
-      form.reset(themeToLoad); // Sync form with loaded data
-    } catch (e) {
-      console.error("Failed to load theme from localStorage", e);
-      // fallback to default
-      setSavedTheme(DEFAULT_HEX_THEME);
-      form.reset(DEFAULT_HEX_THEME);
-    }
-  }, [form]);
+    setIsMounted(true);
+  }, []);
 
-  // Watch for form changes to enable/disable save button
   useEffect(() => {
-    if (!isClient) return;
+    if (isMounted) {
+      try {
+        const storedThemeJson = localStorage.getItem(COLORS_STORAGE_KEY);
+        const themeToLoad = storedThemeJson ? JSON.parse(storedThemeJson) : DEFAULT_HEX_THEME;
+        setSavedTheme(themeToLoad);
+        form.reset(themeToLoad);
+      } catch (e) {
+        console.error("Failed to load theme from localStorage", e);
+        setSavedTheme(DEFAULT_HEX_THEME);
+        form.reset(DEFAULT_HEX_THEME);
+      }
+    }
+  }, [isMounted, form]);
+
+  useEffect(() => {
+    if (!isMounted) return;
     const subscription = form.watch((value) => {
       setHasChanges(!isEqual(value, savedTheme));
     });
     return () => subscription.unsubscribe();
-  }, [form, savedTheme, isClient]);
-
+  }, [form, savedTheme, isMounted]);
 
   const onSubmit = async (data: ColorConfigFormValues) => {
     setIsSubmitting(true);
     try {
       localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(data));
-      setSavedTheme(data); // Update our source of truth
-      setHasChanges(false); // Disable save button
+      setSavedTheme(data);
+      setHasChanges(false); 
       
-      // Instantly apply the new colors for the current mode
       applyThemeColors(data[currentMode]);
 
       toast({
@@ -177,13 +181,7 @@ export default function ThemeColorsPage() {
     form.reset(DEFAULT_HEX_THEME);
     setHasChanges(false);
 
-    // Apply default css vars for current mode
-     const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
-     const root = document.documentElement;
-     Object.keys(defaultColorsForMode).forEach(key => {
-        const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
-    });
+    applyThemeColors(DEFAULT_HEX_THEME[currentMode]);
 
     toast({
       title: "Tema Restaurado",
@@ -220,7 +218,7 @@ export default function ThemeColorsPage() {
     );
   };
 
-  if (!isClient) {
+  if (!isMounted) {
     return (
         <div className="flex justify-center items-center h-96">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -276,5 +274,3 @@ export default function ThemeColorsPage() {
     </main>
   );
 }
-
-    

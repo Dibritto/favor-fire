@@ -31,7 +31,7 @@ const hexToHslString = (hex: string): string => {
 };
 
 // Function to apply theme colors to the root element
-const applyThemeColors = (colors: Record<string, string>) => {
+export const applyThemeColors = (colors: Record<string, string>) => {
     const root = document.documentElement;
     Object.keys(colors).forEach((key) => {
         const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
@@ -68,45 +68,52 @@ export function ThemeProvider({
   colorsStorageKey = "app-colors-hex",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') {
+      return defaultTheme;
+    }
+    return (localStorage.getItem(storageKey) as Theme | null) || defaultTheme;
+  });
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Effect to set the theme mode (light/dark class)
   useEffect(() => {
-    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
-    setTheme(storedTheme || defaultTheme);
-  }, [storageKey, defaultTheme]);
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!isMounted) return;
+
     const root = window.document.documentElement
     root.classList.remove("light", "dark")
     root.classList.add(theme)
-  }, [theme])
-
-  // Effect to load and apply custom colors, runs only on client
-  useEffect(() => {
+    localStorage.setItem(storageKey, theme);
+    
     const storedColorsJson = localStorage.getItem(colorsStorageKey);
     const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
     
     if (hexTheme && hexTheme[theme]) {
         applyThemeColors(hexTheme[theme]);
     } else {
-        // If no custom colors, apply defaults (which are in CSS but this ensures consistency)
         const defaultColorsForMode = MOCK_DEFAULT_THEME[theme];
-         const root = document.documentElement;
          Object.keys(defaultColorsForMode).forEach(key => {
             const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
             root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
         });
     }
 
-    // Add a listener to storage events to update theme in real-time across tabs
-    const handleStorageChange = (event: StorageEvent) => {
-        if (event.key === colorsStorageKey) {
-             const newStoredColorsJson = event.newValue;
-             const newHexTheme = newStoredColorsJson ? JSON.parse(newStoredColorsJson) : null;
+  }, [theme, isMounted, storageKey, colorsStorageKey]);
+
+  // Add a listener to storage events to update theme in real-time across tabs
+  useEffect(() => {
+      const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === colorsStorageKey && event.newValue) {
+             const newHexTheme = JSON.parse(event.newValue);
              if (newHexTheme && newHexTheme[theme]) {
                 applyThemeColors(newHexTheme[theme]);
              }
+        }
+        if (event.key === storageKey && event.newValue) {
+          setTheme(event.newValue as Theme);
         }
     };
     
@@ -114,23 +121,16 @@ export function ThemeProvider({
     return () => {
         window.removeEventListener('storage', handleStorageChange);
     };
+  }, [theme, storageKey, colorsStorageKey]);
 
-  }, [theme, colorsStorageKey]);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => {
-        const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-        localStorage.setItem(storageKey, newTheme);
-        return newTheme;
-    });
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   }
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
-    },
+    setTheme,
     toggleTheme,
   }
 
@@ -150,6 +150,3 @@ export const useTheme = () => {
   return context
 }
 
-export { applyThemeColors };
-
-    
