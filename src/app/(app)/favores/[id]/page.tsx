@@ -185,7 +185,7 @@ export default function FavorDetailPage() {
             <div>
                 <h3 className="font-semibold mb-1 text-primary">Detalhes:</h3>
                 <div className="space-y-1">
-                    <p className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Localização:</strong> {favor.location}</p>
+                    <p className="flex items-start"><MapPin className="h-4 w-4 mr-2 text-muted-foreground shrink-0 mt-0.5" /> <span className="break-words"><strong>Localização:</strong> {favor.location}</span></p>
                     {favor.preferredDateTime && <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Preferência:</strong> {format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>}
                     <p className="flex items-center">
                         <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Urgência:</strong>
@@ -306,4 +306,6 @@ export default function FavorDetailPage() {
     </article>
   );
 }
+    
+
     
