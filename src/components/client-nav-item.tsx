@@ -39,11 +39,17 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
    if (href === "/assinatura" && pathname !== "/assinatura") {
     isActive = false;
   }
-   if (href === "/perfil" && pathname !== "/perfil") {
-    isActive = false;
+   if (href === "/perfil" && pathname.startsWith('/perfil/')) {
+    const parts = pathname.split('/');
+     if(parts.length > 2 && parts[2] !== 'editar') {
+        isActive = false;
+     }
   }
-  if (href === "/comunidades" && pathname !== "/comunidades") {
-    isActive = false;
+  if (href === "/comunidades" && pathname.startsWith('/comunidades/')) {
+    const parts = pathname.split('/');
+    if(parts.length > 2 && parts[2] !== 'criar') {
+        isActive = false;
+    }
   }
 
 
@@ -68,3 +74,4 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
     </Link>
   );
 }
+

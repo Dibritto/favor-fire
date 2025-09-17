@@ -50,7 +50,7 @@ export default function FavorDiscoveryPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h1 className="text-3xl font-headline font-bold">Descobrir Favores</h1>
@@ -109,7 +109,7 @@ export default function FavorDiscoveryPage() {
         </Card>
       </section>
 
-      <main aria-labelledby="favors-list-heading">
+      <section aria-labelledby="favors-list-heading">
         <h2 id="favors-list-heading" className="sr-only">Lista de Favores Disponíveis</h2>
         {filteredFavors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,8 +124,8 @@ export default function FavorDiscoveryPage() {
             <p className="text-muted-foreground">Tente ajustar sua busca ou filtros, ou volte mais tarde!</p>
           </div>
         )}
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
 
