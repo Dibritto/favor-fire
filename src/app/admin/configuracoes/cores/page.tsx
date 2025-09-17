@@ -210,15 +210,15 @@ function updateStyleTag(theme: ColorConfigFormValues) {
         document.head.appendChild(styleTag);
     }
     
-    const lightVars = Object.entries(theme.light).map(([key, value]) => {
-        const [h, s, l] = hexToHsl(value);
-        return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
-    }).join('\n');
-    
-    const darkVars = Object.entries(theme.dark).map(([key, value]) => {
-        const [h, s, l] = hexToHsl(value);
-        return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
-    }).join('\n');
+    const generateCssVars = (themePart: Record<string, string>) => {
+        return Object.entries(themePart).map(([key, value]) => {
+            const [h, s, l] = hexToHsl(value);
+            return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
+        }).join('\n');
+    }
+
+    const lightVars = generateCssVars(theme.light);
+    const darkVars = generateCssVars(theme.dark);
 
     styleTag.innerHTML = `
 :root {
@@ -241,28 +241,30 @@ export default function ThemeColorsPage() {
   });
   
   useEffect(() => {
+    // This effect runs once on mount to confirm we're on the client
+    // and to load the theme from localStorage.
     setIsClient(true);
     try {
         const storedTheme = localStorage.getItem('app-colors');
         if (storedTheme) {
             const parsedTheme = JSON.parse(storedTheme);
-            form.reset(convertHslThemeToHex(parsedTheme));
-            updateStyleTag(convertHslThemeToHex(parsedTheme));
+            const hexTheme = convertHslThemeToHex(parsedTheme);
+            form.reset(hexTheme); // Load saved theme into the form
+            updateStyleTag(hexTheme); // Apply the styles
         } else {
-            updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+            updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME)); // Apply default styles
         }
     } catch {
-        // Se houver erro no parse, usa o tema padrão
-        form.reset(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+        // If there's an error, apply default styles
         updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
     }
   }, [form]);
 
   useEffect(() => {
+      // This effect watches for form changes and applies them live.
+      if (!isClient) return;
       const subscription = form.watch((value) => {
-        if(isClient) {
-            updateStyleTag(value as ColorConfigFormValues);
-        }
+          updateStyleTag(value as ColorConfigFormValues);
       });
       return () => subscription.unsubscribe();
   }, [form, isClient]);
@@ -270,30 +272,44 @@ export default function ThemeColorsPage() {
   function onSubmit(data: ColorConfigFormValues) {
     setIsSubmitting(true);
     
-    const newTheme = { light: {} as any, dark: {} as any };
-
-    for (const mode of ['light', 'dark'] as const) {
-        for (const key in data[mode]) {
-            const hexColor = data[mode][key as keyof typeof data.light];
-            const [h, s, l] = hexToHsl(hexColor);
-            (newTheme[mode] as any)[key] = `${h} ${s}% ${l}%`;
+    try {
+        const newThemeInHsl = { light: {} as any, dark: {} as any };
+        for (const mode of ['light', 'dark'] as const) {
+            for (const key in data[mode]) {
+                const hexColor = data[mode][key as keyof typeof data.light];
+                const [h, s, l] = hexToHsl(hexColor);
+                (newThemeInHsl[mode] as any)[key] = `${h} ${s}% ${l}%`;
+            }
         }
+        
+        localStorage.setItem('app-colors', JSON.stringify(newThemeInHsl));
+
+        // After saving, reset the form state to the newly saved data.
+        // This makes the new data the "default" for dirty state tracking.
+        form.reset(data);
+
+        toast({
+          title: "Tema Atualizado!",
+          description: "As cores da aplicação foram salvas com sucesso.",
+        });
+
+    } catch (error) {
+        console.error("Failed to save theme:", error);
+        toast({
+            title: "Erro ao Salvar",
+            description: "Não foi possível salvar as cores do tema.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsSubmitting(false);
     }
-    
-    localStorage.setItem('app-colors', JSON.stringify(newTheme));
-
-    toast({
-      title: "Tema Atualizado!",
-      description: "As cores da aplicação foram salvas com sucesso.",
-    });
-
-    setIsSubmitting(false);
   }
 
   const resetToDefault = () => {
     localStorage.removeItem('app-colors');
-    form.reset(convertHslThemeToHex(MOCK_DEFAULT_THEME));
-    updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+    const defaultHexTheme = convertHslThemeToHex(MOCK_DEFAULT_THEME);
+    form.reset(defaultHexTheme);
+    updateStyleTag(defaultHexTheme);
      toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
@@ -362,7 +378,7 @@ export default function ThemeColorsPage() {
                     </div>
                     <div className="flex gap-2">
                         <Button type="button" variant="outline" onClick={resetToDefault} disabled={!isClient}>Restaurar Padrão</Button>
-                        <Button type="submit" disabled={isSubmitting || !isClient}>
+                        <Button type="submit" disabled={isSubmitting || !isClient || !form.formState.isDirty}>
                             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                             Salvar Cores
                         </Button>
@@ -393,5 +409,7 @@ export default function ThemeColorsPage() {
      </main>
   );
 }
+
+    
 
     
