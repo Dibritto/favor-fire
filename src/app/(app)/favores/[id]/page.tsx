@@ -209,32 +209,36 @@ export default function FavorDetailPage() {
             <div>
                 <h3 className="font-semibold mb-2 text-primary">Detalhes:</h3>
                 <div className="space-y-3">
-                    <div>
-                        <strong className="flex items-center text-foreground mb-1"><MapPin className="h-4 w-4 mr-2 text-muted-foreground" /> Localização:</strong>
-                        <p className="text-muted-foreground pl-6">{favor.location}</p>
+                    <div className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 mr-2 text-muted-foreground mt-1 shrink-0" /> 
+                        <div>
+                            <strong className="text-foreground">Localização:</strong>
+                            <p className="text-muted-foreground break-words">{favor.location}</p>
+                        </div>
                     </div>
                     {favor.preferredDateTime && (
-                        <div>
-                            <strong className="flex items-center text-foreground mb-1"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> Preferência de Data:</strong>
-                            <p className="text-muted-foreground pl-6">{format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>
+                        <div className="flex items-start gap-2">
+                            <CalendarDays className="h-4 w-4 mr-2 text-muted-foreground mt-1 shrink-0" />
+                             <div>
+                                <strong className="text-foreground">Preferência de Data:</strong>
+                                <p className="text-muted-foreground">{format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>
+                             </div>
                         </div>
                     )}
-                     <div>
-                        <strong className="flex items-center text-foreground mb-1"><AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> Urgência:</strong>
-                        <div className="pl-6">
-                            <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
-                                {urgencyTranslations[favor.urgency]}
-                            </Badge>
-                        </div>
+                     <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
+                        <strong className="text-foreground">Urgência:</strong>
+                        <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
+                            {urgencyTranslations[favor.urgency]}
+                        </Badge>
                     </div>
-                     <div>
-                        <strong className="flex items-center text-foreground mb-1"><Users className="h-4 w-4 mr-2 text-muted-foreground" /> Modo de Participação:</strong>
-                         <div className="pl-6">
-                            <Badge variant="outline" className={`capitalize ${participationStyle}`}>
-                               {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
-                               {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
-                            </Badge>
-                        </div>
+                     <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
+                        <strong className="text-foreground">Participação:</strong>
+                        <Badge variant="outline" className={`capitalize ${participationStyle}`}>
+                           {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
+                           {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
+                        </Badge>
                     </div>
                 </div>
             </div>
@@ -350,5 +354,3 @@ export default function FavorDetailPage() {
     </article>
   );
 }
-
-    
