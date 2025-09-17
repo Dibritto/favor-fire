@@ -1,3 +1,4 @@
+
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -91,15 +92,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 </SidebarMenu>
               </nav>
             </SidebarContent>
-            <SidebarFooter className="border-t border-sidebar-border p-3">
-               <div className="flex items-center gap-3 mb-3">
+            <SidebarFooter className="border-t border-sidebar-border p-3 space-y-3">
+               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={`https://placehold.co/40x40.png?text=${userInitial}`} alt={user?.name} data-ai-hint="avatar person" />
+                  <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/40/40`} alt={user?.name} data-ai-hint="avatar person" />
                   <AvatarFallback>{userInitial}</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-sidebar-foreground">{user?.name || 'Nome do Usuário'}</span>
-                  <span className="text-xs text-sidebar-foreground/70">{user?.email || 'usuario@exemplo.com'}</span>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm font-medium text-sidebar-foreground truncate">{user?.name || 'Nome do Usuário'}</span>
+                  <span className="text-xs text-sidebar-foreground/70 truncate">{user?.email || 'usuario@exemplo.com'}</span>
                 </div>
               </div>
               <Button variant="ghost" className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" asChild>
