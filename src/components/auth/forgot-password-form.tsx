@@ -19,42 +19,40 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
-const loginFormSchema = z.object({
+const forgotPasswordFormSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
-  password: z.string().min(1, { message: "A senha é obrigatória." }),
 });
 
-type LoginFormValues = z.infer<typeof loginFormSchema>;
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>;
 
-export function LoginForm() {
+export function ForgotPasswordForm() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordFormSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  async function onSubmit(data: LoginFormValues) {
-    console.log("Dados de login:", data);
+  async function onSubmit(data: ForgotPasswordFormValues) {
+    console.log("Dados de recuperação de senha:", data);
     toast({
-      title: "Login Bem-sucedido",
-      description: "Redirecionando para o seu painel...",
+      title: "Verifique seu E-mail",
+      description: "Se uma conta com este e-mail existir, enviamos um link para redefinir sua senha.",
     });
     
     setTimeout(() => {
-      router.push("/inicio");
-    }, 1000);
+      router.push("/auth/entrar");
+    }, 2000);
   }
 
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Bem-vindo(a) de Volta!</CardTitle>
-        <CardDescription>Faça login na sua conta do Projeto Favor.</CardDescription>
+        <CardTitle className="text-2xl font-headline">Esqueceu sua Senha?</CardTitle>
+        <CardDescription>Não se preocupe. Insira seu e-mail e enviaremos um link para você criar uma nova senha.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -72,33 +70,15 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <Button type="submit" className="w-full">
-              Entrar
+              Enviar Link de Recuperação
             </Button>
           </form>
         </Form>
         <div className="mt-6 text-center text-sm">
-          Não tem uma conta?{" "}
-          <Link href="/auth/cadastrar" className="underline text-primary hover:text-primary/80">
-            Cadastre-se
-          </Link>
-        </div>
-        <div className="mt-2 text-center text-sm">
-           <Link href="/auth/esqueci-senha" className="underline text-xs text-muted-foreground hover:text-primary/80">
-            Esqueceu a senha?
+          Lembrou da senha?{" "}
+          <Link href="/auth/entrar" className="underline text-primary hover:text-primary/80">
+            Voltar para o Login
           </Link>
         </div>
       </CardContent>
