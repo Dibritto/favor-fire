@@ -32,7 +32,7 @@ export default function AdminManageNotificationsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <main className="space-y-8">
       <section aria-labelledby="send-notification-heading">
         <Card>
           <CardHeader>
@@ -131,6 +131,6 @@ export default function AdminManageNotificationsPage() {
           </CardContent>
         </Card>
       </section>
-    </div>
+    </main>
   );
 }
