@@ -141,6 +141,20 @@ export default function FavorDetailPage() {
       default: return "";
     }
   };
+   const getStatusStyles = (status: Favor['status']) => {
+    switch (status) {
+      case 'open':
+        return "border-blue-500 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700";
+      case 'accepted':
+        return "border-purple-500 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700";
+      case 'completed':
+        return "border-teal-500 bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300 dark:border-teal-700";
+      case 'cancelled':
+        return "border-gray-500 bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700";
+      default:
+        return "";
+    }
+  }
 
   const canRateRequester = favor.status === 'completed' && isExecutor && !favor.requesterRating;
   const canRateExecutor = favor.status === 'completed' && isRequester && !favor.executorRating;
@@ -149,14 +163,17 @@ export default function FavorDetailPage() {
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-           <div className="flex justify-end">
+           <div className="flex justify-end gap-2">
              <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
                 {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
                 {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
             </Badge>
+             <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
+                <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
+            </Badge>
           </div>
           <div className="flex justify-between items-start gap-4">
-              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1">{favor.title}</CardTitle>
+              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1 pt-2">{favor.title}</CardTitle>
               <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
@@ -191,7 +208,6 @@ export default function FavorDetailPage() {
                         <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Urgência:</strong>
                         <Badge variant="outline" className={`ml-2 capitalize ${getUrgencyStyles(favor.urgency)}`}>{urgencyTranslations[favor.urgency]}</Badge>
                     </p>
-                     <p className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Status:</strong> <span className="ml-1 capitalize font-medium">{statusTranslations[favor.status]}</span></p>
                 </div>
             </div>
             <div>
@@ -306,6 +322,8 @@ export default function FavorDetailPage() {
     </article>
   );
 }
+    
+
     
 
     
