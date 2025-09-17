@@ -13,8 +13,7 @@ import { Send, History, Bell, Users, User } from 'lucide-react';
 import { mockNotifications } from '@/lib/mock-data';
 import type { Notification } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ClientFormattedDate } from '@/components/client-formatted-date';
 
 export default function AdminManageNotificationsPage() {
   const { toast } = useToast();
@@ -112,7 +111,9 @@ export default function AdminManageNotificationsPage() {
                 <TableRow key={notif.id}>
                   <TableCell className="font-medium">{notif.title}</TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground max-w-sm truncate">{notif.message}</TableCell>
-                  <TableCell className="hidden sm:table-cell">{format(new Date(notif.createdAt), "P 'às' p", { locale: ptBR })}</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <ClientFormattedDate dateString={notif.createdAt} format="P 'às' p" />
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm">Ver</Button>
                   </TableCell>
