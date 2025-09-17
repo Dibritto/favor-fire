@@ -126,8 +126,14 @@ const applyThemeVariables = (theme: Theme) => {
         }).join(' ');
     };
     
-    root.style.cssText = generateCssString(theme.light);
-
+    let lightStyle = document.getElementById('light-theme-sheet');
+    if (!lightStyle) {
+        lightStyle = document.createElement('style');
+        lightStyle.id = 'light-theme-sheet';
+        document.head.appendChild(lightStyle);
+    }
+    lightStyle.innerHTML = `:root { ${generateCssString(theme.light)} }`;
+    
     let darkStyle = document.getElementById('dark-theme-sheet');
     if (!darkStyle) {
         darkStyle = document.createElement('style');
@@ -139,56 +145,47 @@ const applyThemeVariables = (theme: Theme) => {
 
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [customTheme, setCustomThemeState] = useState<Theme>(DEFAULT_THEME);
+  const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
   const [mode, setMode] = useState<ThemeMode | null>(null);
 
-  const setAndApplyTheme = useCallback((newTheme: Theme) => {
-    setCustomThemeState(newTheme);
-    applyThemeVariables(newTheme);
+  const applyMode = useCallback((themeMode: ThemeMode) => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(themeMode);
+    setMode(themeMode);
   }, []);
   
+  // Load initial theme and mode from localStorage
   useEffect(() => {
-    // Carrega o tema e o modo do localStorage na montagem inicial
     try {
       const storedTheme = localStorage.getItem('app-theme');
       const initialTheme = storedTheme ? JSON.parse(storedTheme) : DEFAULT_THEME;
-      setAndApplyTheme(initialTheme);
+      setCustomTheme(initialTheme);
+      applyThemeVariables(initialTheme);
 
       const storedMode = localStorage.getItem('theme-mode') as ThemeMode;
-      const initialMode = storedMode || 'dark';
-      setMode(initialMode);
-      
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      root.classList.add(initialMode);
-
+      const initialMode = storedMode || 'dark'; // Default to dark
+      applyMode(initialMode);
     } catch (error) {
-      console.error("Failed to load theme from localStorage", error);
-      setMode('dark');
-      const root = window.document.documentElement;
-      root.classList.remove('light');
-      root.classList.add('dark');
+      console.error("Failed to load settings from localStorage", error);
+      applyMode('dark');
     }
-  }, [setAndApplyTheme]);
+  }, [applyMode]);
 
-
-  // Ouve mudanças no localStorage de outras abas
+  // Listen for changes from other tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'app-theme' && event.newValue) {
         try {
           const newTheme = JSON.parse(event.newValue);
-          setAndApplyTheme(newTheme);
+          setCustomTheme(newTheme);
+          applyThemeVariables(newTheme);
         } catch (error) {
           console.error("Failed to parse theme from storage event", error);
         }
       }
       if (event.key === 'theme-mode' && event.newValue) {
-        const newMode = event.newValue as ThemeMode;
-        setMode(newMode);
-        const root = window.document.documentElement;
-        root.classList.remove('light', 'dark');
-        root.classList.add(newMode);
+        applyMode(event.newValue as ThemeMode);
       }
     };
 
@@ -196,27 +193,22 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [setAndApplyTheme]);
-
+  }, [applyMode]);
 
   const setTheme = (newTheme: Theme) => {
     try {
       localStorage.setItem('app-theme', JSON.stringify(newTheme));
-      setAndApplyTheme(newTheme);
+      setCustomTheme(newTheme);
+      applyThemeVariables(newTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }
   };
 
   const toggleTheme = () => {
-    setMode(prevMode => {
-      const newMode = prevMode === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme-mode', newMode);
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      root.classList.add(newMode);
-      return newMode;
-    });
+    const newMode = mode === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme-mode', newMode);
+    applyMode(newMode);
   }
 
   const value = {
