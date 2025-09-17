@@ -4,14 +4,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
-import type { Favor, User, UrgencyLevel, FavorStatus } from '@/types';
+import type { Favor, User, UrgencyLevel, FavorStatus, FavorParticipationType } from '@/types';
 import { getCurrentUser } from '@/lib/auth'; // Mock auth
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, UserCircle, X } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, User as UserIcon, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { RatingForm } from '@/components/rating-form';
@@ -34,6 +34,11 @@ const statusTranslations: Record<FavorStatus, string> = {
   accepted: 'Aceito',
   completed: 'Concluído',
   cancelled: 'Cancelado',
+};
+
+const participationTranslations: Record<FavorParticipationType, string> = {
+  individual: 'Individual',
+  collective: 'Coletivo',
 };
 
 
@@ -159,6 +164,8 @@ export default function FavorDetailPage() {
   const canRateRequester = favor.status === 'completed' && isExecutor && !favor.requesterRating;
   const canRateExecutor = favor.status === 'completed' && isRequester && !favor.executorRating;
 
+  const participationStyle = "border-indigo-500 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-700";
+
   return (
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
@@ -204,10 +211,15 @@ export default function FavorDetailPage() {
                 <div className="space-y-1">
                     <p className="flex items-start"><MapPin className="h-4 w-4 mr-2 text-muted-foreground shrink-0 mt-0.5" /> <span className="break-words"><strong>Localização:</strong> {favor.location}</span></p>
                     {favor.preferredDateTime && <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Preferência:</strong> {format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>}
-                    <p className="flex items-center">
-                        <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Urgência:</strong>
-                        <Badge variant="outline" className={`ml-2 capitalize ${getUrgencyStyles(favor.urgency)}`}>{urgencyTranslations[favor.urgency]}</Badge>
-                    </p>
+                    <div className="flex items-center pt-1 flex-wrap gap-2">
+                        <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
+                            <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]}
+                        </Badge>
+                        <Badge variant="outline" className={`capitalize ${participationStyle}`}>
+                           {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
+                           {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
+                        </Badge>
+                    </div>
                 </div>
             </div>
             <div>
