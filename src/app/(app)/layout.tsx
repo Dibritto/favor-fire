@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen w-full bg-muted/40">
         <Sidebar side="left" variant="sidebar" collapsible="icon">
           <SidebarHeader className="border-b border-sidebar-border">
-            <div className="p-3 flex justify-between items-center h-16">
+            <div className="p-3 flex justify-center items-center h-16">
               <Logo size="md" />
             </div>
           </SidebarHeader>
