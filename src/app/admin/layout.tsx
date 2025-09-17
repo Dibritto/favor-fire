@@ -7,9 +7,20 @@ import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
-import { Footer } from '@/components/footer';
 import { PageTitle } from '@/components/page-title';
 import { NotificationsDropdown } from '@/components/notifications-dropdown';
+
+
+function AdminFooter() {
+    const currentYear = new Date().getFullYear();
+    return (
+        <footer className="mt-auto text-center py-4 border-t border-border/50 bg-muted/50">
+            <p className="text-xs text-muted-foreground">
+                &copy; {currentYear} Projeto Favor. Todos os direitos reservados.
+            </p>
+        </footer>
+    );
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -22,7 +33,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Sidebar side="left" variant="sidebar" collapsible="icon">
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="p-3 flex justify-center items-center h-16">
-              <Logo size="md" />
+              <Link href="/">
+                <Logo size="md" />
+              </Link>
             </div>
           </SidebarHeader>
           <SidebarContent className="flex-grow">
@@ -110,7 +123,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <main className="flex-1 p-4 sm:p-6 overflow-auto bg-background">
             {children}
           </main>
-          <Footer />
+          <AdminFooter />
         </div>
       </div>
     </SidebarProvider>
