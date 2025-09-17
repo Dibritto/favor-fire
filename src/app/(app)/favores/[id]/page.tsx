@@ -149,34 +149,32 @@ export default function FavorDetailPage() {
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
-                 <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1">{favor.title}</CardTitle>
-                 <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start mt-2 sm:mt-0">
-                    {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
-                    {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
-                </Badge>
-              </div>
-              <CardDescription className="text-sm text-muted-foreground pt-1">
-                Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
-              </CardDescription>
-            </div>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-                        <MoreVertical className="h-4 w-4" />
-                        <span className="sr-only">Mais opções</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
-                        <ShieldAlert className="mr-2 h-4 w-4" />
-                        Denunciar Favor
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex justify-between items-start gap-4">
+              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1">{favor.title}</CardTitle>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Mais opções</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Denunciar Favor
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
           </div>
+          <div className="flex justify-end">
+             <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
+                {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
+                {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+            </Badge>
+          </div>
+          <CardDescription className="text-sm text-muted-foreground pt-1">
+            Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-foreground text-base leading-relaxed">{favor.description}</p>
@@ -308,3 +306,5 @@ export default function FavorDetailPage() {
     </article>
   );
 }
+
+    
