@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Palette, Save } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
 
 // This is not the real theme provider, just a helper for this page.
 const MOCK_DEFAULT_THEME = {
@@ -204,24 +203,21 @@ const friendlyColorNames: Record<string, string> = {
 const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
 function updateStyleTag(theme: ColorConfigFormValues) {
-    const styleId = 'dynamic-theme-styles';
-    let styleTag = document.getElementById(styleId);
+    let styleTag = document.getElementById('dynamic-theme-styles');
     if (!styleTag) {
         styleTag = document.createElement('style');
-        styleTag.id = styleId;
+        styleTag.id = 'dynamic-theme-styles';
         document.head.appendChild(styleTag);
     }
     
     const lightVars = Object.entries(theme.light).map(([key, value]) => {
         const [h, s, l] = hexToHsl(value);
-        const cssVarName = toKebabCase(key).startsWith('sidebar') ? `--${toKebabCase(key).replace('sidebar-', 'sidebar-')}`: `--${toKebabCase(key)}`;
-        return `${cssVarName}: ${h} ${s}% ${l}%;`;
+        return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
     }).join('\n');
     
     const darkVars = Object.entries(theme.dark).map(([key, value]) => {
-         const [h, s, l] = hexToHsl(value);
-        const cssVarName = toKebabCase(key).startsWith('sidebar') ? `--${toKebabCase(key).replace('sidebar-', 'sidebar-')}`: `--${toKebabCase(key)}`;
-        return `${cssVarName}: ${h} ${s}% ${l}%;`;
+        const [h, s, l] = hexToHsl(value);
+        return `--${toKebabCase(key)}: ${h} ${s}% ${l}%;`;
     }).join('\n');
 
     styleTag.innerHTML = `
@@ -234,38 +230,42 @@ ${darkVars}
     `;
 }
 
-function getInitialTheme(): typeof MOCK_DEFAULT_THEME {
-    if (typeof window === 'undefined') return MOCK_DEFAULT_THEME;
-    try {
-        const storedTheme = localStorage.getItem('app-colors');
-        return storedTheme ? JSON.parse(storedTheme) : MOCK_DEFAULT_THEME;
-    } catch {
-        return MOCK_DEFAULT_THEME;
-    }
-}
-
-
 export default function ThemeColorsPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTheme, setActiveTheme] = useState(getInitialTheme);
+  const [isClient, setIsClient] = useState(false);
 
-  
   const form = useForm<ColorConfigFormValues>({
     resolver: zodResolver(colorConfigSchema),
-    defaultValues: convertHslThemeToHex(activeTheme),
+    defaultValues: convertHslThemeToHex(MOCK_DEFAULT_THEME),
   });
   
   useEffect(() => {
-    form.reset(convertHslThemeToHex(activeTheme));
-  }, [activeTheme, form]);
+    setIsClient(true);
+    try {
+        const storedTheme = localStorage.getItem('app-colors');
+        if (storedTheme) {
+            const parsedTheme = JSON.parse(storedTheme);
+            form.reset(convertHslThemeToHex(parsedTheme));
+            updateStyleTag(convertHslThemeToHex(parsedTheme));
+        } else {
+            updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+        }
+    } catch {
+        // Se houver erro no parse, usa o tema padrão
+        form.reset(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+        updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+    }
+  }, [form]);
 
   useEffect(() => {
       const subscription = form.watch((value) => {
-        updateStyleTag(value as ColorConfigFormValues);
+        if(isClient) {
+            updateStyleTag(value as ColorConfigFormValues);
+        }
       });
       return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form, isClient]);
   
   function onSubmit(data: ColorConfigFormValues) {
     setIsSubmitting(true);
@@ -281,7 +281,6 @@ export default function ThemeColorsPage() {
     }
     
     localStorage.setItem('app-colors', JSON.stringify(newTheme));
-    setActiveTheme(newTheme);
 
     toast({
       title: "Tema Atualizado!",
@@ -293,7 +292,8 @@ export default function ThemeColorsPage() {
 
   const resetToDefault = () => {
     localStorage.removeItem('app-colors');
-    setActiveTheme(MOCK_DEFAULT_THEME);
+    form.reset(convertHslThemeToHex(MOCK_DEFAULT_THEME));
+    updateStyleTag(convertHslThemeToHex(MOCK_DEFAULT_THEME));
      toast({
       title: "Tema Restaurado",
       description: "As cores padrão foram restauradas.",
@@ -301,6 +301,23 @@ export default function ThemeColorsPage() {
   }
 
   const renderColorFields = (mode: 'light' | 'dark') => {
+    if (!isClient) {
+        // Render skeletons on the server to prevent hydration mismatch
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Object.keys(MOCK_DEFAULT_THEME[mode]).map((key) => (
+                    <div key={`${mode}.${key}`} className="space-y-2">
+                        <div className="h-6 w-32 rounded bg-muted animate-pulse"></div>
+                        <div className="flex items-center gap-2">
+                            <div className="h-10 w-14 rounded bg-muted animate-pulse"></div>
+                            <div className="h-10 flex-1 rounded bg-muted animate-pulse"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.keys(form.getValues(mode)).map((key) => (
@@ -344,8 +361,8 @@ export default function ThemeColorsPage() {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Button type="button" variant="outline" onClick={resetToDefault}>Restaurar Padrão</Button>
-                        <Button type="submit" disabled={isSubmitting}>
+                        <Button type="button" variant="outline" onClick={resetToDefault} disabled={!isClient}>Restaurar Padrão</Button>
+                        <Button type="submit" disabled={isSubmitting || !isClient}>
                             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                             Salvar Cores
                         </Button>
