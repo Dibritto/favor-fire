@@ -3,7 +3,7 @@ import { CreditCard, DollarSign, Users, Zap } from 'lucide-react';
 
 export default function AdminManageSubscriptionsPage() {
   return (
-    <section>
+    <main>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -28,6 +28,6 @@ export default function AdminManageSubscriptionsPage() {
           </div>
         </CardContent>
       </Card>
-    </section>
+    </main>
   );
 }

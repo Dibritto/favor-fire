@@ -51,7 +51,7 @@ export default function AdminManageFavorsPage() {
   }, []);
 
   return (
-    <section>
+    <main>
       <Card>
         <CardHeader>
           <CardTitle>Gerenciar Favores</CardTitle>
@@ -116,6 +116,6 @@ export default function AdminManageFavorsPage() {
           </Table>
         </CardContent>
       </Card>
-    </section>
+    </main>
   );
 }

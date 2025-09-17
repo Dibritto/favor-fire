@@ -24,7 +24,7 @@ export default function AdminUsersPage() {
   }, []);
 
   return (
-    <section>
+    <main>
       <Card>
         <CardHeader>
           <CardTitle>Todos os Usuários</CardTitle>
@@ -88,6 +88,6 @@ export default function AdminUsersPage() {
           </Table>
         </CardContent>
       </Card>
-    </section>
+    </main>
   );
 }

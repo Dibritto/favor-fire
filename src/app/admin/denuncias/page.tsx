@@ -98,7 +98,7 @@ export default function AdminManageReportsPage() {
   }
 
   return (
-    <section>
+    <main>
       <Card>
         <CardHeader>
           <CardTitle>Gerenciar Denúncias</CardTitle>
@@ -170,6 +170,6 @@ export default function AdminManageReportsPage() {
           </Table>
         </CardContent>
       </Card>
-    </section>
+    </main>
   );
 }
