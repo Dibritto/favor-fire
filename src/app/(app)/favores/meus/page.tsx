@@ -69,7 +69,7 @@ export default function MyFavorsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
       <h1 className="text-3xl font-headline font-bold">Meus Favores</h1>
       <Tabs defaultValue="requested" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:w-1/2">
@@ -101,6 +101,6 @@ export default function MyFavorsPage() {
           </section>
         </TabsContent>
       </Tabs>
-    </div>
+    </main>
   );
 }
