@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -224,6 +223,38 @@ export default function DashboardPage() {
               {activities.length > 0 ? (
                 <ul className="space-y-4">
                   {activities.map((activity) => {
+                    let activityMessage;
+                    if (activity.message) {
+                      activityMessage = <span>{activity.message}</span>;
+                    } else if (activity.type === 'new_favor') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} pediu um novo favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    } else if (activity.type === 'favor_accepted') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} aceitou o favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    } else if (activity.type === 'favor_completed') {
+                      activityMessage = (
+                        <>
+                          {activity.userName} completou o favor:{' '}
+                          <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
+                            "{activity.favorTitle}"
+                          </Link>
+                        </>
+                      );
+                    }
+                  
                     return (
                       <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
                         <Avatar className="h-10 w-10 border">
@@ -234,31 +265,7 @@ export default function DashboardPage() {
                         </Avatar>
                         <div className="flex-1">
                           <p className="text-sm text-foreground leading-snug">
-                            {activity.message && <span>{activity.message}</span>}
-                            {activity.type === 'new_favor' && (
-                              <>
-                                {activity.userName} pediu um novo favor:{' '}
-                                <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
-                                  "{activity.favorTitle}"
-                                </Link>
-                              </>
-                            )}
-                            {activity.type === 'favor_accepted' && (
-                              <>
-                                {activity.userName} aceitou o favor:{' '}
-                                <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
-                                  "{activity.favorTitle}"
-                                </Link>
-                              </>
-                            )}
-                            {activity.type === 'favor_completed' && (
-                              <>
-                                {activity.userName} completou o favor:{' '}
-                                <Link href={`/favors/${activity.favorId}`} className="font-medium text-primary hover:underline">
-                                  "{activity.favorTitle}"
-                                </Link>
-                              </>
-                            )}
+                             {activityMessage}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ptBR })}
@@ -277,7 +284,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Quick Actions & Tip */}
-        <section className="lg:col-span-1 space-y-8">
+        <aside className="lg:col-span-1 space-y-8">
             <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
                     <CardTitle className="text-xl font-headline">Ações Rápidas</CardTitle>
@@ -308,7 +315,7 @@ export default function DashboardPage() {
                 </div>
             </CardContent>
             </Card>
-        </section>
+        </aside>
       </div>
     </div>
   );

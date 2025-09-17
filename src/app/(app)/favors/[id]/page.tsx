@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -130,7 +129,7 @@ export default function FavorDetailPage() {
   const canRateExecutor = favor.status === 'completed' && isRequester && !favor.executorRating;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-12">
+    <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
@@ -242,7 +241,7 @@ export default function FavorDetailPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </article>
   );
 }
 

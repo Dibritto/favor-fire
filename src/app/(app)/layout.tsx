@@ -84,7 +84,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </Button>
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" /> {/* Mobile trigger visible on small screens */}
             <div className="flex-1">
@@ -98,7 +98,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             {children}
           </main>
           <Footer />
-        </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );

@@ -55,7 +55,7 @@ export function FavorCard({ favor }: FavorCardProps) {
   }
 
   return (
-    <Card className="flex flex-col h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
+    <Card as="article" className="flex flex-col h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
             <CardTitle className="font-headline text-lg md:text-xl line-clamp-2">{favor.title}</CardTitle>
