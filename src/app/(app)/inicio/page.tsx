@@ -175,7 +175,7 @@ export default function DashboardPage() {
       </section>
       
       <section aria-labelledby="recent-favors-heading">
-         <Card className="shadow-lg border-primary border-2">
+         <Card className="shadow-lg">
             <CardHeader>
                 <div className="flex items-center mb-1">
                     <Search className="h-6 w-6 mr-2 text-primary" />
