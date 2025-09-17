@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -64,6 +65,7 @@ const favorFormSchema = z.object({
   urgency: z.enum(["low", "medium", "high"], { required_error: "O nível de urgência é obrigatório." }),
   state: z.string({ required_error: "O estado é obrigatório." }),
   city: z.string().min(3, "A cidade é obrigatória."),
+  bairro: z.string().min(3, "O bairro é obrigatório."),
   address: z.string().optional(),
   type: z.enum(["volunteer", "paid"], { required_error: "O tipo de favor é obrigatório." }),
   participationType: z.enum(["individual", "collective"], { required_error: "O modo de participação é obrigatório." }),
@@ -87,6 +89,7 @@ export default function SubmitFavorPage() {
       description: "",
       urgency: "medium",
       city: "",
+      bairro: "",
       address: "",
       type: "volunteer",
       participationType: "individual",
@@ -96,20 +99,19 @@ export default function SubmitFavorPage() {
   const watchFavorType = form.watch("type");
 
   async function onSubmit(data: FavorFormValues) {
-    const location = data.address ? `${data.address}, ${data.city} - ${data.state}` : `${data.city} - ${data.state}`;
+    const location = data.address ? `${data.address}, ${data.bairro}, ${data.city} - ${data.state}` : `${data.bairro}, ${data.city} - ${data.state}`;
     
     const submissionData = {
         ...data,
         location,
     };
-    // Remover campos que já foram combinados em 'location'
     delete (submissionData as Partial<FavorFormValues>).city;
     delete (submissionData as Partial<FavorFormValues>).state;
     delete (submissionData as Partial<FavorFormValues>).address;
+    delete (submissionData as Partial<FavorFormValues>).bairro;
 
 
     console.log("Dados do favor submetido:", submissionData);
-    // Em um app real, você salvaria isso no seu backend
     toast({
       title: "Favor Enviado!",
       description: "Seu pedido de favor foi publicado para a comunidade.",
@@ -192,12 +194,25 @@ export default function SubmitFavorPage() {
                 </div>
                  <FormField
                     control={form.control}
+                    name="bairro"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Bairro</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Ex: Centro" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
                     name="address"
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Endereço (Opcional)</FormLabel>
                         <FormControl>
-                        <Input placeholder="Ex: Rua Principal, 123, Centro" {...field} />
+                        <Input placeholder="Ex: Rua Principal, 123" {...field} />
                         </FormControl>
                          <FormDescription>Seja específico, se necessário para o favor.</FormDescription>
                         <FormMessage />
@@ -373,5 +388,3 @@ export default function SubmitFavorPage() {
     </div>
   );
 }
-
-    
