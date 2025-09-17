@@ -1,8 +1,5 @@
 
-
-
-
-import type { User, Favor, Notification, Report } from '@/types';
+import type { User, Favor, Notification, Report, Community } from '@/types';
 
 export const mockUsers: User[] = [
   {
@@ -218,4 +215,32 @@ mockReports.forEach(report => {
     } else {
         report.reportedItem = mockUsers.find(u => u.id === report.reportedItemId);
     }
+});
+
+
+export const mockCommunities: Community[] = [
+    {
+        id: 'comm1',
+        name: 'Amantes de Jardinagem de Qualquer Cidade',
+        description: 'Uma comunidade para todos que amam jardinagem, para compartilhar dicas, sementes e ajudar uns aos outros com os jardins.',
+        type: 'public',
+        creatorId: 'user1',
+        memberIds: ['user1', 'user2', 'user3'],
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'comm2',
+        name: 'Clube de Leitura do Condomínio Greenwood',
+        description: 'Um clube de leitura privado para os moradores do Condomínio Greenwood. Nos encontramos uma vez por mês.',
+        type: 'private',
+        creatorId: 'user2',
+        memberIds: ['user2', 'user1'],
+        createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+];
+
+// Populate creator and members
+mockCommunities.forEach(community => {
+    community.creator = mockUsers.find(u => u.id === community.creatorId);
+    community.members = community.memberIds.map(id => mockUsers.find(u => u.id === id)).filter(Boolean) as User[];
 });

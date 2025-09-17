@@ -1,9 +1,4 @@
 
-
-
-
-
-
 export interface User {
   id: string;
   name: string;
@@ -64,7 +59,10 @@ export interface Community {
     description: string;
     type: CommunityType;
     creatorId: string;
+    creator?: User; // Populated for display
     memberIds: string[];
+    members?: User[]; // Populated for display
+    createdAt: string; // ISO string
 }
 
 export type MissionNiche = 'streamer' | 'ong' | 'empresa';
