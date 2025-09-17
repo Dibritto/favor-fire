@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -200,6 +201,7 @@ const friendlyColorNames: Record<string, string> = {
     sidebarRing: "Anel de Foco da Sidebar",
 };
 
+const toKebabCase = (str: string) => str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
 function updateStyleTag(theme: ColorConfigFormValues) {
     const styleId = 'dynamic-theme-styles';
@@ -212,12 +214,14 @@ function updateStyleTag(theme: ColorConfigFormValues) {
     
     const lightVars = Object.entries(theme.light).map(([key, value]) => {
         const [h, s, l] = hexToHsl(value);
-        return `--${key}: ${h} ${s}% ${l}%;`;
+        const cssVarName = toKebabCase(key).startsWith('sidebar') ? `--${toKebabCase(key).replace('sidebar-', 'sidebar-')}`: `--${toKebabCase(key)}`;
+        return `${cssVarName}: ${h} ${s}% ${l}%;`;
     }).join('\n');
     
     const darkVars = Object.entries(theme.dark).map(([key, value]) => {
          const [h, s, l] = hexToHsl(value);
-        return `--${key}: ${h} ${s}% ${l}%;`;
+        const cssVarName = toKebabCase(key).startsWith('sidebar') ? `--${toKebabCase(key).replace('sidebar-', 'sidebar-')}`: `--${toKebabCase(key)}`;
+        return `${cssVarName}: ${h} ${s}% ${l}%;`;
     }).join('\n');
 
     styleTag.innerHTML = `
@@ -257,9 +261,11 @@ export default function ThemeColorsPage() {
   }, [activeTheme, form]);
 
   useEffect(() => {
-      const hexValues = form.watch();
-      updateStyleTag(hexValues);
-  }, [form.watch()]);
+      const subscription = form.watch((value) => {
+        updateStyleTag(value as ColorConfigFormValues);
+      });
+      return () => subscription.unsubscribe();
+  }, [form.watch]);
   
   function onSubmit(data: ColorConfigFormValues) {
     setIsSubmitting(true);
@@ -370,3 +376,5 @@ export default function ThemeColorsPage() {
      </main>
   );
 }
+
+    
