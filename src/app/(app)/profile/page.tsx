@@ -65,7 +65,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      <Card className="shadow-xl overflow-hidden">
+      <header className="shadow-xl overflow-hidden rounded-lg">
         <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
            <Image 
             src="https://placehold.co/1200x200.png" 
@@ -76,14 +76,14 @@ export default function ProfilePage() {
             data-ai-hint="abstract banner"
           />
         </div>
-        <CardContent className="relative pt-0">
+        <div className="relative pt-0">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
                     <AvatarImage src={`https://placehold.co/128x128.png?text=${user.name.charAt(0).toUpperCase()}`} alt={user.name} data-ai-hint="profile picture"/>
                     <AvatarFallback className="text-4xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow text-center sm:text-left">
-                    <CardTitle className="text-2xl sm:text-3xl font-headline">{user.name}</CardTitle>
+                    <h1 className="text-2xl sm:text-3xl font-headline">{user.name}</h1>
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
                         {[...Array(Math.floor(user.reputation))].map((_, i) => <Star key={`full-${i}`} className="h-5 w-5 fill-current" />)}
                         {user.reputation % 1 >= 0.5 && <Star key="half" className="h-5 w-5" style={{ clipPath: 'inset(0 50% 0 0)' }} />}
@@ -93,40 +93,44 @@ export default function ProfilePage() {
                 </div>
                 <Button variant="outline" size="sm"><Edit3 className="mr-2 h-4 w-4" /> Editar Perfil (Em Breve)</Button>
             </div>
-        </CardContent>
-      </Card>
+        </div>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-1">
-            <CardHeader>
-                <CardTitle className="text-xl font-headline">Informações de Contato</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-                <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
-                {user.phone && <p className="flex items-center"><Phone className="mr-3 h-5 w-5 text-primary" /> {user.phone}</p>}
-                 <p className="flex items-center">
-                    <CalendarDays className="mr-3 h-5 w-5 text-primary" /> 
-                    {user.joinDate ? `Entrou em: ${format(new Date(user.joinDate), "P", { locale: ptBR })}` : 'Data de entrada não disponível'}
-                </p>
-            </CardContent>
-        </Card>
-        <Card className="md:col-span-2">
-            <CardHeader>
-                <CardTitle className="text-xl font-headline">Contribuição Comunitária</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 text-center">
-                <div className="p-4 rounded-lg bg-muted">
-                    <HelpingHand className="h-8 w-8 mx-auto text-primary mb-2" />
-                    <p className="text-2xl font-bold">{user.favorsCompleted}</p>
-                    <p className="text-sm text-muted-foreground">Favores Concluídos</p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted">
-                    <ListChecks className="h-8 w-8 mx-auto text-accent mb-2" />
-                    <p className="text-2xl font-bold">{user.favorsRequested}</p>
-                    <p className="text-sm text-muted-foreground">Favores Pedidos</p>
-                </div>
-            </CardContent>
-        </Card>
+        <aside className="md:col-span-1">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl font-headline">Informações de Contato</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                    <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
+                    {user.phone && <p className="flex items-center"><Phone className="mr-3 h-5 w-5 text-primary" /> {user.phone}</p>}
+                    <p className="flex items-center">
+                        <CalendarDays className="mr-3 h-5 w-5 text-primary" /> 
+                        {user.joinDate ? `Entrou em: ${format(new Date(user.joinDate), "P", { locale: ptBR })}` : 'Data de entrada não disponível'}
+                    </p>
+                </CardContent>
+            </Card>
+        </aside>
+        <div className="md:col-span-2">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-4 text-center">
+                    <div className="p-4 rounded-lg bg-muted">
+                        <HelpingHand className="h-8 w-8 mx-auto text-primary mb-2" />
+                        <p className="text-2xl font-bold">{user.favorsCompleted}</p>
+                        <p className="text-sm text-muted-foreground">Favores Concluídos</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted">
+                        <ListChecks className="h-8 w-8 mx-auto text-accent mb-2" />
+                        <p className="text-2xl font-bold">{user.favorsRequested}</p>
+                        <p className="text-sm text-muted-foreground">Favores Pedidos</p>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
       </div>
       
       <Card>

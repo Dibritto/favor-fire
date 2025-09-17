@@ -17,7 +17,7 @@ export default function WebsiteLayout({
           <Link href="/">
             <Logo size="md" />
           </Link>
-          <nav className="flex items-center space-x-2">
+          <nav aria-label="Main navigation" className="flex items-center space-x-2">
             <Button variant="ghost" asChild>
               <Link href="/auth/login">Entrar</Link>
             </Button>
