@@ -10,6 +10,7 @@ export function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
 
   useEffect(() => {
+    // This effect runs only on the client, after hydration
     setCurrentYear(new Date().getFullYear());
   }, []);
 
@@ -50,7 +51,7 @@ export function Footer() {
       </div>
       <div className="text-center py-6 border-t border-border/50 bg-muted/50">
         <p className="text-sm text-muted-foreground">
-          &copy; {currentYear || new Date().getFullYear()} Kindred Connect. Todos os direitos reservados.
+          {currentYear ? `© ${currentYear} Kindred Connect. Todos os direitos reservados.` : `\u00A0`}
         </p>
       </div>
     </footer>
