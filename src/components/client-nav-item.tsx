@@ -33,6 +33,15 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
   if(href === "/inicio" && pathname !== "/inicio") {
       isActive = false;
   }
+  if (href === "/perfil" && pathname.startsWith("/perfil/editar")) {
+    isActive = false;
+  }
+   if (href === "/assinatura" && pathname !== "/assinatura") {
+    isActive = false;
+  }
+   if (href === "/perfil" && pathname !== "/perfil") {
+    isActive = false;
+  }
 
 
   const handleClick = () => {
@@ -42,18 +51,17 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
   };
   
   return (
-    <Link href={href} passHref legacyBehavior aria-label={label} onClick={handleClick}>
+    <Link href={href} passHref legacyBehavior aria-label={label}>
       <SidebarMenuButton 
         asChild 
         isActive={isActive} 
         tooltip={{ children: label, side: 'right', className: 'font-body' }} 
         className="w-full justify-start"
       >
-        <a> 
+        <a onClick={handleClick}> 
           {children}
         </a>
       </SidebarMenuButton>
     </Link>
   );
 }
-
