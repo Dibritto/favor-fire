@@ -93,7 +93,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8 md:space-y-12">
+    <main className="space-y-8 md:space-y-12">
       <section className="bg-card p-6 sm:p-8 rounded-lg shadow-lg border border-border">
         <h1 className="text-3xl md:text-4xl font-headline font-bold text-primary mb-2">
           Bem-vindo(a) de volta, {user?.name?.split(' ')[0] || 'Usuário'}!
@@ -321,6 +321,6 @@ export default function DashboardPage() {
             </section>
         </aside>
       </div>
-    </div>
+    </main>
   );
 }
