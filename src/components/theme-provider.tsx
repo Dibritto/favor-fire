@@ -68,17 +68,22 @@ export function ThemeProvider({
   colorsStorageKey = "app-colors-hex",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return defaultTheme;
-    }
-    return (localStorage.getItem(storageKey) as Theme | null) || defaultTheme;
-  });
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      const storedTheme = localStorage.getItem(storageKey) as Theme | null;
+      if (storedTheme) {
+        setTheme(storedTheme);
+      }
+    }
+  }, [isMounted, storageKey]);
+
 
   useEffect(() => {
     if (!isMounted) return;
@@ -105,6 +110,7 @@ export function ThemeProvider({
 
   // Add a listener to storage events to update theme in real-time across tabs
   useEffect(() => {
+      if (!isMounted) return;
       const handleStorageChange = (event: StorageEvent) => {
         if (event.key === colorsStorageKey && event.newValue) {
              const newHexTheme = JSON.parse(event.newValue);
@@ -121,7 +127,7 @@ export function ThemeProvider({
     return () => {
         window.removeEventListener('storage', handleStorageChange);
     };
-  }, [theme, storageKey, colorsStorageKey]);
+  }, [theme, isMounted, storageKey, colorsStorageKey]);
 
 
   const toggleTheme = () => {
@@ -149,4 +155,3 @@ export const useTheme = () => {
 
   return context
 }
-
