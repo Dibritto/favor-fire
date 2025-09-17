@@ -37,38 +37,39 @@ export function ThemeClientProvider({
   const [theme, setTheme] = useState<Theme>(defaultTheme);
   const [isMounted, setIsMounted] = useState(false);
 
+  // This effect ensures we only run localStorage logic on the client
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  // This effect applies the theme mode and custom colors once mounted
   useEffect(() => {
-    if (!isMounted) return;
-
-    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
-    setTheme(storedTheme || defaultTheme);
-
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(storedTheme || defaultTheme);
-    localStorage.setItem(storageKey, storedTheme || defaultTheme);
-    
-    try {
-      const storedColorsJson = localStorage.getItem(colorsStorageKey);
-      const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
+    if (isMounted) {
+      const storedTheme = localStorage.getItem(storageKey) as Theme | null;
       const currentMode = storedTheme || defaultTheme;
+      setTheme(currentMode);
+      
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(currentMode);
 
-      if (hexTheme && hexTheme[currentMode]) {
-          applyThemeColors(hexTheme[currentMode]);
-      } else {
-          const defaultColorsForMode = MOCK_DEFAULT_THEME[currentMode];
-          const root = document.documentElement;
-          Object.keys(defaultColorsForMode).forEach(key => {
-              const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-              root.style.setProperty(cssVarName, (defaultColorsForMode as any)[key]);
-          });
-      }
-    } catch (e) {
+      try {
+        const storedColorsJson = localStorage.getItem(colorsStorageKey);
+        const hexTheme = storedColorsJson ? JSON.parse(storedColorsJson) : null;
+
+        if (hexTheme && hexTheme[currentMode]) {
+            applyThemeColors(hexTheme[currentMode]);
+        } else {
+            // Apply default theme if no custom colors are stored
+            const defaultHslColors = MOCK_DEFAULT_THEME[currentMode];
+            Object.keys(defaultHslColors).forEach(key => {
+                const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                root.style.setProperty(cssVarName, (defaultHslColors as any)[key]);
+            });
+        }
+      } catch (e) {
         console.error("Failed to parse or apply theme colors from localStorage", e);
+      }
     }
   }, [isMounted, storageKey, colorsStorageKey, defaultTheme]);
 
@@ -78,6 +79,7 @@ export function ThemeClientProvider({
         localStorage.setItem(storageKey, newTheme);
         window.document.documentElement.classList.remove('light', 'dark');
         window.document.documentElement.classList.add(newTheme);
+
         // Re-apply colors for the new theme
         try {
             const storedColorsJson = localStorage.getItem(colorsStorageKey);
@@ -103,8 +105,8 @@ export function ThemeClientProvider({
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-        setTheme(newTheme);
         localStorage.setItem(storageKey, newTheme);
+        setTheme(newTheme);
         window.document.documentElement.classList.remove('light', 'dark');
         window.document.documentElement.classList.add(newTheme);
     },

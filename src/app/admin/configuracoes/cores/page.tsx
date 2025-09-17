@@ -19,8 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2, Palette, Save } from "lucide-react";
 import MOCK_DEFAULT_THEME from "@/lib/default-theme";
 import { isEqual } from "lodash";
-import { applyThemeColors, hexToHslString, hslStringToHex } from "@/lib/theme-utils";
-
+import { applyThemeColors, hslStringToHex } from "@/lib/theme-utils";
 
 const colorSchema = z.object({
     background: z.string(), foreground: z.string(), card: z.string(), cardForeground: z.string(),
@@ -62,7 +61,6 @@ const convertHslThemeToHex = (theme: typeof MOCK_DEFAULT_THEME): ColorConfigForm
     }
     return result;
 };
-
 
 const DEFAULT_HEX_THEME = convertHslThemeToHex(MOCK_DEFAULT_THEME);
 const COLORS_STORAGE_KEY = "app-colors-hex";
