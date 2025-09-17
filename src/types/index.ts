@@ -1,4 +1,5 @@
 
+
 export interface User {
   id: string;
   name: string;
@@ -97,7 +98,7 @@ export interface Notification {
 
 export type ReportStatus = 'pending' | 'resolved' | 'ignored';
 export type ReportReason = 'spam' | 'inappropriate' | 'scam' | 'other';
-export type ReportedItemType = 'favor' | 'user';
+export type ReportedItemType = 'favor' | 'user' | 'community';
 
 export interface Report {
     id: string;
@@ -105,7 +106,7 @@ export interface Report {
     reportedBy?: User;
     reportedItemId: string;
     reportedItemType: ReportedItemType;
-    reportedItem?: Favor | User;
+    reportedItem?: Favor | User | Community;
     reason: ReportReason;
     comments?: string;
     status: ReportStatus;

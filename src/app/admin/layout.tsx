@@ -1,3 +1,4 @@
+
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -93,7 +94,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <SidebarFooter className="border-t border-sidebar-border p-3">
              <div className="flex items-center gap-3 mb-3">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={`https://placehold.co/40x40.png?text=${userInitial}`} alt={user?.name} data-ai-hint="avatar person" />
+                <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/40/40`} alt={user?.name} data-ai-hint="avatar person" />
                 <AvatarFallback>{userInitial}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">

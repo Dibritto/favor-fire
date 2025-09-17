@@ -2,17 +2,18 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import type { Report, User, Favor } from '@/types';
-import { mockReports, mockUsers, mockFavors } from '@/lib/mock-data';
+import type { Report, User, Favor, Community } from '@/types';
+import { mockReports } from '@/lib/mock-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, MessageSquare, User as UserIcon, ShieldCheck } from 'lucide-react';
+import { MoreHorizontal, MessageSquare, User as UserIcon, ShieldCheck, Users } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 // Função para obter o estilo do status para consistência
 const getStatusStyles = (status: Report['status']) => {
@@ -44,28 +45,57 @@ const reasonTranslations: { [key in Report['reason']]: string } = {
 
 export default function AdminManageReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Em um app real, você buscaria os dados da sua API
     setReports(mockReports);
   }, []);
+  
+  const handleMarkAsResolved = (reportId: string) => {
+    setReports(prevReports => 
+        prevReports.map(r => r.id === reportId ? {...r, status: 'resolved'} : r)
+    );
+    toast({ title: 'Denúncia Resolvida', description: 'A denúncia foi marcada como resolvida.'});
+  }
 
   const getReportedItemName = (report: Report) => {
     if (report.reportedItemType === 'favor') {
         const favor = report.reportedItem as Favor;
         return favor?.title || 'Favor não encontrado';
     }
-    const user = report.reportedItem as User;
-    return user?.name || 'Usuário não encontrado';
+    if (report.reportedItemType === 'user') {
+        const user = report.reportedItem as User;
+        return user?.name || 'Usuário não encontrado';
+    }
+    if (report.reportedItemType === 'community') {
+        const community = report.reportedItem as Community;
+        return community?.name || 'Comunidade não encontrada';
+    }
+    return 'Item desconhecido';
   }
 
   const getReportedItemLink = (report: Report) => {
     if (report.reportedItemType === 'favor') {
       return `/favores/${report.reportedItemId}`;
     }
-    // Assumindo que teremos perfis públicos em /perfil/[id] no futuro
-    return `/perfil`; // Link para o próprio perfil por enquanto
+     if (report.reportedItemType === 'user') {
+      return `/perfil/${report.reportedItemId}`;
+    }
+     if (report.reportedItemType === 'community') {
+      return `/comunidades/${report.reportedItemId}`;
+    }
+    return '#';
   };
+
+  const getItemIcon = (type: Report['reportedItemType']) => {
+    switch (type) {
+        case 'favor': return <MessageSquare className="h-4 w-4 mr-2 text-muted-foreground" />;
+        case 'user': return <UserIcon className="h-4 w-4 mr-2 text-muted-foreground" />;
+        case 'community': return <Users className="h-4 w-4 mr-2 text-muted-foreground" />;
+        default: return null;
+    }
+  }
 
   return (
     <section>
@@ -91,10 +121,7 @@ export default function AdminManageReportsPage() {
                 <TableRow key={report.id}>
                   <TableCell>
                     <div className="font-medium flex items-center">
-                        {report.reportedItemType === 'favor' ? 
-                            <MessageSquare className="h-4 w-4 mr-2 text-muted-foreground" /> : 
-                            <UserIcon className="h-4 w-4 mr-2 text-muted-foreground" />
-                        }
+                        {getItemIcon(report.reportedItemType)}
                         <Link href={getReportedItemLink(report)} className="hover:underline">
                             {getReportedItemName(report)}
                         </Link>
@@ -127,13 +154,13 @@ export default function AdminManageReportsPage() {
                            <Link href={getReportedItemLink(report)}>Ver Item Denunciado</Link> 
                         </DropdownMenuItem>
                          {report.status === 'pending' && (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkAsResolved(report.id)}>
                                 <ShieldCheck className="mr-2 h-4 w-4" />
                                 Marcar como Resolvido
                             </DropdownMenuItem>
                          )}
                         <DropdownMenuItem className="text-destructive">Suspender Item</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Suspender Usuário que Denunciou</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">Suspender Usuário Denunciante</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

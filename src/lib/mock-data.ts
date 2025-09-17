@@ -1,4 +1,5 @@
 
+
 import type { User, Favor, Notification, Report, Community } from '@/types';
 
 export const mockUsers: User[] = [
@@ -43,12 +44,26 @@ export const mockUsers: User[] = [
   },
 ];
 
-// Populate sponsor data for the invitation system
-mockUsers.forEach(user => {
-    if (user.invitedById) {
-        user.sponsor = mockUsers.find(u => u.id === user.invitedById);
-    }
-});
+export const mockCommunities: Community[] = [
+    {
+        id: 'comm1',
+        name: 'Amantes de Jardinagem de Qualquer Cidade',
+        description: 'Uma comunidade para todos que amam jardinagem, para compartilhar dicas, sementes e ajudar uns aos outros com os jardins.',
+        type: 'public',
+        creatorId: 'user1',
+        memberIds: ['user1', 'user2', 'user3'],
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'comm2',
+        name: 'Clube de Leitura do Condomínio Greenwood',
+        description: 'Um clube de leitura privado para os moradores do Condomínio Greenwood. Nos encontramos uma vez por mês.',
+        type: 'private',
+        creatorId: 'user2',
+        memberIds: ['user2', 'user1'],
+        createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+];
 
 
 export const mockFavors: Favor[] = [
@@ -62,6 +77,7 @@ export const mockFavors: Favor[] = [
     participationType: 'individual',
     preferredDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     status: 'open',
+    communityId: 'comm1',
     requesterId: 'user1',
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
   },
@@ -122,18 +138,12 @@ export const mockFavors: Favor[] = [
     type: 'volunteer',
     participationType: 'individual',
     status: 'open',
+    communityId: 'comm2',
     requesterId: 'user2',
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ];
 
-// Populate requester/executor objects for easier access in components
-mockFavors.forEach(favor => {
-  favor.requester = mockUsers.find(u => u.id === favor.requesterId);
-  if (favor.executorId) {
-    favor.executor = mockUsers.find(u => u.id === favor.executorId);
-  }
-});
 
 export const mockNotifications: Notification[] = [
   {
@@ -207,43 +217,45 @@ export const mockReports: Report[] = [
         comments: 'O favor já foi concluído, mas ainda está aparecendo como aberto em alguns lugares.',
         status: 'resolved',
         createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+     {
+        id: 'report4',
+        reportedById: 'user1',
+        reportedItemId: 'comm2',
+        reportedItemType: 'community',
+        reason: 'other',
+        comments: 'Esta comunidade parece estar inativa há muito tempo.',
+        status: 'ignored',
+        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     }
 ];
 
-// Populate related data for reports
+// Populate related data before exporting
+mockUsers.forEach(user => {
+    if (user.invitedById) {
+        user.sponsor = mockUsers.find(u => u.id === user.invitedById);
+    }
+});
+
+mockFavors.forEach(favor => {
+  favor.requester = mockUsers.find(u => u.id === favor.requesterId);
+  if (favor.executorId) {
+    favor.executor = mockUsers.find(u => u.id === favor.executorId);
+  }
+});
+
+mockCommunities.forEach(community => {
+    community.creator = mockUsers.find(u => u.id === community.creatorId);
+    community.members = community.memberIds.map(id => mockUsers.find(u => u.id === id)).filter(Boolean) as User[];
+});
+
 mockReports.forEach(report => {
     report.reportedBy = mockUsers.find(u => u.id === report.reportedById);
     if (report.reportedItemType === 'favor') {
         report.reportedItem = mockFavors.find(f => f.id === report.reportedItemId);
-    } else {
+    } else if (report.reportedItemType === 'user') {
         report.reportedItem = mockUsers.find(u => u.id === report.reportedItemId);
+    } else if (report.reportedItemType === 'community') {
+        report.reportedItem = mockCommunities.find(c => c.id === report.reportedItemId);
     }
-});
-
-
-export const mockCommunities: Community[] = [
-    {
-        id: 'comm1',
-        name: 'Amantes de Jardinagem de Qualquer Cidade',
-        description: 'Uma comunidade para todos que amam jardinagem, para compartilhar dicas, sementes e ajudar uns aos outros com os jardins.',
-        type: 'public',
-        creatorId: 'user1',
-        memberIds: ['user1', 'user2', 'user3'],
-        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'comm2',
-        name: 'Clube de Leitura do Condomínio Greenwood',
-        description: 'Um clube de leitura privado para os moradores do Condomínio Greenwood. Nos encontramos uma vez por mês.',
-        type: 'private',
-        creatorId: 'user2',
-        memberIds: ['user2', 'user1'],
-        createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-];
-
-// Populate creator and members
-mockCommunities.forEach(community => {
-    community.creator = mockUsers.find(u => u.id === community.creatorId);
-    community.members = community.memberIds.map(id => mockUsers.find(u => u.id === id)).filter(Boolean) as User[];
 });
