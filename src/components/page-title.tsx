@@ -9,6 +9,7 @@ const routeTitles: { [key: string]: string } = {
   '/favores/meus': 'Meus Favores',
   '/favores/pedir': 'Pedir um Favor',
   '/perfil': 'Perfil',
+  '/perfil/editar': 'Editar Perfil',
   '/admin/painel': 'Painel Administrativo',
   '/admin/usuarios': 'Gerenciar Usuários',
   '/admin/favores': 'Gerenciar Favores',

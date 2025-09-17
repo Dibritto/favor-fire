@@ -88,7 +88,11 @@ export default function ProfilePage() {
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
                 </div>
-                <Button variant="outline" size="sm"><Edit3 className="mr-2 h-4 w-4" /> Editar Perfil (Em Breve)</Button>
+                <Button variant="outline" size="sm" asChild>
+                    <Link href="/perfil/editar">
+                        <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
+                    </Link>
+                </Button>
             </div>
         </div>
       </div>
