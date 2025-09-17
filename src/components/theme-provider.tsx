@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 
 // Define the structure of a single theme mode (light or dark)
 type ThemeModeVars = {
@@ -117,21 +117,16 @@ const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 const applyThemeVariables = (theme: Theme) => {
     if (typeof window === 'undefined') return;
 
-    const generateCssString = (themeVars: ThemeModeVars, selector: string) => {
-        const css = Object.entries(themeVars).map(([key, value]) => {
+    const root = document.documentElement;
+
+    const generateCssString = (themeVars: ThemeModeVars) => {
+        return Object.entries(themeVars).map(([key, value]) => {
             const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
             return `${cssVar}: ${value};`;
         }).join(' ');
-        return `${selector} { ${css} }`;
     };
-
-    let lightStyle = document.getElementById('light-theme-sheet');
-    if (!lightStyle) {
-        lightStyle = document.createElement('style');
-        lightStyle.id = 'light-theme-sheet';
-        document.head.appendChild(lightStyle);
-    }
-    lightStyle.innerHTML = generateCssString(theme.light, ':root');
+    
+    root.style.cssText = generateCssString(theme.light);
 
     let darkStyle = document.getElementById('dark-theme-sheet');
     if (!darkStyle) {
@@ -139,20 +134,25 @@ const applyThemeVariables = (theme: Theme) => {
         darkStyle.id = 'dark-theme-sheet';
         document.head.appendChild(darkStyle);
     }
-    darkStyle.innerHTML = generateCssString(theme.dark, '.dark');
+    darkStyle.innerHTML = `.dark { ${generateCssString(theme.dark)} }`;
 }
 
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
+  const [customTheme, setCustomThemeState] = useState<Theme>(DEFAULT_THEME);
   const [mode, setMode] = useState<ThemeMode | null>(null);
 
+  const setAndApplyTheme = useCallback((newTheme: Theme) => {
+    setCustomThemeState(newTheme);
+    applyThemeVariables(newTheme);
+  }, []);
+  
   useEffect(() => {
+    // Carrega o tema e o modo do localStorage na montagem inicial
     try {
       const storedTheme = localStorage.getItem('app-theme');
       const initialTheme = storedTheme ? JSON.parse(storedTheme) : DEFAULT_THEME;
-      setCustomTheme(initialTheme);
-      applyThemeVariables(initialTheme);
+      setAndApplyTheme(initialTheme);
 
       const storedMode = localStorage.getItem('theme-mode') as ThemeMode;
       const initialMode = storedMode || 'dark';
@@ -169,13 +169,40 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       root.classList.remove('light');
       root.classList.add('dark');
     }
-  }, []);
+  }, [setAndApplyTheme]);
+
+
+  // Ouve mudanças no localStorage de outras abas
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'app-theme' && event.newValue) {
+        try {
+          const newTheme = JSON.parse(event.newValue);
+          setAndApplyTheme(newTheme);
+        } catch (error) {
+          console.error("Failed to parse theme from storage event", error);
+        }
+      }
+      if (event.key === 'theme-mode' && event.newValue) {
+        const newMode = event.newValue as ThemeMode;
+        setMode(newMode);
+        const root = window.document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(newMode);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [setAndApplyTheme]);
+
 
   const setTheme = (newTheme: Theme) => {
     try {
       localStorage.setItem('app-theme', JSON.stringify(newTheme));
-      setCustomTheme(newTheme);
-      applyThemeVariables(newTheme);
+      setAndApplyTheme(newTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }
