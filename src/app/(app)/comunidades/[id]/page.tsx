@@ -82,18 +82,18 @@ export default function CommunityDetailPage() {
           />
         </div>
         <div className="bg-card p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <div className="flex-1">
-              <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
-              <CardDescription className="flex items-center gap-2 mt-1">
-                {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                <span className="capitalize">{community.type === 'public' ? 'Pública' : 'Privada'}</span>
-                <span className="mx-1">·</span>
-                <Users className="h-4 w-4" />
-                <span>{community.memberIds.length} membro(s)</span>
-              </CardDescription>
-            </div>
-            <div className="flex-shrink-0 flex items-center gap-2">
+          <div>
+            <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
+            <CardDescription className="flex items-center gap-2 mt-1">
+              {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+              <span className="capitalize">{community.type === 'public' ? 'Pública' : 'Privada'}</span>
+              <span className="mx-1">·</span>
+              <Users className="h-4 w-4" />
+              <span>{community.memberIds.length} membro(s)</span>
+            </CardDescription>
+          </div>
+          <p className="text-muted-foreground">{community.description}</p>
+           <div className="flex-shrink-0 flex items-center gap-2 pt-2">
               <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -110,8 +110,6 @@ export default function CommunityDetailPage() {
                   </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
-          <p className="text-muted-foreground">{community.description}</p>
         </div>
       </header>
 
