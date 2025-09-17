@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,8 +10,7 @@ import type { Notification, NotificationType } from '@/types';
 import { getCurrentUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ClientFormattedDate } from './client-formatted-date';
 
 function getNotificationIcon(type: NotificationType) {
   switch (type) {
@@ -84,7 +84,12 @@ export function NotificationsDropdown() {
                   <p className="text-muted-foreground text-xs leading-snug">{notif.message}</p>
                   <div className="flex items-center justify-between mt-1">
                     <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ptBR })}
+                      <ClientFormattedDate
+                        dateString={notif.createdAt}
+                        formatFunction="formatDistanceToNow"
+                        addSuffix={true}
+                        formatString=''
+                      />
                     </p>
                     {notif.link && (
                         <Button variant="link" asChild className="h-auto p-0 text-xs">

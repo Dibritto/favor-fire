@@ -115,7 +115,7 @@ export default function AdminManageNotificationsPage() {
                     <TableCell className="font-medium">{notif.title}</TableCell>
                     <TableCell className="hidden md:table-cell text-sm text-muted-foreground max-w-sm truncate">{notif.message}</TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <ClientFormattedDate dateString={notif.createdAt} format="P 'às' p" />
+                      <ClientFormattedDate dateString={notif.createdAt} formatString="P 'às' p" />
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">Ver</Button>

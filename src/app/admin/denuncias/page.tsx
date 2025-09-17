@@ -10,10 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, MessageSquare, User as UserIcon, ShieldCheck, Users } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { ClientFormattedDate } from '@/components/client-formatted-date';
 
 // Função para obter o estilo do status para consistência
 const getStatusStyles = (status: Report['status']) => {
@@ -134,7 +133,12 @@ export default function AdminManageReportsPage() {
                         </TableCell>
                         <TableCell className="hidden lg:table-cell">{report.reportedBy?.name || 'N/A'}</TableCell>
                         <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(report.createdAt), { locale: ptBR, addSuffix: true })}
+                            <ClientFormattedDate
+                                dateString={report.createdAt}
+                                formatFunction="formatDistanceToNow"
+                                addSuffix={true}
+                                formatString=''
+                            />
                         </TableCell>
                         <TableCell>
                             <Badge variant="outline" className={`capitalize ${getStatusStyles(report.status)}`}>

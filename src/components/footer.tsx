@@ -5,6 +5,7 @@ import { BookOpen, Users2, ShieldCheck, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Logo } from './logo';
+import { ClientFormattedDate } from './client-formatted-date';
 
 export function Footer() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);

@@ -12,8 +12,7 @@ import { mockFavors, mockUsers } from '@/lib/mock-data';
 import { FavorCard } from '@/components/favor-card';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ClientFormattedDate } from '@/components/client-formatted-date';
 
 // Estatísticas de exemplo
 const initialDashboardStats = {
@@ -269,7 +268,12 @@ export default function DashboardPage() {
                              {activityMessage}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ptBR })}
+                            <ClientFormattedDate 
+                                dateString={activity.timestamp.toISOString()}
+                                formatFunction="formatDistanceToNow"
+                                addSuffix={true}
+                                formatString=''
+                            />
                           </p>
                         </div>
                         {renderActivityIcon(activity.type)}
