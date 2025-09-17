@@ -91,7 +91,7 @@ export function FavorCard({ favor }: FavorCardProps) {
                 <span>{format(new Date(favor.preferredDateTime), "P", { locale: ptBR })} às {format(new Date(favor.preferredDateTime), "p", { locale: ptBR })}</span>
                 </div>
             )}
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 pt-1">
                 <Badge variant="outline" className={`capitalize text-xs px-2 py-0.5 ${getUrgencyStyles(favor.urgency)}`}>
                 <AlertTriangle className="h-3 w-3 mr-1" /> {urgencyTranslations[favor.urgency]} Urgência
                 </Badge>
