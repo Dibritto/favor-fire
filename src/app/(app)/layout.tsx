@@ -86,7 +86,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" />
             <div className="flex-1">
-                <h1 className="font-semibold text-xl font-headline text-foreground">Conexão Solidária</h1>
+                <h1 className="font-semibold text-xl font-headline text-foreground">Projeto Favor</h1>
             </div>
             <div className="flex items-center gap-2">
                 <ThemeToggleButton />

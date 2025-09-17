@@ -54,7 +54,7 @@ export function LoginForm() {
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-headline">Bem-vindo(a) de Volta!</CardTitle>
-        <CardDescription>Faça login na sua conta Conexão Solidária.</CardDescription>
+        <CardDescription>Faça login na sua conta do Projeto Favor.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

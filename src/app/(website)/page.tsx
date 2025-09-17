@@ -10,7 +10,7 @@ export default function LandingPage() {
                 Conecte-se, Compartilhe e Ajude
             </h1>
             <p className="text-lg text-foreground/80 max-w-3xl mx-auto mb-10">
-                Conexão Solidária é a sua plataforma comunitária para solicitar e oferecer ajuda, construindo laços mais fortes na sua vizinhança. Se precisa de uma mão ou quer estender a sua, este é o lugar.
+                Projeto Favor é a sua plataforma comunitária para solicitar e oferecer ajuda, construindo laços mais fortes na sua vizinhança. Se precisa de uma mão ou quer estender a sua, este é o lugar.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button asChild size="lg" className="w-full sm:w-auto shadow-lg hover:shadow-primary/30 transition-shadow">

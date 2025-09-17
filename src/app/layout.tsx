@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; // Added Toaster for app-wide notifications
 
 export const metadata: Metadata = {
-  title: 'Conexão Solidária',
+  title: 'Projeto Favor',
   description: 'Uma plataforma para colaboração comunitária e ajuda mútua.',
 };
 
