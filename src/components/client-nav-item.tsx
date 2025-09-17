@@ -42,6 +42,9 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
    if (href === "/perfil" && pathname !== "/perfil") {
     isActive = false;
   }
+  if (href === "/comunidades" && pathname !== "/comunidades") {
+    isActive = false;
+  }
 
 
   const handleClick = () => {

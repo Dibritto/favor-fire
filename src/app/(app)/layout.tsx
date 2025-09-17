@@ -1,7 +1,7 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Compass, ListChecks, PlusSquare, User as UserIcon, LogOut, HomeIcon, Shield, Gem } from 'lucide-react';
+import { Compass, ListChecks, PlusSquare, User as UserIcon, LogOut, HomeIcon, Shield, Gem, Users2 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
@@ -49,6 +49,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                   <ClientNavItem href="/favores" label="Descobrir Favores">
                     <Compass />
                     <span>Descobrir Favores</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                 <SidebarMenuItem>
+                  <ClientNavItem href="/comunidades" label="Comunidades">
+                    <Users2 />
+                    <span>Comunidades</span>
                   </ClientNavItem>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
