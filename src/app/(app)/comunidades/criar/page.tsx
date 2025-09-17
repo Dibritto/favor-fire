@@ -63,7 +63,7 @@ export default function CreateCommunityPage() {
   }
 
   return (
-    <article className="max-w-2xl mx-auto">
+    <main className="max-w-2xl mx-auto">
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Criar Nova Comunidade</CardTitle>
@@ -158,8 +158,6 @@ export default function CreateCommunityPage() {
           </Form>
         </CardContent>
       </Card>
-    </article>
+    </main>
   );
 }
-
-    
