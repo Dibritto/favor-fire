@@ -1,5 +1,6 @@
 
-import type { User, Favor } from '@/types';
+
+import type { User, Favor, Notification } from '@/types';
 
 export const mockUsers: User[] = [
   {
@@ -41,6 +42,7 @@ export const mockFavors: Favor[] = [
     urgency: 'medium',
     location: 'Rua Principal, 123, Qualquer Cidade',
     type: 'volunteer',
+    participationType: 'individual',
     preferredDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     status: 'open',
     requesterId: 'user1',
@@ -54,6 +56,7 @@ export const mockFavors: Favor[] = [
     location: 'Proximidades do Parque Oak Drive',
     type: 'paid',
     amount: 100,
+    participationType: 'individual',
     preferredDateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
     status: 'open',
     requesterId: 'user3',
@@ -66,6 +69,7 @@ export const mockFavors: Favor[] = [
     urgency: 'low',
     location: 'Remoto/Online',
     type: 'volunteer',
+    participationType: 'individual',
     status: 'accepted',
     requesterId: 'user2',
     executorId: 'user1',
@@ -80,6 +84,7 @@ export const mockFavors: Favor[] = [
     location: 'Condomínio Greenwood',
     type: 'paid',
     amount: 30,
+    participationType: 'individual',
     status: 'completed',
     requesterId: 'user1',
     executorId: 'user2',
@@ -98,6 +103,7 @@ export const mockFavors: Favor[] = [
     urgency: 'medium',
     location: 'Lar de Idosos Sunshine',
     type: 'volunteer',
+    participationType: 'individual',
     status: 'open',
     requesterId: 'user2',
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -111,3 +117,45 @@ mockFavors.forEach(favor => {
     favor.executor = mockUsers.find(u => u.id === favor.executorId);
   }
 });
+
+export const mockNotifications: Notification[] = [
+  {
+    id: 'notif1',
+    userId: 'user1',
+    type: 'favor_accepted',
+    title: 'Favor Aceito!',
+    message: 'Bob aceitou seu pedido "Ajuda para mover um sofá".',
+    link: '/favores/favor3',
+    read: false,
+    createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
+  },
+  {
+    id: 'notif2',
+    userId: 'user1',
+    type: 'favor_completed',
+    title: 'Favor Concluído!',
+    message: 'Você marcou o favor "Regar plantas durante as férias" como concluído. Não se esqueça de avaliar Bob!',
+    link: '/favores/favor4',
+    read: false,
+    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+  },
+  {
+    id: 'notif3',
+    userId: 'user1',
+    type: 'admin_announcement',
+    title: 'Atualização da Plataforma',
+    message: 'Uma nova atualização de manutenção está agendada para este fim de semana. A plataforma pode ficar temporariamente indisponível.',
+    read: true,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+  },
+  {
+    id: 'notif4',
+    userId: 'user1',
+    type: 'favor_rated',
+    title: 'Você recebeu uma nova avaliação!',
+    message: 'Bob avaliou sua interação no favor "Regar plantas durante as férias".',
+    link: '/perfil',
+    read: true,
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+  },
+];

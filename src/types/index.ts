@@ -1,6 +1,7 @@
 
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -69,4 +70,22 @@ export interface Mission {
     niche: MissionNiche;
     creatorId: string; // Could be a User ID or a Company ID
     goals: { description: string; completed: boolean }[];
+}
+
+export type NotificationType = 
+  | 'favor_accepted' 
+  | 'favor_completed' 
+  | 'favor_rated' 
+  | 'new_favor_in_community'
+  | 'admin_announcement';
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string; // e.g., /favors/favor123
+  read: boolean;
+  createdAt: string; // ISO string
 }

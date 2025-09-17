@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Footer } from '@/components/footer';
 import { PageTitle } from '@/components/page-title';
+import { NotificationsDropdown } from '@/components/notifications-dropdown';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -90,6 +91,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <PageTitle />
             </div>
             <div className="flex items-center gap-2">
+                <NotificationsDropdown />
                 <ThemeToggleButton />
             </div>
           </header>
