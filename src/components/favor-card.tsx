@@ -66,19 +66,19 @@ export function FavorCard({ favor }: FavorCardProps) {
     <article>
         <Card className="flex flex-col h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
         <CardHeader className="pb-3">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
                 <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0">
                     {favor.type === 'paid' ? <DollarSign className="mr-1 h-3 w-3" /> : <Sparkles className="mr-1 h-3 w-3" />}
                     {favor.type === 'paid' ? 'Pago' : 'Voluntário'}
                 </Badge>
+                 <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
+                    <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
+                </Badge>
             </div>
-            <CardTitle className="font-headline text-lg md:text-xl line-clamp-2">{favor.title}</CardTitle>
+            <CardTitle className="font-headline text-lg md:text-xl line-clamp-2 pt-2">{favor.title}</CardTitle>
             <CardDescription className="text-xs text-muted-foreground flex items-center pt-1">
               <Users className="h-3 w-3 mr-1.5" />
               Pedido por: {favor.requester?.name || 'Alguém da comunidade'}
-              <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ml-auto ${getStatusStyles(favor.status)}`}>
-                 <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
-              </Badge>
             </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow pt-0 pb-4">
