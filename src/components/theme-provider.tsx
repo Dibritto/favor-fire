@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 // Define the structure of a single theme mode (light or dark)
 type ThemeModeVars = {
@@ -102,9 +102,9 @@ export const DEFAULT_THEME: Theme = {
   },
 };
 
+
 type ThemeMode = 'light' | 'dark';
 
-// Define the context shape
 interface ThemeContextProps {
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -112,91 +112,70 @@ interface ThemeContextProps {
   toggleTheme: () => void;
 }
 
-// Create the context
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
-// Helper to convert kebab-case to camelCase
-function toCamelCase(str: string): string {
-    return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+const applyThemeVariables = (theme: Theme) => {
+    if (typeof window === 'undefined') return;
+
+    const generateCssString = (themeVars: ThemeModeVars, selector: string) => {
+        const css = Object.entries(themeVars).map(([key, value]) => {
+            const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+            return `${cssVar}: ${value};`;
+        }).join(' ');
+        return `${selector} { ${css} }`;
+    };
+
+    let lightStyle = document.getElementById('light-theme-sheet');
+    if (!lightStyle) {
+        lightStyle = document.createElement('style');
+        lightStyle.id = 'light-theme-sheet';
+        document.head.appendChild(lightStyle);
+    }
+    lightStyle.innerHTML = generateCssString(theme.light, ':root');
+
+    let darkStyle = document.getElementById('dark-theme-sheet');
+    if (!darkStyle) {
+        darkStyle = document.createElement('style');
+        darkStyle.id = 'dark-theme-sheet';
+        document.head.appendChild(darkStyle);
+    }
+    darkStyle.innerHTML = generateCssString(theme.dark, '.dark');
 }
 
-// Helper to apply HSL values to a style sheet
-const applyThemeToStyleSheet = (theme: ThemeModeVars, sheet: CSSStyleSheet, prefix: string) => {
-    const rule = `${prefix} { ${Object.entries(theme).map(([key, value]) => `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value};`).join(' ')} }`;
 
-    // Clear existing rules and add the new one
-    while (sheet.cssRules.length) {
-        sheet.deleteRule(0);
-    }
-    sheet.insertRule(rule, 0);
-};
-
-// Define the provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [customTheme, setCustomTheme] = useState<Theme>(DEFAULT_THEME);
   const [mode, setMode] = useState<ThemeMode | null>(null);
 
-  // Effect to load custom colors and mode from localStorage
   useEffect(() => {
     try {
       const storedTheme = localStorage.getItem('app-theme');
-      if (storedTheme) {
-        const parsedTheme = JSON.parse(storedTheme);
-        if (parsedTheme.light && parsedTheme.dark) {
-          setCustomTheme(parsedTheme);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to parse theme from localStorage", error);
-    }
+      const initialTheme = storedTheme ? JSON.parse(storedTheme) : DEFAULT_THEME;
+      setCustomTheme(initialTheme);
+      applyThemeVariables(initialTheme);
 
-    try {
-      const storedMode = localStorage.getItem('theme-mode') as ThemeMode | null;
-      setMode(storedMode || 'dark');
+      const storedMode = localStorage.getItem('theme-mode') as ThemeMode;
+      const initialMode = storedMode || 'dark';
+      setMode(initialMode);
+      
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(initialMode);
+
     } catch (error) {
+      console.error("Failed to load theme from localStorage", error);
       setMode('dark');
+      const root = window.document.documentElement;
+      root.classList.remove('light');
+      root.classList.add('dark');
     }
   }, []);
-
-  // Effect to apply theme colors and mode class
-  useEffect(() => {
-    if (!mode) return;
-
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(mode);
-
-    // Get or create style sheets for dynamic themes
-    let lightSheet = (document.getElementById('light-theme-sheet') as HTMLStyleElement)?.sheet;
-    if (!lightSheet) {
-        const styleEl = document.createElement('style');
-        styleEl.id = 'light-theme-sheet';
-        document.head.appendChild(styleEl);
-        lightSheet = styleEl.sheet;
-    }
-
-    let darkSheet = (document.getElementById('dark-theme-sheet') as HTMLStyleElement)?.sheet;
-    if (!darkSheet) {
-        const styleEl = document.createElement('style');
-        styleEl.id = 'dark-theme-sheet';
-        document.head.appendChild(styleEl);
-        darkSheet = styleEl.sheet;
-    }
-
-    if (lightSheet) {
-        applyThemeToStyleSheet(customTheme.light, lightSheet, ':root');
-    }
-    if (darkSheet) {
-        applyThemeToStyleSheet(customTheme.dark, darkSheet, '.dark');
-    }
-    
-  }, [customTheme, mode]);
-
 
   const setTheme = (newTheme: Theme) => {
     try {
       localStorage.setItem('app-theme', JSON.stringify(newTheme));
       setCustomTheme(newTheme);
+      applyThemeVariables(newTheme);
     } catch (error) {
       console.error("Failed to save theme to localStorage", error);
     }
@@ -206,6 +185,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     setMode(prevMode => {
       const newMode = prevMode === 'light' ? 'dark' : 'light';
       localStorage.setItem('theme-mode', newMode);
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(newMode);
       return newMode;
     });
   }
@@ -224,7 +206,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use the theme context
 export const useTheme = (): ThemeContextProps => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
