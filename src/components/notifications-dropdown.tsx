@@ -69,11 +69,12 @@ export function NotificationsDropdown() {
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length > 0 ? (
-            notifications.map(notif => (
-              <div
+            <ul className='divide-y divide-border'>
+              {notifications.map(notif => (
+              <li
                 key={notif.id}
                 className={cn(
-                  'p-4 border-b text-sm flex items-start gap-3',
+                  'p-4 text-sm flex items-start gap-3',
                   !notif.read && 'bg-accent/50'
                 )}
               >
@@ -93,8 +94,9 @@ export function NotificationsDropdown() {
                   </div>
                 </div>
                 {!notif.read && <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-primary mt-1" />}
-              </div>
-            ))
+              </li>
+            ))}
+            </ul>
           ) : (
             <p className="p-4 text-center text-muted-foreground">Nenhuma notificação nova.</p>
           )}
