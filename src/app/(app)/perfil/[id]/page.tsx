@@ -8,7 +8,7 @@ import { mockFavors } from '@/lib/mock-data';
 import type { User, Favor } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Mail, Phone, Star, ListChecks, HelpingHand, CalendarDays, Gift, MessageCircle, MoreVertical, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -84,7 +84,7 @@ export default function PublicProfilePage() {
   const publicName = user.displayName || user.name;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-12">
+    <main className="max-w-4xl mx-auto space-y-8 pb-12">
       <header className="shadow-xl overflow-hidden rounded-lg">
         <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
            <Image 
@@ -137,7 +137,7 @@ export default function PublicProfilePage() {
         </div>
       </header>
 
-      <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-6">
             <Card>
                 <CardHeader>
@@ -150,19 +150,27 @@ export default function PublicProfilePage() {
                     </p>
                 </CardContent>
             </Card>
-            {user.sponsor && (
+             {user.sponsor && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Apadrinhamento</CardTitle>
+                         <CardTitle className="text-xl font-headline flex items-center gap-2"><Gift className="h-5 w-5 text-primary"/> Apadrinhamento</CardTitle>
+                         <CardDescription>Convidado(a) por:</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="flex items-center text-sm">
-                            <Gift className="mr-3 h-5 w-5 text-primary" /> 
-                            Convidado(a) por: 
-                            <Link href={`/perfil/${user.sponsor.id}`} className="font-medium text-primary hover:underline ml-1">
-                                {user.sponsor.displayName || user.sponsor.name}
-                            </Link>
-                        </p>
+                        <Link href={`/perfil/${user.sponsor.id}`} className="block group">
+                             <div className="flex items-center gap-4 rounded-lg p-3 transition-colors group-hover:bg-muted/50">
+                                <Avatar>
+                                    <AvatarImage src={`https://picsum.photos/seed/avatar${user.sponsor.id}/128/128`} alt={user.sponsor.name} data-ai-hint="profile picture" />
+                                    <AvatarFallback>{user.sponsor.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold text-primary group-hover:underline">{user.sponsor.displayName || user.sponsor.name}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" /> {user.sponsor.reputation.toFixed(1)} de reputação
+                                    </p>
+                                </div>
+                            </div>
+                        </Link>
                     </CardContent>
                 </Card>
             )}
@@ -222,7 +230,7 @@ export default function PublicProfilePage() {
               </Card>
             </article>
         </div>
-      </main>
+      </div>
       <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -251,6 +259,8 @@ export default function PublicProfilePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </main>
   );
 }
+
+    
