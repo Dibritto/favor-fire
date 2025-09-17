@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -86,7 +87,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <article className="max-w-2xl mx-auto">
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>Editar Perfil</CardTitle>
@@ -160,6 +161,6 @@ export default function EditProfilePage() {
           </Form>
         </CardContent>
       </Card>
-    </div>
+    </article>
   );
 }

@@ -91,7 +91,7 @@ export default function FavorDetailPage() {
 
   const submitRating = async (forUserType: 'requester' | 'executor', ratingData: { rating: number, feedback?: string }) => {
     if(!favor) return;
-    console.log(`Avaliação para ${forUserType}:`, ratingData, "ID do Favor:", favor.id);
+    console.log(`Rating for ${forUserType}:`, ratingData, "Favor ID:", favor.id);
     await new Promise(resolve => setTimeout(resolve, 1000));
     if (forUserType === 'requester') {
       setFavor(prev => prev ? {...prev, requesterRating: ratingData.rating, requesterFeedback: ratingData.feedback} : null);
@@ -244,3 +244,4 @@ export default function FavorDetailPage() {
     </article>
   );
 }
+
