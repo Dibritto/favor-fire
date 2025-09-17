@@ -88,6 +88,7 @@ export default function PublicProfilePage() {
                     <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
                     {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg">{user.bio}</p>}
                     <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
+                         <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
                 </div>

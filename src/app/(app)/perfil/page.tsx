@@ -90,18 +90,6 @@ export default function ProfilePage() {
                         <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
                     </div>
                 </div>
-                 <div className="flex flex-col sm:flex-row gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href="/perfil/editar">
-                            <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
-                        </Link>
-                    </Button>
-                     <Button size="sm" asChild>
-                        <Link href="/comunidades/criar">
-                            <Building className="mr-2 h-4 w-4" /> Criar Comunidade
-                        </Link>
-                    </Button>
-                </div>
             </div>
         </div>
       </header>
@@ -110,7 +98,7 @@ export default function ProfilePage() {
         <aside className="md:col-span-1 space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Informações</CardTitle>
+                    <CardTitle className="text-xl font-headline">Minhas Informações</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                     <p className="flex items-center"><Mail className="mr-3 h-5 w-5 text-primary" /> {user.email}</p>
@@ -119,6 +107,18 @@ export default function ProfilePage() {
                         <CalendarDays className="mr-3 h-5 w-5 text-primary" /> 
                         {user.joinDate ? `Entrou em: ${format(new Date(user.joinDate), "P", { locale: ptBR })}` : 'Data de entrada não disponível'}
                     </p>
+                    <div className="border-t pt-4 mt-4 flex flex-col gap-2">
+                         <Button variant="outline" size="sm" asChild>
+                            <Link href="/perfil/editar">
+                                <Edit3 className="mr-2 h-4 w-4" /> Editar Perfil
+                            </Link>
+                        </Button>
+                         <Button size="sm" asChild>
+                            <Link href="/comunidades/criar">
+                                <Building className="mr-2 h-4 w-4" /> Criar Comunidade
+                            </Link>
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
             {user.sponsor && (
@@ -142,7 +142,7 @@ export default function ProfilePage() {
             <section>
                 <Card>
                     <CardHeader>
-                        <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                        <CardTitle id="contribution-heading" className="text-xl font-headline">Minha Contribuição</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4 text-center">
                         <div className="p-4 rounded-lg bg-muted">
