@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarMenuButton } from '@/components/ui/sidebar';
 import type { ReactNode } from 'react';
-import { useSidebar } from '@/components/ui/sidebar'; // Import useSidebar
+import { useSidebar } from '@/components/ui/sidebar';
 
 interface ClientNavItemProps {
   href: string;
@@ -16,25 +16,29 @@ interface ClientNavItemProps {
 
 export function ClientNavItem({ href, label, children, exact = false }: ClientNavItemProps) {
   const pathname = usePathname();
-  const { isMobile, setOpenMobile } = useSidebar(); // Get mobile state and setter
+  const { isMobile, setOpenMobile } = useSidebar();
   let isActive: boolean;
 
   if (exact) {
     isActive = pathname === href;
   } else {
-    if (href === "/favors") { 
-      isActive = pathname === "/favors" || (pathname.startsWith("/favors/") && !pathname.startsWith("/favors/my") && !pathname.startsWith("/favors/submit"));
-    } else if (href === "/") { 
-        isActive = pathname === "/";
-    }
-    else { 
-      isActive = pathname === href || pathname.startsWith(`${href}/`);
-    }
+    // Logic to highlight parent menu item
+    // e.g., /favors/my should activate the /favors link
+    isActive = pathname.startsWith(href);
   }
+  
+  // Special cases to avoid activating multiple items
+  if (href === "/favors" && (pathname.startsWith("/favores/meus") || pathname.startsWith("/favores/pedir"))) {
+      isActive = false;
+  }
+  if(href === "/inicio" && pathname !== "/inicio") {
+      isActive = false;
+  }
+
 
   const handleClick = () => {
     if (isMobile) {
-      setOpenMobile(false); // Close mobile sidebar on click
+      setOpenMobile(false);
     }
   };
   
@@ -53,4 +57,3 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
     </Link>
   );
 }
-

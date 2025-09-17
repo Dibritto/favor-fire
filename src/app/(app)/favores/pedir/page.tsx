@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { CalendarIcon, DollarSign, Users } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,6 +27,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ptBR } from 'date-fns/locale';
+import { createFavor } from "@/lib/actions";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+
 
 const states = [
   { value: "AC", label: "Acre" },
@@ -85,6 +89,7 @@ type FavorFormValues = z.infer<typeof favorFormSchema>;
 export default function SubmitFavorPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FavorFormValues>({
     resolver: zodResolver(favorFormSchema),
@@ -96,6 +101,7 @@ export default function SubmitFavorPage() {
       address: "",
       type: "volunteer",
       participationType: "individual",
+      urgency: "medium",
     },
   });
 
@@ -103,29 +109,47 @@ export default function SubmitFavorPage() {
   const watchParticipationType = form.watch("participationType");
 
   async function onSubmit(data: FavorFormValues) {
+    setIsSubmitting(true);
     const location = data.address ? `${data.address}, ${data.bairro}, ${data.city} - ${data.state}` : `${data.bairro}, ${data.city} - ${data.state}`;
     
+    // @ts-ignore
     const submissionData = {
         ...data,
         location,
+        preferredDateTime: data.preferredDateTime?.toISOString(),
     };
-    delete (submissionData as Partial<FavorFormValues>).city;
-    delete (submissionData as Partial<FavorFormValues>).state;
-    delete (submissionData as Partial<FavorFormValues>).address;
-    delete (submissionData as Partial<FavorFormValues>).bairro;
 
+    // Remove os campos que não fazem parte do modelo de dados final do Favor
+    delete (submissionData as any).city;
+    delete (submissionData as any).state;
+    delete (submissionData as any).address;
+    delete (submissionData as any).bairro;
 
-    console.log("Dados do favor submetido:", submissionData);
-    toast({
-      title: "Favor Enviado!",
-      description: "Seu pedido de favor foi publicado para a comunidade.",
-    });
-    router.push("/favores");
+    const result = await createFavor(submissionData);
+
+    if (result.success) {
+        toast({
+            title: "Favor Enviado!",
+            description: "Seu pedido de favor foi publicado para a comunidade.",
+        });
+        router.push("/favores");
+    } else {
+        toast({
+            title: "Erro ao Enviar",
+            description: result.message,
+            variant: "destructive",
+        });
+        setIsSubmitting(false);
+    }
   }
 
   return (
     <div className="max-w-2xl mx-auto">
       <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-3xl font-headline">Pedir um Novo Favor</CardTitle>
+          <CardDescription>Deixe a comunidade saber que tipo de ajuda você precisa.</CardDescription>
+        </CardHeader>
         <CardContent className="pt-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -404,7 +428,10 @@ export default function SubmitFavorPage() {
                 )}
               />
 
-              <Button type="submit" className="w-full" size="lg">Enviar Pedido de Favor</Button>
+              <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? 'Enviando...' : 'Enviar Pedido de Favor'}
+              </Button>
             </form>
           </Form>
         </CardContent>
