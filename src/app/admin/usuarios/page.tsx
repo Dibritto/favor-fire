@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -23,7 +24,7 @@ export default function AdminUsersPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <section>
       <Card>
         <CardHeader>
           <CardTitle>Todos os Usuários</CardTitle>
@@ -87,6 +88,6 @@ export default function AdminUsersPage() {
           </Table>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

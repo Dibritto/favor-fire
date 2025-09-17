@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -50,7 +51,7 @@ export default function AdminManageFavorsPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <section>
       <Card>
         <CardHeader>
           <CardTitle>Gerenciar Favores</CardTitle>
@@ -115,6 +116,6 @@ export default function AdminManageFavorsPage() {
           </Table>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

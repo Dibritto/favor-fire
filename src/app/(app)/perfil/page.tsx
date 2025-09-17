@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -129,10 +130,10 @@ export default function ProfilePage() {
                 </Card>
             )}
         </aside>
-        <section className="md:col-span-2 space-y-6">
+        <section className="md:col-span-2 space-y-6" aria-labelledby="contribution-heading">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                    <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4 text-center">
                     <div className="p-4 rounded-lg bg-muted">
@@ -148,10 +149,10 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
             
-            <article>
+            <article aria-labelledby="requested-favors-heading">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
+                  <CardTitle id="requested-favors-heading" className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {favorsRequested.length > 0 ? (
@@ -165,10 +166,10 @@ export default function ProfilePage() {
               </Card>
             </article>
 
-            <article>
+            <article aria-labelledby="fulfilled-favors-heading">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
+                  <CardTitle id="fulfilled-favors-heading" className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {favorsFulfilled.length > 0 ? (

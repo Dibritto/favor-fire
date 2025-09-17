@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -79,19 +80,25 @@ export default function MyFavorsPage() {
             <HelpingHand className="mr-2 h-4 w-4" /> Favores Aceitos por Mim
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="requested" className="mt-6">
-          {renderFavorList(
-            requestedFavors,
-            "Você ainda não pediu nenhum favor.",
-            <ListChecks className="mx-auto h-12 w-12" />
-          )}
+        <TabsContent value="requested" className="mt-6" asChild>
+           <section>
+              <h2 className="sr-only">Meus Pedidos de Favor</h2>
+              {renderFavorList(
+                requestedFavors,
+                "Você ainda não pediu nenhum favor.",
+                <ListChecks className="mx-auto h-12 w-12" />
+              )}
+           </section>
         </TabsContent>
-        <TabsContent value="accepted" className="mt-6">
-          {renderFavorList(
-            acceptedFavors,
-            "Você ainda não aceitou nenhum favor. Dê uma olhada na página Descobrir!",
-            <Search className="mx-auto h-12 w-12" />
-          )}
+        <TabsContent value="accepted" className="mt-6" asChild>
+          <section>
+            <h2 className="sr-only">Favores Aceitos por Mim</h2>
+            {renderFavorList(
+              acceptedFavors,
+              "Você ainda não aceitou nenhum favor. Dê uma olhada na página Descobrir!",
+              <Search className="mx-auto h-12 w-12" />
+            )}
+          </section>
         </TabsContent>
       </Tabs>
     </div>
