@@ -1,9 +1,9 @@
 
-"use client"; // For client-side filtering and state
+"use client";
 
 import { useState, useMemo, useEffect } from 'react';
 import { FavorCard } from '@/components/favor-card';
-import { mockFavors, mockUsers } from '@/lib/mock-data'; // Using mock data
+import { mockFavors, mockUsers } from '@/lib/mock-data';
 import type { Favor, FavorType, UrgencyLevel, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -17,15 +17,14 @@ export default function FavorDiscoveryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FavorType | 'all'>('all');
   const [filterUrgency, setFilterUrgency] = useState<UrgencyLevel | 'all'>('all');
-  // const [filterLocation, setFilterLocation] = useState(''); // Future: more complex location filter
 
   useEffect(() => {
-    // Simulate fetching data
+    // Simula a busca de dados
     const populatedFavors = mockFavors.map(favor => ({
       ...favor,
       requester: mockUsers.find(u => u.id === favor.requesterId)
     }));
-    setFavors(populatedFavors.filter(f => f.status === 'open' || f.status === 'accepted')); // Show open and accepted favors
+    setFavors(populatedFavors.filter(f => f.status === 'open' || f.status === 'accepted')); // Mostra favores abertos e aceitos
   }, []);
 
   const filteredFavors = useMemo(() => {
@@ -39,7 +38,6 @@ export default function FavorDiscoveryPage() {
         
         const matchesType = filterType === 'all' || favor.type === filterType;
         const matchesUrgency = filterUrgency === 'all' || favor.urgency === filterUrgency;
-        // const matchesLocation = filterLocation === '' || favor.location.toLowerCase().includes(filterLocation.toLowerCase());
 
         return matchesSearchTerm && matchesType && matchesUrgency;
       });
@@ -49,12 +47,11 @@ export default function FavorDiscoveryPage() {
     setSearchTerm('');
     setFilterType('all');
     setFilterUrgency('all');
-    // setFilterLocation('');
   };
 
   return (
     <main className="space-y-6">
-      <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
+       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h1 className="text-3xl font-headline font-bold">Descobrir Favores</h1>
             <p className="text-muted-foreground">Encontre oportunidades para ajudar ou obter ajuda em sua comunidade.</p>
@@ -64,7 +61,7 @@ export default function FavorDiscoveryPage() {
             <PlusCircle className="mr-2 h-4 w-4" /> Pedir um Favor
           </Link>
         </Button>
-      </header>
+      </div>
 
       <section aria-labelledby="filter-favors-heading">
         <Card>
@@ -105,13 +102,6 @@ export default function FavorDiscoveryPage() {
                       <SelectItem value="high">Alta Urgência</SelectItem>
                   </SelectContent>
               </Select>
-              {/* 
-              <Input
-                  placeholder="Filter by Location (e.g. Anytown)"
-                  value={filterLocation}
-                  onChange={(e) => setFilterLocation(e.target.value)}
-              /> 
-              */}
               <Button onClick={resetFilters} variant="outline" className="w-full md:w-auto">
                   <FilterX className="mr-2 h-4 w-4" /> Limpar Filtros
               </Button>

@@ -6,7 +6,7 @@ import { FavorCard } from '@/components/favor-card';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
 import type { Favor, User } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCurrentUser } from '@/lib/auth'; // Using mock auth
+import { getCurrentUser } from '@/lib/auth';
 import { ListChecks, HelpingHand, Search } from 'lucide-react';
 
 export default function MyFavorsPage() {
@@ -81,14 +81,14 @@ export default function MyFavorsPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="requested" className="mt-6">
-          <section>
-            <h2 className="sr-only">Meus Pedidos de Favor</h2>
-            {renderFavorList(
-              requestedFavors,
-              "Você ainda não pediu nenhum favor.",
-              <ListChecks className="mx-auto h-12 w-12" />
-            )}
-          </section>
+           <section>
+              <h2 className="sr-only">Meus Pedidos de Favor</h2>
+              {renderFavorList(
+                requestedFavors,
+                "Você ainda não pediu nenhum favor.",
+                <ListChecks className="mx-auto h-12 w-12" />
+              )}
+           </section>
         </TabsContent>
         <TabsContent value="accepted" className="mt-6">
           <section>
