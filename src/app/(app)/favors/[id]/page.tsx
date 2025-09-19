@@ -1,22 +1,27 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
-import type { Favor, User, UrgencyLevel, FavorStatus } from '@/types';
-import { getCurrentUser } from '@/lib/auth'; // Mock auth
+import type { Favor, User, UrgencyLevel, FavorStatus, FavorParticipationType, ReportReason } from '@/types';
+import { getCurrentUser } from '@/lib/auth'; // Auth simulado
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, HelpingHand, Loader2, MapPin, MessageSquare, Sparkles, Star, UserCircle, X } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Check, CheckCircle, DollarSign, Handshake, Loader2, MapPin, MessageSquare, MoreVertical, ShieldAlert, Sparkles, Star, User as UserIcon, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { RatingForm } from '@/components/rating-form';
-import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const urgencyTranslations: Record<UrgencyLevel, string> = {
   low: 'Baixa',
@@ -31,6 +36,18 @@ const statusTranslations: Record<FavorStatus, string> = {
   cancelled: 'Cancelado',
 };
 
+const participationTranslations: Record<FavorParticipationType, string> = {
+  individual: 'Individual',
+  collective: 'Coletivo',
+};
+
+const reasonTranslations: { [key in ReportReason]: string } = {
+    spam: 'Spam ou Propaganda',
+    inappropriate: 'Conteúdo Inadequado',
+    scam: 'Fraude ou Golpe',
+    other: 'Outro',
+};
+
 
 export default function FavorDetailPage() {
   const params = useParams();
@@ -42,6 +59,9 @@ export default function FavorDetailPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<ReportReason | ''>('');
+  const [reportComments, setReportComments] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,13 +120,32 @@ export default function FavorDetailPage() {
     }
   }
 
+  const handleReportSubmit = () => {
+     if (!reportReason) {
+        toast({
+            title: "Erro",
+            description: "Por favor, selecione um motivo para a denúncia.",
+            variant: "destructive",
+        });
+        return;
+    }
+    console.log("Denúncia enviada:", { favorId: favor?.id, reason: reportReason, comments: reportComments });
+    toast({
+        title: "Denúncia Enviada",
+        description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
+    });
+    setReportReason("");
+    setReportComments("");
+    setIsReportDialogOpen(false);
+  }
+
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Carregando detalhes do favor...</span></div>;
   }
 
   if (!favor) {
-    return <div className="text-center py-10"><AlertTriangle className="mx-auto h-12 w-12 text-destructive" /><h1 className="mt-4 text-2xl font-bold">Favor Não Encontrado</h1><p className="text-muted-foreground">O favor que você está procurando não existe ou foi removido.</p><Button asChild className="mt-6"><Link href="/favors">Voltar para Descobrir</Link></Button></div>;
+    return <div className="text-center py-10"><AlertTriangle className="mx-auto h-12 w-12 text-destructive" /><h1 className="mt-4 text-2xl font-bold">Favor Não Encontrado</h1><p className="text-muted-foreground">O favor que você está procurando não existe ou foi removido.</p><Button asChild className="mt-6"><Link href="/favores">Voltar para Descobrir</Link></Button></div>;
   }
 
   const isRequester = currentUser?.id === favor.requesterId;
@@ -124,22 +163,57 @@ export default function FavorDetailPage() {
       default: return "";
     }
   };
+   const getStatusStyles = (status: Favor['status']) => {
+    switch (status) {
+      case 'open':
+        return "border-blue-500 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700";
+      case 'accepted':
+        return "border-purple-500 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700";
+      case 'completed':
+        return "border-teal-500 bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300 dark:border-teal-700";
+      case 'cancelled':
+        return "border-gray-500 bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700";
+      default:
+        return "";
+    }
+  }
 
   const canRateRequester = favor.status === 'completed' && isExecutor && !favor.requesterRating;
   const canRateExecutor = favor.status === 'completed' && isRequester && !favor.executorRating;
+
+  const participationStyle = "border-indigo-500 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-700";
 
   return (
     <article className="max-w-3xl mx-auto space-y-6 pb-12">
       <Card className="shadow-lg">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-            <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2">{favor.title}</CardTitle>
-            <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1 self-start sm:self-center">
-              {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
-              {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
+           <div className="flex justify-end items-center gap-2">
+             <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0 text-sm px-3 py-1">
+                {favor.type === 'paid' ? <DollarSign className="mr-1.5 h-4 w-4" /> : <Sparkles className="mr-1.5 h-4 w-4" />}
+                {favor.type === 'paid' ? 'Pago' : 'Voluntário'} {favor.type === 'paid' && favor.amount ? ` (R$${favor.amount})` : ''}
             </Badge>
+             <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
+                <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
+            </Badge>
+             <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Mais opções</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Denunciar Favor
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
           </div>
-          <CardDescription className="text-sm text-muted-foreground">
+          <div className="flex justify-between items-start gap-4">
+              <CardTitle className="text-2xl sm:text-3xl font-headline line-clamp-2 flex-1 pt-2">{favor.title}</CardTitle>
+          </div>
+          <CardDescription className="text-sm text-muted-foreground pt-1">
             Publicado em {format(new Date(favor.createdAt), "P", { locale: ptBR })}
           </CardDescription>
         </CardHeader>
@@ -150,42 +224,66 @@ export default function FavorDetailPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-                <h3 className="font-semibold mb-1 text-primary">Detalhes:</h3>
-                <div className="space-y-1">
-                    <p className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Localização:</strong> {favor.location}</p>
-                    {favor.preferredDateTime && <p className="flex items-center"><CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Preferência:</strong> {format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>}
-                    <p className="flex items-center">
-                        <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Urgência:</strong>
-                        <Badge variant="outline" className={`ml-2 capitalize ${getUrgencyStyles(favor.urgency)}`}>{urgencyTranslations[favor.urgency]}</Badge>
-                    </p>
-                     <p className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" /> <strong>Status:</strong> <span className="ml-1 capitalize font-medium">{statusTranslations[favor.status]}</span></p>
+                <h3 className="font-semibold mb-2 text-primary">Detalhes:</h3>
+                <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 mr-2 text-muted-foreground mt-1 shrink-0" /> 
+                        <div>
+                            <strong className="text-foreground">Localização:</strong>
+                            <p className="text-muted-foreground break-words">{favor.location}</p>
+                        </div>
+                    </div>
+                    {favor.preferredDateTime && (
+                        <div className="flex items-start gap-2">
+                            <CalendarDays className="h-4 w-4 mr-2 text-muted-foreground mt-1 shrink-0" />
+                             <div>
+                                <strong className="text-foreground">Preferência de Data:</strong>
+                                <p className="text-muted-foreground">{format(new Date(favor.preferredDateTime), "Pp", { locale: ptBR })}</p>
+                             </div>
+                        </div>
+                    )}
+                     <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
+                        <strong className="text-foreground">Urgência:</strong>
+                        <Badge variant="outline" className={`capitalize ${getUrgencyStyles(favor.urgency)}`}>
+                            {urgencyTranslations[favor.urgency]}
+                        </Badge>
+                    </div>
+                     <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
+                        <strong className="text-foreground">Participação:</strong>
+                        <Badge variant="outline" className={`capitalize ${participationStyle}`}>
+                           {favor.participationType === 'collective' ? <Users className="h-3 w-3 mr-1" /> : <UserIcon className="h-3 w-3 mr-1" />}
+                           {participationTranslations[favor.participationType]} {favor.numberOfPeople ? `(${favor.numberOfPeople})` : ''}
+                        </Badge>
+                    </div>
                 </div>
             </div>
             <div>
                 <h3 className="font-semibold mb-2 text-primary">Participantes:</h3>
                 {favor.requester && (
-                    <div className="flex items-center space-x-3 mb-2">
+                  <Link href={`/perfil/${favor.requester.id}`} className="flex items-center space-x-3 mb-2 group">
                         <Avatar>
-                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.requester.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.requester.name} />
+                            <AvatarImage src={`https://picsum.photos/seed/avatar${favor.requester.id}/40/40`} data-ai-hint="avatar person" alt={favor.requester.name} />
                             <AvatarFallback>{favor.requester.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="font-medium">{favor.requester.name} (Solicitante)</p>
+                            <p className="font-medium group-hover:underline">{favor.requester.name} (Solicitante)</p>
                             <p className="text-xs text-muted-foreground">Reputação: {favor.requester.reputation.toFixed(1)} <Star className="inline h-3 w-3 text-yellow-400 fill-yellow-400" /></p>
                         </div>
-                    </div>
+                   </Link>
                 )}
                 {favor.executor && (
-                    <div className="flex items-center space-x-3">
+                   <Link href={`/perfil/${favor.executor.id}`} className="flex items-center space-x-3 group">
                         <Avatar>
-                            <AvatarImage src={`https://placehold.co/40x40.png?text=${favor.executor.name.charAt(0).toUpperCase()}`} data-ai-hint="avatar person" alt={favor.executor.name} />
+                            <AvatarImage src={`https://picsum.photos/seed/avatar${favor.executor.id}/40/40`} data-ai-hint="avatar person" alt={favor.executor.name} />
                             <AvatarFallback>{favor.executor.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="font-medium">{favor.executor.name} (Ajudante)</p>
+                            <p className="font-medium group-hover:underline">{favor.executor.name} (Ajudante)</p>
                             <p className="text-xs text-muted-foreground">Reputação: {favor.executor.reputation.toFixed(1)} <Star className="inline h-3 w-3 text-yellow-400 fill-yellow-400" /></p>
                         </div>
-                    </div>
+                   </Link>
                 )}
                  {!favor.executor && favor.status === 'open' && (
                     <p className="text-sm text-muted-foreground italic">Aguardando um ajudante...</p>
@@ -241,8 +339,49 @@ export default function FavorDetailPage() {
           </CardContent>
         </Card>
       )}
+
+      <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Denunciar este favor</AlertDialogTitle>
+            <AlertDialogDescription>
+              Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="report-reason" className="text-right">Motivo</Label>
+                <Select value={reportReason} onValueChange={(value) => setReportReason(value as ReportReason)}>
+                    <SelectTrigger id="report-reason" className="col-span-3">
+                        <SelectValue placeholder="Selecione um motivo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.entries(reasonTranslations).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>{value}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="report-comments" className="text-right pt-2">
+                Comentários
+              </Label>
+              <Textarea
+                id="report-comments"
+                value={reportComments}
+                onChange={(e) => setReportComments(e.target.value)}
+                className="col-span-3"
+                placeholder="Ex: É spam, conteúdo inadequado, etc. (Opcional)"
+                rows={3}
+              />
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReportSubmit} disabled={!reportReason}>Enviar Denúncia</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </article>
   );
 }
-
-    

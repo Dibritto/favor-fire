@@ -27,8 +27,8 @@ type RatingFormValues = z.infer<typeof ratingFormSchema>;
 
 interface RatingFormProps {
   favorId: string;
-  onRatedUserType: 'requester' | 'executor'; // Who is being rated
-  onSubmitRating: (data: RatingFormValues) => Promise<void>; // Function to handle submission
+  onRatedUserType: 'requester' | 'executor'; // Quem está sendo avaliado
+  onSubmitRating: (data: RatingFormValues) => Promise<void>; // Função para lidar com o envio
   isSubmitting?: boolean;
 }
 
@@ -54,7 +54,7 @@ export function RatingForm({ favorId, onRatedUserType, onSubmitRating, isSubmitt
         title: "Avaliação Enviada",
         description: `Seu feedback para o ${ratedUserTypeName} foi registrado.`,
       });
-      form.reset(); // Reset form after successful submission
+      form.reset(); // Reseta o formulário após o envio bem-sucedido
     } catch (error) {
       console.error("Failed to submit rating:", error);
       toast({
