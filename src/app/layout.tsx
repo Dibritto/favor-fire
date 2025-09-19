@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Kindred Connect',
+  title: 'Projeto Favor',
   description: 'Uma plataforma para colaboração comunitária e ajuda mútua.',
 };
 

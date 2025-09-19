@@ -2,21 +2,21 @@
 import type { User } from '@/types';
 import { mockUsers } from './mock-data';
 
-// NOTE: This is a mock authentication service.
-// In a real application, you would integrate with a real authentication provider.
+// NOTA: Este é um serviço de autenticação simulado.
+// Em uma aplicação real, você integraria com um provedor de autenticação real.
 
 /**
- * Gets the currently logged-in user.
- * In this mock, we are always returning user 'user2' to have a consistent experience.
- * To simulate a logged-out state, you can return null.
- * @returns A promise that resolves to the current user or null.
+ * Obtém o usuário atualmente logado.
+ * Nesta simulação, estamos sempre retornando o usuário 'user2' para ter uma experiência consistente.
+ * Para simular um estado de logout, você pode retornar null.
+ * @returns Uma promessa que resolve para o usuário atual ou nulo.
  */
 export const getCurrentUser = async (): Promise<User | null> => {
-  // We'll use 'user2' as the default logged-in user because they have a sponsor,
-  // which allows us to test more UI features.
+  // Usaremos 'user2' como o usuário logado padrão porque ele tem um padrinho,
+  // o que nos permite testar mais recursos da interface.
   const user = mockUsers.find(u => u.id === 'user2') || null;
 
-  // If the user has an 'invitedById', we'll populate the 'sponsor' field.
+  // Se o usuário tiver um 'invitedById', preencheremos o campo 'sponsor'.
   if (user && user.invitedById) {
       user.sponsor = mockUsers.find(u => u.id === user.invitedById);
   }
@@ -26,14 +26,14 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
 
 /**
- * Gets a user by their ID.
- * @param id - The ID of the user to retrieve.
- * @returns A promise that resolves to the user or null if not found.
+ * Obtém um usuário pelo seu ID.
+ * @param id - O ID do usuário a ser recuperado.
+ * @returns Uma promessa que resolve para o usuário ou nulo se não for encontrado.
  */
 export const getUserById = async (id: string): Promise<User | null> => {
     const user = mockUsers.find(user => user.id === id) || null;
     
-    // Also populate the sponsor if it exists for the retrieved user.
+    // Também preenche o padrinho se existir para o usuário recuperado.
     if (user && user.invitedById) {
         user.sponsor = mockUsers.find(u => u.id === user.invitedById);
     }

@@ -1,6 +1,7 @@
 
 
 
+
 import type { User, Favor, Notification, Report, Community, Mission } from '@/types';
 
 export const mockUsers: User[] = [
@@ -76,11 +77,11 @@ export const mockFavors: Favor[] = [
     location: 'Rua Principal, 123, Qualquer Cidade',
     type: 'volunteer',
     participationType: 'individual',
-    preferredDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
+    preferredDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 dias a partir de agora
     status: 'open',
     communityId: 'comm1',
     requesterId: 'user1',
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 dia atrás
   },
   {
     id: 'favor2',
@@ -91,7 +92,7 @@ export const mockFavors: Favor[] = [
     type: 'paid',
     amount: 100,
     participationType: 'individual',
-    preferredDateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+    preferredDateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 semana a partir de agora
     status: 'open',
     requesterId: 'user3',
     createdAt: new Date().toISOString(),
@@ -107,7 +108,7 @@ export const mockFavors: Favor[] = [
     status: 'accepted',
     requesterId: 'user2',
     executorId: 'user1',
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 dias atrás
     acceptedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -155,7 +156,7 @@ export const mockNotifications: Notification[] = [
     message: 'Bob aceitou seu pedido "Ajuda para mover um sofá".',
     link: '/favores/favor3',
     read: false,
-    createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
+    createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutos atrás
   },
   {
     id: 'notif2',
@@ -165,7 +166,7 @@ export const mockNotifications: Notification[] = [
     message: 'Você marcou o favor "Regar plantas durante as férias" como concluído. Não se esqueça de avaliar Bob!',
     link: '/favores/favor4',
     read: false,
-    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hora atrás
   },
   {
     id: 'notif3',
@@ -174,7 +175,7 @@ export const mockNotifications: Notification[] = [
     title: 'Atualização da Plataforma',
     message: 'Uma nova atualização de manutenção está agendada para este fim de semana. A plataforma pode ficar temporariamente indisponível.',
     read: true,
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 dias atrás
   },
   {
     id: 'notif4',
@@ -184,7 +185,7 @@ export const mockNotifications: Notification[] = [
     message: 'Bob avaliou sua interação no favor "Regar plantas durante as férias".',
     link: '/perfil',
     read: true,
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 dias atrás
   },
 ];
 
@@ -238,7 +239,7 @@ export const mockMissions: Mission[] = [
         description: 'Ajude a dar o pontapé inicial na nossa comunidade completando seus primeiros favores e interações.',
         niche: 'empresa',
         creatorId: 'system',
-        creator: { name: 'Projeto Favor', avatar: '/logo.png' },
+        creator: { name: 'Projeto Favor', avatar: '/favor.png' },
         reward: 'Selo de "Pioneiro" no perfil',
         goals: [
             { description: 'Complete seu primeiro favor', completed: true },
@@ -276,7 +277,7 @@ export const mockMissions: Mission[] = [
 ];
 
 
-// Populate related data before exporting
+// Preenche os dados relacionados antes de exportar
 mockUsers.forEach(user => {
     if (user.invitedById) {
         user.sponsor = mockUsers.find(u => u.id === user.invitedById);
