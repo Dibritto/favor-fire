@@ -87,3 +87,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+@layer components {
+  .hero-banner-clipped {
+    clip-path: polygon(0 0, 100% 0, 100% 25%, 85% 100%, 0 100%, 0% 85%);
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-clipped {
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+    }
+  }
+}
