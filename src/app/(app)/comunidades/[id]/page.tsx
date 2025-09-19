@@ -69,7 +69,7 @@ export default function CommunityDetailPage() {
         });
         return;
     }
-    console.log("Denúncia enviada:", { communityId: community?.id, motivo: reportReason, comentarios: reportComments });
+    console.log("Denúncia enviada:", { communityId: community?.id, reason: reportReason, comments: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
@@ -196,7 +196,7 @@ export default function CommunityDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Denunciar esta comunidade</AlertDialogTitle>
             <AlertDialogDescription>
-              Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
+              Agradecemos por ajudar a manter a comunidade segura. Sua denúncia é anônima.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-4 py-4">
@@ -222,7 +222,7 @@ export default function CommunityDetailPage() {
                 value={reportComments}
                 onChange={(e) => setReportComments(e.target.value)}
                 className="col-span-3"
-                placeholder="Ex: Conteúdo inadequado, spam, etc. (Opcional)"
+                placeholder="Forneça detalhes adicionais (opcional)"
                 rows={3}
               />
             </div>

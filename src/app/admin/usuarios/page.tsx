@@ -47,7 +47,7 @@ export default function AdminUsersPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
-                        <AvatarImage src={`https://placehold.co/40x40.png?text=${user.name.charAt(0).toUpperCase()}`} alt={user.name} data-ai-hint="avatar person" />
+                        <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/40/40`} alt={user.name} data-ai-hint="avatar person" />
                         <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="font-medium">{user.name}</div>
@@ -74,7 +74,7 @@ export default function AdminUsersPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                           <Link href={`/perfil`}>Ver Perfil</Link> 
+                           <Link href={`/perfil/${user.id}`}>Ver Perfil</Link> 
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Editar Usuário (Em Breve)</DropdownMenuItem>

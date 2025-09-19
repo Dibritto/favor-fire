@@ -30,8 +30,10 @@ export default function AdminManageCommunitiesPage() {
                 <h1 className="text-2xl font-headline font-bold">Gerenciar Comunidades</h1>
                 <p className="text-muted-foreground">Crie, visualize e gerencie as comunidades da plataforma.</p>
             </div>
-            <Button>
+            <Button asChild>
+              <Link href="/comunidades/criar">
                 <PlusCircle className="mr-2 h-4 w-4" /> Criar Comunidade
+              </Link>
             </Button>
         </div>
       <section aria-labelledby="communities-table-heading">
@@ -82,7 +84,9 @@ export default function AdminManageCommunitiesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                          <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/comunidades/${community.id}`}>Ver Detalhes</Link>
+                          </DropdownMenuItem>
                           <DropdownMenuItem>Editar Comunidade</DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive">Desativar Comunidade</DropdownMenuItem>
                         </DropdownMenuContent>

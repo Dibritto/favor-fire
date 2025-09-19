@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import type { Report, User, Favor, Community } from '@/types';
+import type { Report, User, Favor, Community, ReportReason } from '@/types';
 import { mockReports } from '@/lib/mock-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -34,10 +34,10 @@ const statusTranslations: { [key in Report['status']]: string } = {
     ignored: 'Ignorado',
 };
 
-const reasonTranslations: { [key in Report['reason']]: string } = {
-    spam: 'Spam',
-    inappropriate: 'Inapropriado',
-    scam: 'Golpe',
+const reasonTranslations: { [key in ReportReason]: string } = {
+    spam: 'Spam ou Propaganda',
+    inappropriate: 'Conteúdo Inadequado',
+    scam: 'Fraude ou Golpe',
     other: 'Outro',
 };
 

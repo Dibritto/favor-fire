@@ -346,7 +346,7 @@ export default function FavorDetailPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Denunciar este favor</AlertDialogTitle>
               <AlertDialogDescription>
-                Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
+                Agradecemos por ajudar a manter a comunidade segura. Sua denúncia é anônima.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="grid gap-4 py-4">
@@ -372,7 +372,7 @@ export default function FavorDetailPage() {
                   value={reportComments}
                   onChange={(e) => setReportComments(e.target.value)}
                   className="col-span-3"
-                  placeholder="Ex: É spam, conteúdo inadequado, etc. (Opcional)"
+                  placeholder="Forneça detalhes adicionais (opcional)"
                   rows={3}
                 />
               </div>
@@ -387,5 +387,3 @@ export default function FavorDetailPage() {
     </main>
   );
 }
-
-    

@@ -88,7 +88,7 @@ export default function PublicProfilePage() {
         });
         return;
     }
-    console.log("Denúncia enviada:", { userId: user?.id, motivo: reportReason, comentarios: reportComments });
+    console.log("Denúncia enviada:", { userId: user?.id, reason: reportReason, comments: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
@@ -261,7 +261,7 @@ export default function PublicProfilePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Denunciar este perfil</AlertDialogTitle>
             <AlertDialogDescription>
-               Por favor, selecione o motivo da denúncia e, se desejar, adicione comentários. Sua denúncia é anônima.
+              Agradecemos por ajudar a manter a comunidade segura. Sua denúncia é anônima.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-4 py-4">
@@ -287,7 +287,7 @@ export default function PublicProfilePage() {
                 value={reportComments}
                 onChange={(e) => setReportComments(e.target.value)}
                 className="col-span-3"
-                placeholder="Ex: Comportamento inadequado, spam, etc. (Opcional)"
+                placeholder="Forneça detalhes adicionais (opcional)"
                 rows={3}
               />
             </div>
