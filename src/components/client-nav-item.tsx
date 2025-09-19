@@ -66,14 +66,12 @@ export function ClientNavItem({ href, label, children, exact = false }: ClientNa
         isActive={isActive} 
         tooltip={{ children: label, side: 'right', className: 'font-body' }} 
         className="w-full justify-start"
+        onClick={handleClick}
       >
-        <a onClick={handleClick}> 
+        <a> 
           {children}
         </a>
       </SidebarMenuButton>
     </Link>
   );
 }
-
-
-    

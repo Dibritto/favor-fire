@@ -24,7 +24,6 @@ const routeTitles: { [key: string]: string } = {
   '/admin/denuncias': 'Gerenciar Denúncias',
   '/admin/notificacoes': 'Gerenciar Notificações',
   '/admin/configuracoes': 'Configurações',
-  '/admin/configuracoes/cores': 'Configurações de Cores do Tema',
 };
 
 export function PageTitle() {
