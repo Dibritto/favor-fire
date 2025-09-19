@@ -117,7 +117,7 @@ export default function EditProfilePage() {
                         alt="Imagem de capa do usuário"
                         fill
                         className="object-cover rounded-lg"
-                        data-ai-hint="profile cover"
+                        data-ai-hint="perfil capa"
                     />
                     <Button type="button" variant="outline" size="icon" className="absolute top-2 right-2 bg-background/70 hover:bg-background/90">
                         <Camera className="h-4 w-4" />
@@ -126,7 +126,7 @@ export default function EditProfilePage() {
                     <div className="absolute bottom-0 left-4 translate-y-1/2">
                          <div className="relative group w-24 h-24">
                             <Avatar className="h-24 w-24 border-4 border-background shadow-md">
-                                <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/128/128`} alt={publicName} data-ai-hint="profile picture" />
+                                <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/128/128`} alt={publicName} data-ai-hint="foto perfil" />
                                 <AvatarFallback className="text-2xl">{publicName?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <Button type="button" variant="outline" size="icon" className="absolute bottom-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background/90">

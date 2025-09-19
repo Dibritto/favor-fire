@@ -30,7 +30,7 @@ export default function LandingPage() {
                     alt="Pessoas da comunidade se ajudando em diversas atividades"
                     fill
                     className="object-cover"
-                    data-ai-hint="community helping together"
+                    data-ai-hint="comunidade ajudando juntos"
                     priority
                 />
             </div>
@@ -38,5 +38,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-    

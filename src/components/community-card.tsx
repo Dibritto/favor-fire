@@ -19,7 +19,7 @@ export function CommunityCard({ community }: CommunityCardProps) {
                 alt={`Imagem da comunidade ${community.name}`}
                 fill
                 className="object-cover"
-                data-ai-hint="community abstract"
+                data-ai-hint="comunidade abstrato"
             />
         </div>
       <CardHeader className="pt-4 pb-3">

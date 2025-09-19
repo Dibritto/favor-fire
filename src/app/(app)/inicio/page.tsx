@@ -257,7 +257,7 @@ export default function DashboardPage() {
                       <li key={activity.id} className="flex items-start space-x-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
                         <Link href={`/perfil/${activity.userId}`} className="shrink-0">
                           <Avatar className="h-10 w-10 border">
-                            {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar person"/> : 
+                            {activity.userAvatar ? <AvatarImage src={activity.userAvatar} alt={activity.userName} data-ai-hint="avatar pessoa"/> : 
                             <AvatarFallback className="bg-muted text-muted-foreground">
                                 {activity.userName.charAt(0).toUpperCase()}
                             </AvatarFallback>}

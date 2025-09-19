@@ -103,7 +103,7 @@ export default function CommunityDetailPage() {
               fill
               className="object-cover"
               priority
-              data-ai-hint="community abstract"
+              data-ai-hint="comunidade abstrato"
             />
           </div>
           <div className="bg-card p-6 space-y-4">
@@ -179,7 +179,7 @@ export default function CommunityDetailPage() {
                   <Card key={member.id} className="flex items-center p-4 gap-4">
                     <Link href={`/perfil/${member.id}`} className="flex items-center gap-4 w-full">
                       <Avatar className="h-12 w-12">
-                            <AvatarImage src={`https://picsum.photos/seed/avatar${member.id}/128/128`} alt={member.name} data-ai-hint="profile picture" />
+                            <AvatarImage src={`https://picsum.photos/seed/avatar${member.id}/128/128`} alt={member.name} data-ai-hint="foto perfil" />
                           <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>

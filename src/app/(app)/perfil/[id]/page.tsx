@@ -112,20 +112,20 @@ export default function PublicProfilePage() {
     <main className="max-w-4xl mx-auto space-y-8 pb-12">
       <header>
         <Card className="shadow-xl overflow-hidden rounded-lg">
-          <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
+          <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="padrao abstrato">
             <Image 
               src="https://picsum.photos/seed/profilebanner/1200/200" 
               alt="Banner do perfil" 
               fill
               style={{ objectFit: 'cover' }}
               priority
-              data-ai-hint="abstract banner"
+              data-ai-hint="banner abstrato"
             />
           </div>
           <div className="relative pt-0">
               <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
                   <Avatar className="h-32 w-32 border-4 border-background shadow-lg shrink-0">
-                      <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="profile picture"/>
+                      <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="foto perfil"/>
                       <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-center sm:items-start flex-grow w-full">
@@ -187,7 +187,7 @@ export default function PublicProfilePage() {
                         <Link href={`/perfil/${user.sponsor.id}`} className="block group">
                              <div className="flex items-center gap-4 rounded-lg p-3 transition-colors group-hover:bg-muted/50">
                                 <Avatar>
-                                    <AvatarImage src={`https://picsum.photos/seed/avatar${user.sponsor.id}/128/128`} alt={user.sponsor.name} data-ai-hint="profile picture" />
+                                    <AvatarImage src={`https://picsum.photos/seed/avatar${user.sponsor.id}/128/128`} alt={user.sponsor.name} data-ai-hint="foto perfil" />
                                     <AvatarFallback>{user.sponsor.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>
@@ -301,5 +301,3 @@ export default function PublicProfilePage() {
     </main>
   );
 }
-
-    

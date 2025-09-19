@@ -102,7 +102,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <SidebarFooter className="border-t border-sidebar-border p-3 space-y-3">
                <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/40/40`} alt={user?.name} data-ai-hint="avatar person" />
+                  <AvatarImage src={`https://picsum.photos/seed/avatar${user?.id}/40/40`} alt={user?.name} data-ai-hint="avatar pessoa" />
                   <AvatarFallback>{userInitial}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col overflow-hidden">

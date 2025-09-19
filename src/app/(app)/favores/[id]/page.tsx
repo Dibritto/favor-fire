@@ -265,7 +265,7 @@ export default function FavorDetailPage() {
                   {favor.requester && (
                     <Link href={`/perfil/${favor.requester.id}`} className="flex items-center space-x-3 mb-2 group">
                           <Avatar>
-                              <AvatarImage src={`https://picsum.photos/seed/avatar${favor.requester.id}/40/40`} data-ai-hint="avatar person" alt={favor.requester.name} />
+                              <AvatarImage src={`https://picsum.photos/seed/avatar${favor.requester.id}/40/40`} data-ai-hint="avatar pessoa" alt={favor.requester.name} />
                               <AvatarFallback>{favor.requester.name.charAt(0).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div>
@@ -277,7 +277,7 @@ export default function FavorDetailPage() {
                   {favor.executor && (
                     <Link href={`/perfil/${favor.executor.id}`} className="flex items-center space-x-3 group">
                           <Avatar>
-                              <AvatarImage src={`https://picsum.photos/seed/avatar${favor.executor.id}/40/40`} data-ai-hint="avatar person" alt={favor.executor.name} />
+                              <AvatarImage src={`https://picsum.photos/seed/avatar${favor.executor.id}/40/40`} data-ai-hint="avatar pessoa" alt={favor.executor.name} />
                               <AvatarFallback>{favor.executor.name.charAt(0).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div>

@@ -90,7 +90,7 @@ export default function CreateCommunityPage() {
                         alt="Imagem de capa da comunidade"
                         fill
                         className="object-cover rounded-lg"
-                        data-ai-hint="community cover abstract"
+                        data-ai-hint="comunidade capa abstrato"
                     />
                     <Button type="button" variant="outline" size="icon" className="absolute top-2 right-2 bg-background/70 hover:bg-background/90">
                         <Camera className="h-4 w-4" />
@@ -99,7 +99,7 @@ export default function CreateCommunityPage() {
                     <div className="absolute bottom-0 left-4 translate-y-1/2">
                          <div className="relative group w-24 h-24">
                             <Avatar className="h-24 w-24 border-4 border-background shadow-md">
-                                <AvatarImage src={`https://picsum.photos/seed/newcommunityavatar/128/128`} alt={communityName} data-ai-hint="community logo" />
+                                <AvatarImage src={`https://picsum.photos/seed/newcommunityavatar/128/128`} alt={communityName} data-ai-hint="comunidade logo" />
                                 <AvatarFallback className="text-2xl">{communityName?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <Button type="button" variant="outline" size="icon" className="absolute bottom-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background/90">
