@@ -93,7 +93,7 @@ export default function FavorDetailPage() {
 
   const handleMarkAsComplete = async () => {
     if (!favor || (favor.status !== 'accepted' && favor.status !== 'open')) return;
-    setIsActionLoading(true);
+    setIsAction-loading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setFavor(prev => prev ? { ...prev, status: 'completed', completedAt: new Date().toISOString() } : null);
     toast({ title: "Favor Concluído!", description: "Ótimo trabalho! Agora você pode avaliar a interação." });
@@ -388,4 +388,5 @@ export default function FavorDetailPage() {
   );
 }
 
+    
     
