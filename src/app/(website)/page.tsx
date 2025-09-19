@@ -10,14 +10,12 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        {/* Hero Slider Section */}
         <HeroSlider />
 
-        {/* Features Section */}
-        <section id="recursos" className="py-24 bg-background">
+        <section id="recursos" aria-labelledby="features-heading" className="py-24 bg-background">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-headline font-bold text-foreground">Como Funciona?</h2>
+              <h2 id="features-heading" className="text-3xl md:text-4xl font-headline font-bold text-foreground">Como Funciona?</h2>
               <p className="mt-3 max-w-xl mx-auto text-muted-foreground">
                 A ajuda mútua nunca foi tão fácil. Veja como você pode participar.
               </p>
@@ -28,7 +26,7 @@ export default function LandingPage() {
                     <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
                         <MessageSquarePlus className="h-8 w-8 text-primary" />
                     </div>
-                  <CardTitle className="font-headline mt-4">Peça um Favor</CardTitle>
+                  <h3 className="font-headline text-xl mt-4 font-semibold">Peça um Favor</h3>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">Precisa de ajuda com jardinagem, uma carona ou um conselho? Crie um pedido e deixe a comunidade saber.</p>
@@ -39,7 +37,7 @@ export default function LandingPage() {
                     <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
                         <Handshake className="h-8 w-8 text-primary" />
                     </div>
-                  <CardTitle className="font-headline mt-4">Ofereça Ajuda</CardTitle>
+                  <h3 className="font-headline text-xl mt-4 font-semibold">Ofereça Ajuda</h3>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">Explore os pedidos e ofereça suas habilidades, tempo ou recursos para ajudar um vizinho.</p>
@@ -50,7 +48,7 @@ export default function LandingPage() {
                     <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
                         <Users className="h-8 w-8 text-primary" />
                     </div>
-                  <CardTitle className="font-headline mt-4">Conecte-se</CardTitle>
+                  <h3 className="font-headline text-xl mt-4 font-semibold">Conecte-se</h3>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">Construa sua reputação, conheça pessoas e fortaleça os laços na sua comunidade local.</p>
@@ -60,11 +58,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-24 bg-muted/50">
+        <section id="depoimentos" aria-labelledby="testimonials-heading" className="py-24 bg-muted/50">
              <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-headline font-bold text-foreground">Amado pela nossa comunidade</h2>
+                    <h2 id="testimonials-heading" className="text-3xl md:text-4xl font-headline font-bold text-foreground">Amado pela nossa comunidade</h2>
                     <p className="mt-3 max-w-xl mx-auto text-muted-foreground">
                         Veja o que nossos membros estão dizendo sobre a plataforma.
                     </p>
@@ -72,9 +69,9 @@ export default function LandingPage() {
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     <Card className="bg-card">
                         <CardContent className="pt-6">
-                            <p className="text-foreground italic mb-4">"O Projeto Favor mudou a forma como eu interajo com meus vizinhos. Consegui ajuda para minha mudança e fiz novos amigos!"</p>
+                            <blockquote className="text-foreground italic mb-4">"O Projeto Favor mudou a forma como eu interajo com meus vizinhos. Consegui ajuda para minha mudança e fiz novos amigos!"</blockquote>
                              <div className="flex items-center">
-                                <Avatar className="h-10 w-10">
+                                <Avatar className="h-10 w-10" aria-label="Avatar de Alice W.">
                                     <AvatarImage src="https://picsum.photos/seed/test1/64" alt="Alice W." data-ai-hint="person face" />
                                     <AvatarFallback>AW</AvatarFallback>
                                 </Avatar>
@@ -87,11 +84,11 @@ export default function LandingPage() {
                     </Card>
                      <Card className="bg-card">
                         <CardContent className="pt-6">
-                            <p className="text-foreground italic mb-4">"É incrível poder ajudar e ser ajudado de forma tão simples. A plataforma é segura e muito fácil de usar. Recomendo a todos!"</p>
+                            <blockquote className="text-foreground italic mb-4">"É incrível poder ajudar e ser ajudado de forma tão simples. A plataforma é segura e muito fácil de usar. Recomendo a todos!"</blockquote>
                             <div className="flex items-center">
-                                <Avatar className="h-10 w-10">
-                                    <AvatarImage src="https://picsum.photos/seed/test2/64" alt="Bob" data-ai-hint="person face" />
-                                    <AvatarFallback>B</AvatarFallback>
+                                <Avatar className="h-10 w-10" aria-label="Avatar de Bob M.">
+                                    <AvatarImage src="https://picsum.photos/seed/test2/64" alt="Bob M." data-ai-hint="person face" />
+                                    <AvatarFallback>BM</AvatarFallback>
                                 </Avatar>
                                 <div className="ml-4">
                                     <p className="font-semibold text-foreground">Bob M.</p>
@@ -102,11 +99,11 @@ export default function LandingPage() {
                     </Card>
                      <Card className="bg-card">
                         <CardContent className="pt-6">
-                            <p className="text-foreground italic mb-4">"Encontrei uma pessoa para me ajudar a montar meus móveis em menos de um dia. Economia de tempo e dinheiro. Fantástico!"</p>
+                            <blockquote className="text-foreground italic mb-4">"Encontrei uma pessoa para me ajudar a montar meus móveis em menos de um dia. Economia de tempo e dinheiro. Fantástico!"</blockquote>
                             <div className="flex items-center">
-                                <Avatar className="h-10 w-10">
-                                    <AvatarImage src="https://picsum.photos/seed/test3/64" alt="Charlie" data-ai-hint="person face" />
-                                    <AvatarFallback>C</AvatarFallback>
+                                <Avatar className="h-10 w-10" aria-label="Avatar de Charlie S.">
+                                    <AvatarImage src="https://picsum.photos/seed/test3/64" alt="Charlie S." data-ai-hint="person face" />
+                                    <AvatarFallback>CS</AvatarFallback>
                                 </Avatar>
                                 <div className="ml-4">
                                     <p className="font-semibold text-foreground">Charlie S.</p>
@@ -120,11 +117,10 @@ export default function LandingPage() {
         </section>
 
 
-        {/* Final CTA Section */}
-        <section className="py-24 bg-background">
+        <section id="cta-final" aria-labelledby="final-cta-heading" className="py-24 bg-background">
           <div className="container px-4 md:px-6 text-center">
              <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-headline font-bold text-foreground">
+                <h2 id="final-cta-heading" className="text-3xl md:text-4xl font-headline font-bold text-foreground">
                     Pronto para fazer parte?
                 </h2>
                 <p className="mt-4 text-lg text-muted-foreground">
