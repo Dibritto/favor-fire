@@ -82,5 +82,3 @@ export function MissionCard({ mission }: MissionCardProps) {
     </Card>
   );
 }
-
-    

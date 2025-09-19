@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { mockCommunities, mockFavors, mockUsers } from '@/lib/mock-data';
+import { mockCommunities, mockUsers } from '@/lib/mock-data';
 import type { Community, Favor, User, ReportReason } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';

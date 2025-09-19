@@ -115,5 +115,3 @@ export function FavorCard({ favor }: FavorCardProps) {
     </article>
   );
 }
-
-    
