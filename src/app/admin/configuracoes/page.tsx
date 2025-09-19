@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings } from 'lucide-react';
+import { Settings as SettingsIcon } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
@@ -8,7 +8,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-              <Settings className="h-6 w-6" />
+              <SettingsIcon className="h-6 w-6" />
               Configurações
           </CardTitle>
           <CardDescription>

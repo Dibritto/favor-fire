@@ -3,7 +3,7 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarFooter, SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, LayoutDashboard, Users, Home, Handshake, Building2, CreditCard, ShieldAlert, Bell, Settings, Palette } from 'lucide-react';
+import { LogOut, LayoutDashboard, Users, Home, Handshake, Building2, CreditCard, ShieldAlert, Bell, Settings } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 import { ClientNavItem } from '@/components/client-nav-item';
 import { Button } from '@/components/ui/button';
@@ -89,6 +89,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   <ClientNavItem href="/admin/notificacoes" label="Gerenciar Notificações">
                     <Bell />
                     <span>Notificações</span>
+                  </ClientNavItem>
+                </SidebarMenuItem>
+                 <SidebarMenuItem>
+                  <ClientNavItem href="/admin/configuracoes" label="Configurações">
+                    <Settings />
+                    <span>Configurações</span>
                   </ClientNavItem>
                 </SidebarMenuItem>
               </SidebarMenu>
