@@ -25,6 +25,7 @@ import { Loader2, Globe, Lock, Camera } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
 
 const communityFormSchema = z.object({
   name: z.string().min(5, "O nome deve ter pelo menos 5 caracteres.").max(50, "O nome deve ter no máximo 50 caracteres."),
@@ -199,5 +200,3 @@ export default function CreateCommunityPage() {
     </main>
   );
 }
-
-    
