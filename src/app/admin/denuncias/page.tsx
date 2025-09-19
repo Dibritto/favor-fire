@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, MessageSquare, User as UserIcon, ShieldCheck, Users } from 'lucide-react';
+import { MoreHorizontal, MessageSquare, User as UserIcon, ShieldCheck, Users, ShieldX } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { ClientFormattedDate } from '@/components/client-formatted-date';
@@ -51,11 +51,11 @@ export default function AdminManageReportsPage() {
     setReports(mockReports);
   }, []);
   
-  const handleMarkAsResolved = (reportId: string) => {
+  const handleMarkAs = (reportId: string, status: Report['status']) => {
     setReports(prevReports => 
-        prevReports.map(r => r.id === reportId ? {...r, status: 'resolved'} : r)
+        prevReports.map(r => r.id === reportId ? {...r, status: status} : r)
     );
-    toast({ title: 'Denúncia Resolvida', description: 'A denúncia foi marcada como resolvida.'});
+    toast({ title: 'Denúncia Atualizada', description: `A denúncia foi marcada como ${statusTranslations[status]}.`});
   }
 
   const getReportedItemName = (report: Report) => {
@@ -159,10 +159,16 @@ export default function AdminManageReportsPage() {
                                 <Link href={getReportedItemLink(report)}>Ver Item Denunciado</Link> 
                                 </DropdownMenuItem>
                                 {report.status === 'pending' && (
-                                    <DropdownMenuItem onClick={() => handleMarkAsResolved(report.id)}>
-                                        <ShieldCheck className="mr-2 h-4 w-4" />
-                                        Marcar como Resolvido
-                                    </DropdownMenuItem>
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleMarkAs(report.id, 'resolved')}>
+                                            <ShieldCheck className="mr-2 h-4 w-4" />
+                                            Marcar como Resolvido
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleMarkAs(report.id, 'ignored')}>
+                                            <ShieldX className="mr-2 h-4 w-4" />
+                                            Ignorar Denúncia
+                                        </DropdownMenuItem>
+                                    </>
                                 )}
                                 <DropdownMenuItem className="text-destructive">Suspender Item</DropdownMenuItem>
                                 <DropdownMenuItem className="text-destructive">Suspender Usuário Denunciante</DropdownMenuItem>

@@ -40,5 +40,5 @@ export function ClientFormattedDate({ dateString, formatString, formatFunction =
     return null;
   }
 
-  return <>{formattedDate}</>;
+  return <time dateTime={dateString}>{formattedDate}</time>;
 }

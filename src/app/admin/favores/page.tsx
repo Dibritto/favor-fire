@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,10 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Sparkles, DollarSign } from 'lucide-react';
+import { MoreHorizontal, Sparkles, DollarSign, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Link from 'next/link';
+import { ClientFormattedDate } from '@/components/client-formatted-date';
 
 // Função para obter o estilo do status para consistência
 const getStatusStyles = (status: Favor['status']) => {
@@ -79,18 +81,19 @@ export default function AdminManageFavorsPage() {
                   <TableCell className="hidden md:table-cell">{favor.requester?.name || 'N/A'}</TableCell>
                   <TableCell className="hidden lg:table-cell">{favor.executor?.name || 'Nenhum'}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={`capitalize ${getStatusStyles(favor.status)}`}>
-                      {statusTranslations[favor.status]}
+                    <Badge variant="outline" className={`capitalize text-xs ${getStatusStyles(favor.status)}`}>
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        {statusTranslations[favor.status]}
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <div className="flex items-center gap-1.5">
-                      {favor.type === 'paid' ? <DollarSign className="h-4 w-4 text-green-600" /> : <Sparkles className="h-4 w-4 text-blue-500" />}
-                      <span className="capitalize">{favor.type === 'paid' ? 'Pago' : 'Voluntário'}</span>
-                    </div>
+                    <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize">
+                      {favor.type === 'paid' ? <DollarSign className="mr-1 h-3 w-3" /> : <Sparkles className="mr-1 h-3 w-3" />}
+                      {favor.type === 'paid' ? 'Pago' : 'Voluntário'}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    {format(new Date(favor.createdAt), 'P', { locale: ptBR })}
+                  <TableCell className="hidden lg:table-cell text-xs">
+                     <ClientFormattedDate dateString={favor.createdAt} formatString="P" />
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

@@ -29,6 +29,7 @@ export default function AdminManageNotificationsPage() {
       description: "A notificação foi enviada para os usuários selecionados.",
     });
     // Aqui você poderia resetar o formulário
+    (e.target as HTMLFormElement).reset();
   };
 
   return (

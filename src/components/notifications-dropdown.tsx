@@ -64,8 +64,13 @@ export function NotificationsDropdown() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex justify-between items-center">
           <h3 className="font-medium text-lg">Notificações</h3>
+          {unreadCount > 0 && (
+            <Button variant="link" size="sm" onClick={handleMarkAllAsRead} disabled={unreadCount === 0} className="h-auto p-0">
+                Marcar todas como lidas
+            </Button>
+          )}
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length > 0 ? (
@@ -103,10 +108,10 @@ export function NotificationsDropdown() {
             ))}
             </ul>
           ) : (
-            <p className="p-4 text-center text-muted-foreground">Nenhuma notificação nova.</p>
+            <p className="p-8 text-center text-muted-foreground text-sm">Nenhuma notificação nova.</p>
           )}
         </div>
-        {notifications.length > 0 && (
+        {notifications.length > 0 && unreadCount > 0 && (
             <div className="p-2 border-t flex justify-end">
                 <Button variant="link" size="sm" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
                     Marcar todas como lidas
