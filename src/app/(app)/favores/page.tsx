@@ -12,6 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PlusCircle, Search, FilterX } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+const favorTypeTranslations: Record<FavorType, string> = {
+  volunteer: 'Voluntário',
+  paid: 'Pago',
+};
+
+const urgencyTranslations: Record<UrgencyLevel, string> = {
+  low: 'Baixa',
+  medium: 'Média',
+  high: 'Alta',
+};
+
 export default function FavorDiscoveryPage() {
   const [favors, setFavors] = useState<Favor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -86,8 +97,9 @@ export default function FavorDiscoveryPage() {
                   </SelectTrigger>
                   <SelectContent>
                       <SelectItem value="all">Todos os Tipos</SelectItem>
-                      <SelectItem value="volunteer">Voluntário</SelectItem>
-                      <SelectItem value="paid">Pago</SelectItem>
+                      {Object.entries(favorTypeTranslations).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>{value}</SelectItem>
+                      ))}
                   </SelectContent>
               </Select>
 
@@ -97,9 +109,9 @@ export default function FavorDiscoveryPage() {
                   </SelectTrigger>
                   <SelectContent>
                       <SelectItem value="all">Todas as Urgências</SelectItem>
-                      <SelectItem value="low">Baixa Urgência</SelectItem>
-                      <SelectItem value="medium">Média Urgência</SelectItem>
-                      <SelectItem value="high">Alta Urgência</SelectItem>
+                      {Object.entries(urgencyTranslations).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>{value}</SelectItem>
+                      ))}
                   </SelectContent>
               </Select>
               <Button onClick={resetFilters} variant="outline" className="w-full md:w-auto">

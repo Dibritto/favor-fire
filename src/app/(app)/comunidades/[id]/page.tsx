@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { mockCommunities, mockFavors, mockUsers } from '@/lib/mock-data';
-import type { Community, Favor, User, ReportReason } from '@/types';
+import type { Community, Favor, User, ReportReason, CommunityType } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -25,6 +25,11 @@ const reasonTranslations: { [key in ReportReason]: string } = {
     inappropriate: 'Conteúdo Inadequado',
     scam: 'Fraude ou Golpe',
     other: 'Outro',
+};
+
+const communityTypeTranslations: { [key in CommunityType]: string } = {
+    public: 'Pública',
+    private: 'Privada',
 };
 
 
@@ -106,7 +111,7 @@ export default function CommunityDetailPage() {
               <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
               <CardDescription className="flex items-center gap-2 mt-1">
                 {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                <span className="capitalize">{community.type === 'public' ? 'Pública' : 'Privada'}</span>
+                <span className="capitalize">{communityTypeTranslations[community.type]}</span>
                 <span className="mx-1">·</span>
                 <Users className="h-4 w-4" />
                 <span>{community.memberIds.length} membro(s)</span>
