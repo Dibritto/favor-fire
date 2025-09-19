@@ -1,10 +1,11 @@
 
+
 import type { Favor, UrgencyLevel, FavorStatus, FavorParticipationType } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { MapPin, Clock, DollarSign, Sparkles, AlertTriangle, Users, CheckCircle, User } from 'lucide-react';
+import { MapPin, Clock, DollarSign, Sparkles, AlertTriangle, Users, CheckCircle, User, Building } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -66,19 +67,19 @@ export function FavorCard({ favor }: FavorCardProps) {
     <article>
         <Card className="flex flex-col h-full shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
         <CardHeader className="pb-3">
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-between items-start gap-2">
+                 <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
+                    <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
+                </Badge>
                 <Badge variant={favor.type === 'paid' ? 'default' : 'secondary'} className="capitalize shrink-0">
                     {favor.type === 'paid' ? <DollarSign className="mr-1 h-3 w-3" /> : <Sparkles className="mr-1 h-3 w-3" />}
                     {favor.type === 'paid' ? 'Pago' : 'Voluntário'}
                 </Badge>
-                 <Badge variant="outline" className={`capitalize text-xs px-1.5 py-0 ${getStatusStyles(favor.status)}`}>
-                    <CheckCircle className="h-2.5 w-2.5 mr-1" /> {statusTranslations[favor.status]}
-                </Badge>
             </div>
             <CardTitle className="font-headline text-lg md:text-xl line-clamp-2 pt-2">{favor.title}</CardTitle>
-            <CardDescription className="text-xs text-muted-foreground flex items-center pt-1">
-              <Users className="h-3 w-3 mr-1.5" />
-              Pedido por: {favor.requester?.name || 'Alguém da comunidade'}
+             <CardDescription className="text-xs text-muted-foreground flex items-center pt-1">
+              <User className="h-3 w-3 mr-1.5" />
+              Pedido por {favor.requester?.name || 'membro da comunidade'}
             </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow pt-0 pb-4">
@@ -88,10 +89,10 @@ export function FavorCard({ favor }: FavorCardProps) {
                 <MapPin className="h-4 w-4 mr-2 text-primary shrink-0" />
                 <span>{favor.location}</span>
             </div>
-            {favor.preferredDateTime && (
+            {favor.community && (
                 <div className="flex items-center text-muted-foreground">
-                <Clock className="h-4 w-4 mr-2 text-primary shrink-0" />
-                <span>{format(new Date(favor.preferredDateTime), "P", { locale: ptBR })} às {format(new Date(favor.preferredDateTime), "p", { locale: ptBR })}</span>
+                <Building className="h-4 w-4 mr-2 text-primary shrink-0" />
+                <span>{favor.community.name}</span>
                 </div>
             )}
             <div className="flex flex-wrap gap-2 pt-1">
@@ -114,3 +115,5 @@ export function FavorCard({ favor }: FavorCardProps) {
     </article>
   );
 }
+
+    

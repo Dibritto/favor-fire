@@ -3,6 +3,7 @@
 
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -35,6 +36,7 @@ export interface Favor {
   participationType: FavorParticipationType;
   numberOfPeople?: number; // Para favores coletivos
   communityId?: string; // Para vincular a uma comunidade, tornando-o um favor restrito
+  community?: Community; // Preenchido para exibição
   preferredDateTime?: string; // string ISO ou uma data/hora mais estruturada
   status: FavorStatus;
   requesterId: string;
@@ -117,3 +119,5 @@ export interface Report {
     status: ReportStatus;
     createdAt: string; // String ISO
 }
+
+    

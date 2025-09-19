@@ -2,6 +2,7 @@
 
 
 
+
 import type { User, Favor, Notification, Report, Community, Mission } from '@/types';
 
 export const mockUsers: User[] = [
@@ -289,6 +290,9 @@ mockFavors.forEach(favor => {
   if (favor.executorId) {
     favor.executor = mockUsers.find(u => u.id === favor.executorId);
   }
+   if (favor.communityId) {
+    favor.community = mockCommunities.find(c => c.id === favor.communityId);
+  }
 });
 
 mockCommunities.forEach(community => {
@@ -312,3 +316,5 @@ mockMissions.forEach(mission => {
         mission.creator = mockUsers.find(u => u.id === mission.creatorId);
     }
 });
+
+    

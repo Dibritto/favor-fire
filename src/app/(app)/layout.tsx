@@ -51,13 +51,25 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                   <SidebarMenuItem>
                     <ClientNavItem href="/favores" label="Descobrir Favores">
                       <Compass />
-                      <span>Descobrir Favores</span>
+                      <span>Descobrir</span>
                     </ClientNavItem>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
+                   <SidebarMenuItem>
                     <ClientNavItem href="/comunidades" label="Comunidades">
                       <Users2 />
                       <span>Comunidades</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/favores/pedir" label="Pedir um Favor">
+                      <PlusSquare />
+                      <span>Pedir Favor</span>
+                    </ClientNavItem>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <ClientNavItem href="/favores/meus" label="Meus Favores">
+                      <ListChecks />
+                      <span>Meus Favores</span>
                     </ClientNavItem>
                   </SidebarMenuItem>
                    <SidebarMenuItem>
@@ -67,21 +79,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                     </ClientNavItem>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <ClientNavItem href="/favores/meus" label="Meus Favores">
-                      <ListChecks />
-                      <span>Meus Favores</span>
-                    </ClientNavItem>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <ClientNavItem href="/favores/pedir" label="Pedir um Favor">
-                      <PlusSquare />
-                      <span>Pedir um Favor</span>
-                    </ClientNavItem>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
                     <ClientNavItem href="/assinatura" label="Minha Assinatura">
                       <Gem />
-                      <span>Minha Assinatura</span>
+                      <span>Assinatura</span>
                     </ClientNavItem>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
@@ -138,3 +138,5 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     </SidebarProvider>
   );
 }
+
+    
