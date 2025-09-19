@@ -46,7 +46,7 @@ export default function AdminManageNotificationsPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="title">Título</Label>
                   <Input id="title" placeholder="Ex: Manutenção Agendada" required />
@@ -134,3 +134,5 @@ export default function AdminManageNotificationsPage() {
     </main>
   );
 }
+
+    
