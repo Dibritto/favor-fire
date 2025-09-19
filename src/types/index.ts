@@ -2,6 +2,7 @@
 
 
 
+
 export interface User {
   id: string;
   name: string;
@@ -9,13 +10,13 @@ export interface User {
   email: string;
   phone?: string;
   bio?: string;
-  reputation: number; // 0-5 scale, can be calculated or stored
+  reputation: number; // escala de 0-5, pode ser calculado ou armazenado
   favorsCompleted: number;
   favorsRequested: number;
-  joinDate?: string; // ISO string for when the user joined
-  // For the future invitation system
+  joinDate?: string; // string ISO para quando o usuário entrou
+  // Para o futuro sistema de convites
   invitedById?: string;
-  sponsor?: User; // Populated for display
+  sponsor?: User; // Preenchido para exibição
   inviteCode?: string;
 }
 
@@ -29,30 +30,30 @@ export interface Favor {
   title: string;
   description: string;
   urgency: UrgencyLevel;
-  location: string; // For simplicity, can be an address or general area
+  location: string; // Para simplicidade, pode ser um endereço ou área geral
   type: FavorType;
   participationType: FavorParticipationType;
-  numberOfPeople?: number; // For collective favors
-  communityId?: string; // To link to a community, making it a restricted favor
-  preferredDateTime?: string; // ISO string or a more structured date/time
+  numberOfPeople?: number; // Para favores coletivos
+  communityId?: string; // Para vincular a uma comunidade, tornando-o um favor restrito
+  preferredDateTime?: string; // string ISO ou uma data/hora mais estruturada
   status: FavorStatus;
   requesterId: string;
-  requester?: User; // Populated for display
-  executorId?: string | null; // For individual favors
-  executor?: User | null; // For individual favors
-  executorIds?: string[]; // For collective favors
-  executors?: User[]; // For collective favors
-  createdAt: string; // ISO string
-  acceptedAt?: string; // ISO string
-  completedAt?: string; // ISO string
-  amount?: number; // For paid favors
-  // Feedback and rating can be separate or embedded
-  requesterRating?: number; // Rating given by executor to requester (1-5)
+  requester?: User; // Preenchido para exibição
+  executorId?: string | null; // Para favores individuais
+  executor?: User | null; // Preenchido para exibição
+  executorIds?: string[]; // Para favores coletivos
+  executors?: User[]; // Preenchido para exibição
+  createdAt: string; // string ISO
+  acceptedAt?: string; // string ISO
+  completedAt?: string; // string ISO
+  amount?: number; // Para favores pagos
+  // Feedback e avaliação podem ser separados ou incorporados
+  requesterRating?: number; // Avaliação dada pelo executor ao solicitante (1-5)
   requesterFeedback?: string;
-  executorRating?: number; // Rating given by requester to executor (1-5)
+  executorRating?: number; // Avaliação dada pelo solicitante ao executor (1-5)
   executorFeedback?: string;
-  // Optional evidence for completion
-  completionProof?: string; // URL to image or text
+  // Prova opcional para conclusão
+  completionProof?: string; // URL para imagem ou texto
 }
 
 export type CommunityType = 'public' | 'private';
@@ -63,10 +64,10 @@ export interface Community {
     description: string;
     type: CommunityType;
     creatorId: string;
-    creator?: User; // Populated for display
+    creator?: User; // Preenchido para exibição
     memberIds: string[];
-    members?: User[]; // Populated for display
-    createdAt: string; // ISO string
+    members?: User[]; // Preenchido para exibição
+    createdAt: string; // string ISO
 }
 
 export type MissionNiche = 'streamer' | 'ong' | 'empresa';
@@ -76,7 +77,7 @@ export interface Mission {
     title: string;
     description: string;
     niche: MissionNiche;
-    creatorId: string; // Could be a User ID or a Company ID
+    creatorId: string; // Pode ser um ID de usuário ou de empresa
     creator?: User | { name: string; avatar: string };
     goals: { description: string; completed: boolean }[];
     reward: string;
@@ -95,9 +96,9 @@ export interface Notification {
   type: NotificationType;
   title: string;
   message: string;
-  link?: string; // e.g., /favors/favor123
+  link?: string; // ex: /favores/favor123
   read: boolean;
-  createdAt: string; // ISO string
+  createdAt: string; // string ISO
 }
 
 export type ReportStatus = 'pending' | 'resolved' | 'ignored';
@@ -114,5 +115,5 @@ export interface Report {
     reason: ReportReason;
     comments?: string;
     status: ReportStatus;
-    createdAt: string; // ISO String
+    createdAt: string; // String ISO
 }
