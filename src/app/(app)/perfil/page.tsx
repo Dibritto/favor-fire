@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '@/lib/auth';
 import { mockFavors, mockUsers } from '@/lib/mock-data';
-import type { User, Favor } from '@/types';
+import type { User, Favor, FavorStatus } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,12 +14,19 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+const statusTranslations: Record<FavorStatus, string> = {
+  open: 'Aberto',
+  accepted: 'Aceito',
+  completed: 'Concluído',
+  cancelled: 'Cancelado',
+};
+
 function ProfileFavorItem({ favor }: { favor: Favor }) {
     return (
         <Link href={`/favores/${favor.id}`} className="block hover:bg-muted/50 p-3 rounded-md transition-colors">
             <div className="flex justify-between items-start">
                 <h4 className="font-semibold text-primary">{favor.title}</h4>
-                <div className="capitalize text-xs p-1 px-2 rounded-md" >{favor.status === "completed" ? "concluído" : favor.status}</div>
+                <div className="capitalize text-xs p-1 px-2 rounded-md" >{statusTranslations[favor.status]}</div>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
                 {favor.type === 'paid' ? `Pago (R$${favor.amount})` : 'Voluntário'} - {format(new Date(favor.createdAt), "P", { locale: ptBR })}
