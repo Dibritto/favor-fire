@@ -81,7 +81,7 @@ export default function PublicProfilePage() {
         });
         return;
     }
-    console.log("Denúncia enviada:", { userId: user?.id, reason: reportReason, comments: reportComments });
+    console.log("Denúncia enviada:", { userId: user?.id, motivo: reportReason, comentarios: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
@@ -103,57 +103,59 @@ export default function PublicProfilePage() {
 
   return (
     <main className="max-w-4xl mx-auto space-y-8 pb-12">
-      <Card as="header" className="shadow-xl overflow-hidden rounded-lg">
-        <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
-           <Image 
-            src="https://picsum.photos/seed/profilebanner/1200/200" 
-            alt="Banner do perfil" 
-            fill
-            style={{ objectFit: 'cover' }}
-            priority
-            data-ai-hint="abstract banner"
-          />
-        </div>
-        <div className="relative pt-0">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
-                <Avatar className="h-32 w-32 border-4 border-background shadow-lg shrink-0">
-                    <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="profile picture"/>
-                    <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col items-center sm:items-start flex-grow w-full">
-                    <div className="flex items-center justify-between w-full">
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
-                            {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg text-center sm:text-left">{user.bio}</p>}
-                            <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
-                                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                                <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
-                            </div>
-                        </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
-                                    <MoreVertical className="h-5 w-5" />
-                                    <span className="sr-only">Mais opções</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
-                                    <ShieldAlert className="mr-2 h-4 w-4" />
-                                    Denunciar Perfil
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                     <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full justify-center sm:justify-start">
-                        <Button size="sm">
-                            <MessageCircle className="mr-2 h-4 w-4" /> Enviar Mensagem
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </Card>
+      <header>
+        <Card className="shadow-xl overflow-hidden rounded-lg">
+          <div className="h-32 bg-gradient-to-r from-primary to-accent relative" data-ai-hint="abstract pattern">
+            <Image 
+              src="https://picsum.photos/seed/profilebanner/1200/200" 
+              alt="Banner do perfil" 
+              fill
+              style={{ objectFit: 'cover' }}
+              priority
+              data-ai-hint="abstract banner"
+            />
+          </div>
+          <div className="relative pt-0">
+              <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12 space-y-4 sm:space-y-0 sm:space-x-6 p-6 bg-card/80 backdrop-blur-sm rounded-b-lg">
+                  <Avatar className="h-32 w-32 border-4 border-background shadow-lg shrink-0">
+                      <AvatarImage src={`https://picsum.photos/seed/avatar${user.id}/128/128`} alt={publicName} data-ai-hint="profile picture"/>
+                      <AvatarFallback className="text-4xl">{publicName.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-center sm:items-start flex-grow w-full">
+                      <div className="flex items-center justify-between w-full">
+                          <div>
+                              <h1 className="text-2xl sm:text-3xl font-headline">{publicName}</h1>
+                              {user.bio && <p className="text-muted-foreground mt-1 text-sm max-w-lg text-center sm:text-left">{user.bio}</p>}
+                              <div className="flex items-center justify-center sm:justify-start text-yellow-500 mt-1">
+                                  <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                                  <span className="ml-2 text-sm text-muted-foreground">({user.reputation.toFixed(1)} Reputação)</span>
+                              </div>
+                          </div>
+                          <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0">
+                                      <MoreVertical className="h-5 w-5" />
+                                      <span className="sr-only">Mais opções</span>
+                                  </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                                      <ShieldAlert className="mr-2 h-4 w-4" />
+                                      Denunciar Perfil
+                                  </DropdownMenuItem>
+                              </DropdownMenuContent>
+                          </DropdownMenu>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full justify-center sm:justify-start">
+                          <Button size="sm">
+                              <MessageCircle className="mr-2 h-4 w-4" /> Enviar Mensagem
+                          </Button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </Card>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 space-y-6">
@@ -194,51 +196,57 @@ export default function PublicProfilePage() {
             )}
         </aside>
         <div className="md:col-span-2 space-y-6">
-            <Card as="section" aria-labelledby="contribution-heading">
-                <CardHeader>
-                    <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4 text-center">
-                    <div className="p-4 rounded-lg bg-muted">
-                        <p className="text-2xl font-bold">{user.favorsCompleted}</p>
-                        <p className="text-sm text-muted-foreground">Favores Concluídos</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-muted">
-                        <p className="text-2xl font-bold">{user.favorsRequested}</p>
-                        <p className="text-sm text-muted-foreground">Favores Pedidos</p>
-                    </div>
-                </CardContent>
-            </Card>
+            <section>
+              <Card as="article" aria-labelledby="contribution-heading">
+                  <CardHeader>
+                      <CardTitle id="contribution-heading" className="text-xl font-headline">Contribuição Comunitária</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-2 gap-4 text-center">
+                      <div className="p-4 rounded-lg bg-muted">
+                          <p className="text-2xl font-bold">{user.favorsCompleted}</p>
+                          <p className="text-sm text-muted-foreground">Favores Concluídos</p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-muted">
+                          <p className="text-2xl font-bold">{user.favorsRequested}</p>
+                          <p className="text-sm text-muted-foreground">Favores Pedidos</p>
+                      </div>
+                  </CardContent>
+              </Card>
+            </section>
             
-            <Card as="article" aria-labelledby="requested-favors-heading">
-              <CardHeader>
-                <CardTitle id="requested-favors-heading" className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {favorsRequested.length > 0 ? (
-                  <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                    {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">Este usuário ainda não pediu favores.</p>
-                )}
-              </CardContent>
-            </Card>
+            <section>
+              <Card as="article" aria-labelledby="requested-favors-heading">
+                <CardHeader>
+                  <CardTitle id="requested-favors-heading" className="text-xl font-headline">Favores Pedidos ({favorsRequested.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {favorsRequested.length > 0 ? (
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      {favorsRequested.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Este usuário ainda não pediu favores.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </section>
 
-            <Card as="article" aria-labelledby="fulfilled-favors-heading">
-              <CardHeader>
-                <CardTitle id="fulfilled-favors-heading" className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {favorsFulfilled.length > 0 ? (
-                  <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                    {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">Este usuário ainda não realizou favores.</p>
-                )}
-              </CardContent>
-            </Card>
+            <section>
+              <Card as="article" aria-labelledby="fulfilled-favors-heading">
+                <CardHeader>
+                  <CardTitle id="fulfilled-favors-heading" className="text-xl font-headline">Favores Realizados ({favorsFulfilled.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {favorsFulfilled.length > 0 ? (
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      {favorsFulfilled.map(favor => <ProfileFavorItem key={favor.id} favor={favor} />)}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">Este usuário ainda não realizou favores.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </section>
         </div>
       </div>
       <AlertDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
@@ -286,5 +294,3 @@ export default function PublicProfilePage() {
     </main>
   );
 }
-
-    

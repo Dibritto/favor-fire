@@ -69,7 +69,7 @@ export default function CommunityDetailPage() {
         });
         return;
     }
-    console.log("Denúncia enviada:", { communityId: community?.id, reason: reportReason, comments: reportComments });
+    console.log("Denúncia enviada:", { communityId: community?.id, motivo: reportReason, comentarios: reportComments });
     toast({
         title: "Denúncia Enviada",
         description: "Agradecemos o seu feedback. Nossa equipe de moderação irá analisar a denúncia.",
@@ -89,48 +89,50 @@ export default function CommunityDetailPage() {
 
   return (
     <main className="max-w-5xl mx-auto space-y-8">
-      <Card as="header" className="shadow-lg overflow-hidden">
-        <div className="h-40 bg-gradient-to-r from-accent to-primary/80 relative">
-          <Image
-            src={`https://picsum.photos/seed/header${community.id}/1200/300`}
-            alt={`Banner da comunidade ${community.name}`}
-            fill
-            className="object-cover"
-            priority
-            data-ai-hint="community abstract"
-          />
-        </div>
-        <div className="bg-card p-6 space-y-4">
-          <div>
-            <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
-            <CardDescription className="flex items-center gap-2 mt-1">
-              {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-              <span className="capitalize">{community.type === 'public' ? 'Pública' : 'Privada'}</span>
-              <span className="mx-1">·</span>
-              <Users className="h-4 w-4" />
-              <span>{community.memberIds.length} membro(s)</span>
-            </CardDescription>
+      <header>
+        <Card className="shadow-lg overflow-hidden">
+          <div className="h-40 bg-gradient-to-r from-accent to-primary/80 relative">
+            <Image
+              src={`https://picsum.photos/seed/header${community.id}/1200/300`}
+              alt={`Banner da comunidade ${community.name}`}
+              fill
+              className="object-cover"
+              priority
+              data-ai-hint="community abstract"
+            />
           </div>
-          <p className="text-muted-foreground flex-grow">{community.description}</p>
-        </div>
-        <CardFooter className="p-4 bg-muted/50 border-t flex justify-end gap-2">
-            <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9">
-                        <MoreVertical className="h-4 w-4" />
-                        <span className="sr-only">Mais opções</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
-                        <ShieldAlert className="mr-2 h-4 w-4" />
-                        Denunciar Comunidade
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </CardFooter>
-      </Card>
+          <div className="bg-card p-6 space-y-4">
+            <div>
+              <CardTitle className="text-3xl font-headline">{community.name}</CardTitle>
+              <CardDescription className="flex items-center gap-2 mt-1">
+                {community.type === 'public' ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                <span className="capitalize">{community.type === 'public' ? 'Pública' : 'Privada'}</span>
+                <span className="mx-1">·</span>
+                <Users className="h-4 w-4" />
+                <span>{community.memberIds.length} membro(s)</span>
+              </CardDescription>
+            </div>
+            <p className="text-muted-foreground flex-grow">{community.description}</p>
+          </div>
+          <CardFooter className="p-4 bg-muted/50 border-t flex justify-end gap-2">
+              <Button onClick={handleJoinCommunity}><UserPlus className="mr-2 h-4 w-4" /> Entrar na Comunidade</Button>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Mais opções</span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)} className="text-destructive">
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Denunciar Comunidade
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
+          </CardFooter>
+        </Card>
+      </header>
 
       <Tabs defaultValue="favors" className="w-full">
         <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:w-1/2 mx-auto">
@@ -142,27 +144,30 @@ export default function CommunityDetailPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="favors" className="mt-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-headline">Favores Ativos</h2>
-            <Button variant="outline" asChild>
-              <Link href={`/favores/pedir?communityId=${community.id}`}>
-                <PlusCircle className="mr-2 h-4 w-4" /> Pedir Favor na Comunidade
-              </Link>
-            </Button>
-          </div>
-          {favors.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favors.map(favor => <FavorCard key={favor.id} favor={favor} />)}
+          <section>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-headline">Favores Ativos</h2>
+              <Button variant="outline" asChild>
+                <Link href={`/favores/pedir?communityId=${community.id}`}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Pedir Favor na Comunidade
+                </Link>
+              </Button>
             </div>
-          ) : (
-            <div className="text-center py-12 border-2 border-dashed rounded-lg">
-              <Rss className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-xl font-semibold">Nenhum favor por aqui ainda.</h3>
-              <p className="mt-2 text-muted-foreground">Seja o primeiro a pedir algo nesta comunidade!</p>
-            </div>
-          )}
+            {favors.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {favors.map(favor => <FavorCard key={favor.id} favor={favor} />)}
+              </div>
+            ) : (
+              <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                <Rss className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-xl font-semibold">Nenhum favor por aqui ainda.</h3>
+                <p className="mt-2 text-muted-foreground">Seja o primeiro a pedir algo nesta comunidade!</p>
+              </div>
+            )}
+          </section>
         </TabsContent>
         <TabsContent value="members" className="mt-6">
+          <section>
             <h2 className="text-2xl font-headline mb-6">Membros da Comunidade</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {community.members?.map(member => (
@@ -182,6 +187,7 @@ export default function CommunityDetailPage() {
                   </Card>
               ))}
             </div>
+          </section>
         </TabsContent>
       </Tabs>
 
